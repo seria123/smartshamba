@@ -35,4 +35,12 @@ class Farm extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the crop cycles for the farm.
+     */
+    public function cropCycles(): HasMany
+    {
+        return $this->hasMany(CropCycle::class);
+    }
 }

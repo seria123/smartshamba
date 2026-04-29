@@ -5,11 +5,24 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Livestock;
 use App\Models\LivestockType;
+use App\Services\LivestockTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LivestockController extends Controller
 {
+    /**
+     * Livestock tracking service instance.
+     */
+    protected $trackingService;
+
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(LivestockTrackingService $trackingService)
+    {
+        $this->trackingService = $trackingService;
+    }
     public function index(Request $request)
     {
         $query = Livestock::with('type')->where('user_id', Auth::id());
@@ -57,6 +70,9 @@ class LivestockController extends Controller
         $validated['user_id'] = Auth::id();
 
         $livestock = Livestock::create($validated);
+        
+        // Assign tracking ID in format KE-{farm_code}-{year}-{serial}
+        $this->trackingService->assignTrackingId($livestock);
 
         return response()->json([
             'success' => true,

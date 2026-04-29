@@ -10,16 +10,20 @@ class RoleMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, $role = null): Response
     {
+        // If no user is authenticated, redirect to login
         if (! $request->user()) {
             return redirect()->route('login');
         }
 
         $user = $request->user();
+
+        // If no role is specified, allow access to any authenticated user
+        if ($role === null) {
+            return $next($request);
+        }
 
         // For the 'admin' role requirement, allow either admin or manager
         if ($role === 'admin') {

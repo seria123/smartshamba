@@ -6,78 +6,111 @@
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800">Alerts</h1>
-        <a href="{{ route('alerts.create') }}" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition">
-            <i class="fas fa-plus mr-2"></i>Add Alert
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 tracking-wide">Alerts</h1>
+            <p class="text-sm text-gray-500 mt-2">Monitor system alerts and sensor readings</p>
+        </div>
+        <a href="{{ route('alerts.create') }}" class="inline-flex items-center space-x-2 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white px-6 py-3 rounded-lg border-2 border-emerald-800 hover:border-emerald-600 transition-all duration-200 shadow-sm hover:shadow-md font-semibold text-sm">
+            <i class="fas fa-plus"></i>
+            <span>Add Alert</span>
         </a>
     </div>
 
     <!-- Alerts Table -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sensor</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Message</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Sensor</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Severity</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($alerts as $alert)
-                    <tr class="{{ !$alert->is_read ? 'bg-yellow-50' : '' }}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {{ $alert->type === 'critical' ? 'bg-red-100 text-red-800' : ($alert->type === 'warning' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
-                                {{ ucfirst($alert->type) }}
-                            </span>
+                    <tr class="hover:bg-gray-50 transition-colors duration-150 {{ !$alert->is_read ? 'bg-yellow-50' : '' }}">
+                        <td class="px-6 py-4">
+                            @if($alert->type === 'critical')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-300">
+                                    <i class=\"fas fa-exclamation-circle mr-1.5\"></i>Critical
+                                </span>
+                            @elseif($alert->type === 'warning')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-300">
+                                    <i class=\"fas fa-warning mr-1.5\"></i>Warning
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
+                                    <i class=\"fas fa-info-circle mr-1.5\"></i>Info
+                                </span>
+                            @endif
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-sm font-medium text-gray-900">{{ Str::limit($alert->message, 50) }}</div>
-                            <div class="text-sm text-gray-500">{{ $alert->parameter }}: {{ $alert->value }} (threshold: {{ $alert->threshold }})</div>
+                            <div class="text-sm font-semibold text-gray-900">{{ Str::limit($alert->message, 50) }}</div>
+                            <div class="text-xs text-gray-500 mt-1">{{ $alert->parameter }}: {{ $alert->value }} (threshold: {{ $alert->threshold }})</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td class="px-6 py-4 text-sm text-gray-700">
                             {{ $alert->sensorReading?->sensor?->name ?? 'N/A' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {{ $alert->severity === 'high' ? 'bg-red-100 text-red-800' : ($alert->severity === 'medium' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
-                                {{ ucfirst($alert->severity) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($alert->is_read)
-                                <span class="text-green-600 text-sm"><i class="fas fa-check-circle"></i> Read</span>
+                        <td class="px-6 py-4">
+                            @if($alert->severity === 'high')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-300">
+                                    High
+                                </span>
+                            @elseif($alert->severity === 'medium')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-300">
+                                    Medium
+                                </span>
                             @else
-                                <span class="text-red-600 text-sm"><i class="fas fa-envelope"></i> Unread</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-300">
+                                    Low
+                                </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{{ route('alerts.show', $alert->id) }}" class="text-primary hover:text-primary-dark mr-3">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('alerts.edit', $alert->id) }}" class="text-yellow-500 hover:text-yellow-700 mr-3">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            @if(!$alert->is_read)
-                                <a href="{{ route('alerts.markAsRead', $alert->id) }}" class="text-green-500 hover:text-green-700 mr-3" title="Mark as read">
-                                    <i class="fas fa-check"></i>
-                                </a>
+                        <td class="px-6 py-4 text-sm">
+                            @if($alert->is_read)
+                                <span class="inline-flex items-center text-green-700 font-medium">
+                                    <i class=\"fas fa-check-circle mr-1.5\"></i>Read
+                                </span>
+                            @else
+                                <span class="inline-flex items-center text-red-700 font-medium\">
+                                    <i class=\"fas fa-envelope mr-1.5\"></i>Unread
+                                </span>
                             @endif
-                            <form action="{{ route('alerts.destroy', $alert->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Are you sure you want to delete this alert?')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                        </td>
+                        <td class="px-6 py-4 text-sm font-medium\">
+                            <div class="flex items-center space-x-2\">
+                                <a href="{{ route('alerts.show', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-200" title="View\">
+                                    <i class=\"fas fa-eye\"></i>
+                                </a>
+                                <a href="{{ route('alerts.edit', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-400 transition-all duration-200" title="Edit\">
+                                    <i class=\"fas fa-edit\"></i>
+                                </a>
+                                @if(!$alert->is_read)
+                                    <a href="{{ route('alerts.markAsRead', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-green-200 text-green-600 hover:bg-green-50 hover:border-green-400 transition-all duration-200" title="Mark as read\">
+                                        <i class=\"fas fa-check\"></i>
+                                    </a>
+                                @endif
+                                <form action="{{ route('alerts.destroy', $alert->id) }}" method="POST" class="inline\">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200" title="Delete\" onclick="return confirm('Are you sure you want to delete this alert?')\">
+                                        <i class=\"fas fa-trash\"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No alerts found.</td>
+                        <td colspan="6" class="px-6 py-12 text-center\">
+                            <div class="flex flex-col items-center justify-center\">
+                                <i class=\"fas fa-bell text-4xl text-gray-300 mb-3\"></i>
+                                <p class=\"text-gray-500 font-medium mb-4\">No alerts found. Your system is running smoothly!</p>
+                            </div>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>

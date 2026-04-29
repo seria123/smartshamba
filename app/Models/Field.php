@@ -61,4 +61,20 @@ class Field extends Model
     {
         return $this->hasOne(Crop::class);
     }
+
+    /**
+     * Get the crop cycles for the field.
+     */
+    public function cropCycles(): HasMany
+    {
+        return $this->hasMany(CropCycle::class);
+    }
+
+    /**
+     * Get the active crop cycle for the field (most recent).
+     */
+    public function activeCropCycle(): HasOne
+    {
+        return $this->hasOne(CropCycle::class)->latestOfMany();
+    }
 }

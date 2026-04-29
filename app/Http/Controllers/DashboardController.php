@@ -62,21 +62,6 @@ class DashboardController extends Controller
             ];
         })->take(10)->toArray();
 
-        return view('dashboard', compact(
-            'totalFarms',
-            'totalFields',
-            'totalSensors',
-            'activeSensors',
-            'recentAlerts',
-            'unreadAlertsCount',
-            'sensors',
-            'farms',
-            'totalWorkers',
-            'activeWorkers',
-            'totalHarvests',
-            'thisYearHarvests',
-            'thisYearQuantity',
-            'recentActivity'
-        ));
+        return view('dashboard', compact('totalFarms', 'totalFields', 'totalSensors', 'activeSensors', 'totalWorkers', 'activeWorkers', 'totalHarvests', 'thisYearHarvests', 'thisYearQuantity', 'sensors', 'farms', 'recentAlerts', 'unreadAlertsCount', 'recentActivity'));
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Livestock extends Model
 {
@@ -18,6 +19,7 @@ class Livestock extends Model
         'livestock_type_id',
         'farm_id',
         'tag_number',
+        'tracking_id',
         'name',
         'date_acquired',
         'weight',
@@ -39,15 +41,11 @@ class Livestock extends Model
     ];
 
     const STATUS_HEALTHY = 'healthy';
-
     const STATUS_SICK = 'sick';
-
     const STATUS_SOLD = 'sold';
-
     const STATUS_DEAD = 'dead';
 
     const GENDER_MALE = 'male';
-
     const GENDER_FEMALE = 'female';
 
     public function type(): BelongsTo
@@ -70,14 +68,28 @@ class Livestock extends Model
         return $this->hasMany(Livestock::class, 'parent_id');
     }
 
-    public function diseases(): HasMany
+    /**
+     * Get the location history for this livestock.
+     */
+    public function locations(): HasMany
     {
-        return $this->hasMany(LivestockDisease::class);
+        return $this->hasMany(LivestockLocation::class)->orderBy('entered_at', 'desc');
     }
 
-    public function activeDiseases(): HasMany
+    /**
+     * Get the current/latest active location (where left_at is null).
+     */
+    public function currentLocation(): HasOne
     {
-        return $this->hasMany(LivestockDisease::class)->where('status', 'active');
+        return $this->hasOne(LivestockLocation::class)->active()->latest('entered_at');
+    }
+
+    /**
+     * Get the movement history for this livestock.
+     */
+    public function movements(): HasMany
+    {
+        return $this->hasMany(LivestockMovement::class)->orderBy('movement_date', 'desc');
     }
 
     public function scopeHealthy($query)

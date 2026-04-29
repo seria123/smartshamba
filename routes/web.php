@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
+
 use App\Http\Controllers\AutomationController;
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\CropAnalysisController;
@@ -10,17 +11,23 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FeedTypeController;
+use App\Http\Controllers\LivestockTrackingController;
+use App\Http\Controllers\CropController;
+use App\Http\Controllers\CropCycleController;
+use App\Http\Controllers\FertilizerController;
+use App\Http\Controllers\FertilizerTypeController;
+use App\Http\Controllers\FertilizerApplicationController;
+use App\Http\Controllers\FeedUsageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\FoodStockController;
 use App\Http\Controllers\HarvestController;
 use App\Http\Controllers\IrrigationController;
-use App\Http\Controllers\LivestockAnalysisController;
-use App\Http\Controllers\LivestockController;
-use App\Http\Controllers\LivestockDiseaseController;
-use App\Http\Controllers\LivestockTypeController;
-use App\Http\Controllers\LivestockWoundAnalysisController;
+ use App\Http\Controllers\LivestockAnalysisController;
+ use App\Http\Controllers\LivestockController;
+ use App\Http\Controllers\LivestockTypeController;
+ use App\Http\Controllers\LivestockWoundAnalysisController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
@@ -28,11 +35,15 @@ use App\Http\Controllers\RevenueController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
 */
+
+// Include authentication routes
+require __DIR__.'/auth.php';
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -80,20 +91,45 @@ Route::middleware(['auth'])->group(function () {
     Route::get('automation/process', [AutomationController::class, 'process'])->name('automation.process');
 
     Route::resource('automation_rules', \App\Http\Controllers\AutomationRuleController::class);
+    Route::post('automation_rules/{automation_rule}/toggle', [AutomationRuleController::class, 'toggle'])->name('automation_rules.toggle');
 
-    Route::resource('crops', FieldController::class);
-    Route::resource('crop_analysis', CropAnalysisController::class);
-    Route::post('crop_analysis/{crop_analysis}/mark-reviewed', [CropAnalysisController::class, 'markReviewed'])->name('crop_analysis.markReviewed');
+      Route::resource('crops', CropController::class);
+      Route::resource('crop_analysis', CropAnalysisController::class);
+      Route::post('crop_analysis/{crop_analysis}/mark-reviewed', [CropAnalysisController::class, 'markReviewed'])->name('crop_analysis.markReviewed');
+      
+       Route::resource('crop_cycles', CropCycleController::class);
+       Route::get('crop_cycles/{crop_cycle}/analyze', [CropCycleController::class, 'analyze'])->name('crop_cycles.analyze');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Livestock
-    |--------------------------------------------------------------------------
-    */
+       // Fertilizer Management Routes
+       Route::resource('fertilizer_types', FertilizerTypeController::class);
+       Route::resource('fertilizers', FertilizerController::class);
+       Route::resource('fertilizer_applications', FertilizerApplicationController::class);
 
-    Route::resource('livestock', LivestockController::class);
+       // Feed Management Routes
+       Route::resource('feed_usages', FeedUsageController::class);
 
-    Route::resource('livestock_types', LivestockTypeController::class)->names([
+      /*
+      |--------------------------------------------------------------------------
+      | Livestock
+      |--------------------------------------------------------------------------
+      */
+
+     // Livestock Tracking Routes (MUST come before resource route to avoid conflicts)
+     Route::get('livestock/tracking', [LivestockTrackingController::class, 'index'])->name('livestock_tracking.index');
+     Route::get('livestock/tracking/recent-movements', [LivestockTrackingController::class, 'recentMovements'])->name('livestock_tracking.recent-movements');
+     Route::get('livestock/tracking/by-location', [LivestockTrackingController::class, 'byLocation'])->name('livestock_tracking.by-location');
+
+     // Individual livestock location tracking
+     Route::get('livestock/{livestock}/locations', [LivestockController::class, 'locationHistory'])->name('livestock.locations.index');
+     Route::get('livestock/{livestock}/locations/current', [LivestockController::class, 'currentLocation'])->name('livestock.locations.current');
+     Route::get('livestock/{livestock}/locations/create', [LivestockController::class, 'createLocation'])->name('livestock.locations.create');
+     Route::post('livestock/{livestock}/locations', [LivestockController::class, 'storeLocation'])->name('livestock.locations.store');
+     Route::get('livestock/{livestock}/movements', [LivestockController::class, 'movementHistory'])->name('livestock.movements.index');
+     Route::get('livestock/{livestock}/grazing-patterns', [LivestockController::class, 'grazingPatterns'])->name('livestock.grazing.patterns');
+
+     Route::resource('livestock', LivestockController::class);
+
+     Route::resource('livestock_types', LivestockTypeController::class)->names([
         'index' => 'livestock-types.index',
         'create' => 'livestock-types.create',
         'store' => 'livestock-types.store',
@@ -101,33 +137,18 @@ Route::middleware(['auth'])->group(function () {
         'edit' => 'livestock-types.edit',
         'update' => 'livestock-types.update',
         'destroy' => 'livestock-types.destroy',
-    ]);
+     ]);
 
-    Route::get('livestock/{livestock}/analysis-history', [LivestockAnalysisController::class, 'livestockHistory'])->name('livestock_analysis.livestockHistory');
+     Route::get('livestock/{livestock}/analysis-history', [LivestockAnalysisController::class, 'livestockHistory'])->name('livestock_analysis.livestockHistory');
 
-    Route::resource('livestock_analysis', LivestockAnalysisController::class);
-    Route::post('livestock_analysis/{livestockAnalysis}/mark-reviewed', [LivestockAnalysisController::class, 'markReviewed'])->name('livestock_analysis.markReviewed');
+     Route::resource('livestock_analysis', LivestockAnalysisController::class);
+     Route::post('livestock_analysis/{livestockAnalysis}/mark-reviewed', [LivestockAnalysisController::class, 'markReviewed'])->name('livestock_analysis.markReviewed');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Diseases
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('diseases/diagnose', [LivestockDiseaseController::class, 'diagnose'])->name('diseases.diagnose');
-    Route::post('diseases/{livestockDisease}/treat', [LivestockDiseaseController::class, 'treat'])->name('diseases.treat');
-    Route::get('diseases/high-severity', [LivestockDiseaseController::class, 'highSeverity'])->name('diseases.highSeverity');
-    Route::get('diseases/contagious', [LivestockDiseaseController::class, 'contagious'])->name('diseases.contagious');
-    Route::post('diseases/ai-analyze', [LivestockDiseaseController::class, 'analyze'])->name('diseases.ai-analyze');
-
-    Route::resource('diseases', LivestockDiseaseController::class)
-        ->parameters(['diseases' => 'livestockDisease']);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Wounds
-    |--------------------------------------------------------------------------
-    */
+     /*
+     |--------------------------------------------------------------------------
+     | Wounds
+     |--------------------------------------------------------------------------
+     */
 
     Route::resource('wounds', LivestockWoundAnalysisController::class);
     Route::patch('wounds/{wound}/treated', [LivestockWoundAnalysisController::class, 'markTreated'])->name('wounds.treated');
@@ -171,9 +192,7 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->group(function () {
 
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
         Route::resource('workers', WorkerController::class);
         Route::post('workers/{worker}/terminate', [WorkerController::class, 'terminate'])->name('workers.terminate');

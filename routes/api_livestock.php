@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\DiseaseController;
 use App\Http\Controllers\Api\FoodStockController;
 use App\Http\Controllers\Api\LivestockController;
 use App\Http\Controllers\Api\LivestockTypeController;
@@ -25,11 +24,4 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::apiResource('food-stocks', FoodStockController::class);
     Route::get('food-stocks/alerts', [FoodStockController::class, 'alerts'])->name('food-stocks.alerts');
     Route::get('food-stocks/summary', [FoodStockController::class, 'summary'])->name('food-stocks.summary');
-
-    // Diseases
-    Route::apiResource('diseases', DiseaseController::class);
-    Route::post('diseases/diagnose', [DiseaseController::class, 'diagnoseLivestock'])->name('diseases.diagnose');
-    Route::post('diseases/{livestockDisease}/treat', [DiseaseController::class, 'treatLivestock'])->name('diseases.treat');
-    Route::get('diseases/high-severity/list', [DiseaseController::class, 'highSeverity'])->name('diseases.high-severity');
-    Route::get('diseases/contagious/list', [DiseaseController::class, 'contagious'])->name('diseases.contagious');
 });

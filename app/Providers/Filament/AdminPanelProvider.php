@@ -62,9 +62,6 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 'logout' => Pages\Actions\LogoutAction::class,
             ])
-            ->middleware([
-                \App\Http\Middleware\RoleMiddleware::class,
-            ])
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Workforce')
@@ -115,6 +112,34 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn (): bool => request()->routeIs('food-stocks.*'))
                     ->group('Farm Operations')
                     ->sort(4),
+                NavigationItem::make('Crop Cycles')
+                    ->label('Crop Cycles')
+                    ->icon('heroicon-o-seedling')
+                    ->url(fn (): string => route('crop-cycles.index'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('crop-cycles.*'))
+                    ->group('Farm Operations')
+                    ->sort(5),
+                NavigationItem::make('Crop Stages')
+                    ->label('Crop Stages')
+                    ->icon('heroicon-o-list-todo')
+                    ->url(fn (): string => route('crop-stages.index'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('crop-stages.*'))
+                    ->group('Farm Operations')
+                    ->sort(6),
+                NavigationItem::make('Activities')
+                    ->label('Activities')
+                    ->icon('heroicon-o-wrench')
+                    ->url(fn (): string => route('activities.index'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('activities.*'))
+                    ->group('Farm Operations')
+                    ->sort(7),
+                NavigationItem::make('Inputs')
+                    ->label('Inputs')
+                    ->icon('heroicon-o-box')
+                    ->url(fn (): string => route('inputs.index'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('inputs.*'))
+                    ->group('Farm Operations')
+                    ->sort(8),
 
                 // Finance
                 NavigationItem::make('Expenses')
@@ -123,14 +148,14 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn (): string => route('expenses.index'))
                     ->isActiveWhen(fn (): bool => request()->routeIs('expenses.*'))
                     ->group('Finance')
-                    ->sort(5),
+                    ->sort(9),
                 NavigationItem::make('Revenues')
                     ->label('Revenues')
                     ->icon('heroicon-o-arrow-trending-up')
                     ->url(fn (): string => route('revenues.index'))
                     ->isActiveWhen(fn (): bool => request()->routeIs('revenues.*'))
                     ->group('Finance')
-                    ->sort(6),
+                    ->sort(10),
 
                 // Market
                 NavigationItem::make('Buyers')

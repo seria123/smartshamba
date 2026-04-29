@@ -6,65 +6,78 @@ use App\Models\LivestockAnalysis;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
-class LivestockAnalysisService
+class LivestockAnalysisService extends BaseAnalysisService
 {
     protected ?string $apiKey;
 
-    protected \App\Services\OpenAIService $openaiService;
-
-    public function __construct(\App\Services\OpenAIService $openaiService)
+    public function __construct(OpenAIService $openaiService)
     {
+        parent::__construct($openaiService);
         $this->apiKey = config('services.openai.key') ?: config('services.openai.api_key') ?: env('OPENAI_API_KEY');
-        $this->openaiService = $openaiService;
     }
 
     /**
      * Perform livestock disease analysis on an uploaded image.
      */
-    public function analyze(UploadedFile $image, ?int $livestockId = null): LivestockAnalysis
+    public function analyze(UploadedFile $image, ?int $livestockId = null)
     {
-        $path = $this->storeImage($image);
+        $path = $this->storeImage($image, 'livestock-analyses');
 
-        $analysis = LivestockAnalysis::create([
-            'livestock_id' => $livestockId,
-            'user_id' => auth()->id(),
-            'image_path' => $path,
-            'status' => 'pending',
-        ]);
+        try {
+            $result = $this->performAnalysis($image);
 
-        $result = $this->performAnalysis($image);
+            $analysis = $this->createRecord([
+                'image_path' => $path,
+                'diagnosis' => $result['diagnosis'],
+                'description' => $result['description'],
+                'severity' => $result['severity'],
+                'recommendation' => $result['recommendation'],
+                'detected_issues' => $result['detected_issues'],
+                'confidence' => $result['confidence'],
+            ], $livestockId);
 
-        $analysis->update([
-            'diagnosis' => $result['diagnosis'],
-            'description' => $result['description'],
-            'severity' => $result['severity'],
-            'recommendation' => $result['recommendation'],
-            'detected_issues' => $result['detected_issues'],
-            'confidence_score' => $result['confidence'],
-            'status' => 'analyzed',
-        ]);
+            return $analysis->fresh();
+        } catch (\Exception $e) {
+            Log::error('Livestock analysis failed: ' . $e->getMessage());
+            $fallback = $this->handleFailure($e->getMessage());
 
-        return $analysis->fresh();
+            $analysis = $this->createRecord([
+                'image_path' => $path,
+                'diagnosis' => $fallback['diagnosis'],
+                'description' => $fallback['description'],
+                'severity' => $fallback['severity'],
+                'recommendation' => $fallback['recommendation'],
+                'detected_issues' => $fallback['detected_issues'],
+                'confidence' => $fallback['confidence'],
+            ], $livestockId);
+
+            return $analysis;
+        }
     }
 
     /**
-     * Store uploaded image to storage.
+     * Get the Eloquent model class.
      */
-    protected function storeImage(UploadedFile $image): string
+    protected function getModelClass(): string
     {
-        $filename = Str::uuid().'.'.$image->getClientOriginalExtension();
-
-        return $image->storeAs('livestock-analyses', $filename, 'public');
+        return LivestockAnalysis::class;
     }
 
     /**
-     * Perform analysis using appropriate method based on configuration.
+     * Get the foreign key name.
+     */
+    protected function getRelationIdName(): string
+    {
+        return 'livestock_id';
+    }
+
+    /**
+     * Perform analysis using OpenAI Vision API or simulation fallback.
      */
     protected function performAnalysis(UploadedFile $image): array
     {
-        if (! empty($this->apiKey) && $this->apiKey !== 'your_openai_api_key_here') {
+        if (!empty($this->apiKey) && $this->apiKey !== 'your_openai_api_key_here') {
             return $this->runOpenAIVisionAnalysis($image);
         }
 
@@ -82,34 +95,30 @@ class LivestockAnalysisService
             $imageData = base64_encode(file_get_contents($image->getRealPath()));
 
             $prompt = <<<'PROMPT'
-Analyze this livestock animal image carefully for any signs of disease or health issues.
+You are a veterinary AI assistant.
 
-Identify:
-1. The animal species (cattle, sheep, goat, chicken, pig, etc.)
-2. Any visible symptoms (skin lesions, discharge, unusual posture, coat condition, eye/nose issues, lameness, etc.)
-3. The most likely disease or health condition based on visual symptoms
-4. Severity assessment (low, medium, high)
+Analyze ONLY livestock animals (cow, goat, sheep, pig, chicken, etc).
+DO NOT provide plant or crop diseases.
 
-Provide a structured response in this exact format:
-```
-SPECIES: [species name]
-SYMPTOMS: [list observed symptoms]
-DISEASE: [most likely disease name]
-SEVERITY: [low/medium/high]
-CONFIDENCE: [percentage 0-100]
-```
+Return EXACTLY in this format:
 
-If the animal appears healthy, state "HEALTHY" for disease and "low" severity.
-Only respond with the structured format, no additional commentary.
+SPECIES: <animal>
+SYMPTOMS: <comma separated symptoms>
+DISEASE: <disease name or HEALTHY>
+SEVERITY: <low|medium|high>
+CONFIDENCE: <0-100>
+
+If image is not livestock, respond:
+DISEASE: INVALID_IMAGE
 PROMPT;
 
             $response = Http::timeout(60)
                 ->withHeaders([
-                    'Authorization' => 'Bearer '.$this->apiKey,
+                    'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type' => 'application/json',
                 ])
                 ->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-4-vision-preview',
+                    'model' => 'gpt-4.1',
                     'messages' => [
                         [
                             'role' => 'user',
@@ -121,7 +130,7 @@ PROMPT;
                                 [
                                     'type' => 'image_url',
                                     'image_url' => [
-                                        'url' => 'data:image/jpeg;base64,'.$imageData,
+                                        'url' => 'data:image/jpeg;base64,' . $imageData,
                                         'detail' => 'high',
                                     ],
                                 ],
@@ -139,9 +148,9 @@ PROMPT;
                 return $this->parseOpenAIVisionResponse($content);
             }
 
-            Log::error('OpenAI Vision API error: '.$response->body());
+            Log::error('OpenAI Vision API error: ' . $response->body());
         } catch (\Exception $e) {
-            Log::error('OpenAI Vision exception: '.$e->getMessage());
+            Log::error('OpenAI Vision exception: ' . $e->getMessage());
         }
 
         return $this->runSimulationAnalysis($image);
@@ -208,7 +217,7 @@ PROMPT;
 
         return [
             'diagnosis' => $result['diagnosis'],
-            'description' => $result['symptoms'] ?: $result['diagnosis'].' detected in '.$result['species'],
+            'description' => $result['symptoms'] ?: $result['diagnosis'] . ' detected in ' . $result['species'],
             'severity' => $result['severity'],
             'recommendation' => $recommendation,
             'detected_issues' => $issues,

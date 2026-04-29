@@ -276,6 +276,9 @@ class DatabaseSeeder extends Seeder
         $reading3 = SensorReading::where('sensor_id', $sensor4->id)->first();
         $reading4 = SensorReading::where('sensor_id', $sensor5->id)->first();
 
+        // Seed fertilizer types and fertilizers
+        $this->call([FertilizerTypeSeeder::class, FertilizerSeeder::class]);
+
         Alert::create([
             'sensor_reading_id' => $reading1->id,
             'type' => 'warning',

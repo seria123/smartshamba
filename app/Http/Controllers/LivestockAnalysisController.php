@@ -64,11 +64,6 @@ class LivestockAnalysisController extends Controller
             $validated['livestock_id'] ?? null
         );
 
-        // If livestock_id was provided and analysis detected a disease, create a disease record
-        if (isset($validated['livestock_id']) && $analysis->diagnosis !== 'Healthy') {
-            $this->createDiseaseRecordFromAnalysis($analysis);
-        }
-
         return redirect()->route('livestock_analysis.show', $analysis)
             ->with('success', 'Livestock analysis completed successfully!');
     }
@@ -158,11 +153,6 @@ class LivestockAnalysisController extends Controller
             $validated['livestock_id'] ?? null
         );
 
-        // If livestock_id was provided and analysis detected a disease, create a disease record
-        if (isset($validated['livestock_id']) && $analysis->diagnosis !== 'Healthy') {
-            $this->createDiseaseRecordFromAnalysis($analysis);
-        }
-
         return response()->json([
             'success' => true,
             'data' => [
@@ -176,85 +166,5 @@ class LivestockAnalysisController extends Controller
                 'created_at' => $analysis->created_at->toIso8601String(),
             ],
         ]);
-    }
-
-    /**
-     * Create a disease record from analysis results.
-     */
-    protected function createDiseaseRecordFromAnalysis(LivestockAnalysis $analysis): void
-    {
-        try {
-            $livestock = $analysis->livestock;
-
-            if (! $livestock) {
-                return;
-            }
-
-            // Find matching disease from master list or create custom entry
-            $disease = \App\Models\Disease::firstOrCreate(
-                ['name' => $analysis->diagnosis],
-                [
-                    'description' => $analysis->description,
-                    'severity' => $analysis->severity ?? 'medium',
-                    'symptoms' => $analysis->description,
-                    'treatment' => $analysis->recommendation,
-                    'prevention' => 'Implement biosecurity measures and regular health checks',
-                    'is_contagious' => $this->isLikelyContagious($analysis->diagnosis),
-                    'is_active' => true,
-                ]
-            );
-
-            // Check if there's already an active disease record for this livestock
-            $existingRecord = \App\Models\LivestockDisease::where('livestock_id', $livestock->id)
-                ->where('status', 'active')
-                ->where('name', $analysis->diagnosis)
-                ->first();
-
-            if (! $existingRecord) {
-                \App\Models\LivestockDisease::create([
-                    'livestock_id' => $livestock->id,
-                    'disease_id' => $disease->id,
-                    'name' => $analysis->diagnosis,
-                    'species' => $livestock->type ?? 'Unknown',
-                    'cause' => 'Detected via AI image analysis',
-                    'symptoms' => $analysis->description,
-                    'transmission' => $disease->is_contagious ? 'May be contagious' : 'Non-contagious',
-                    'prevention' => $disease->prevention,
-                    'treatment' => $analysis->recommendation,
-                    'status' => 'active',
-                    'diagnosed_date' => now(),
-                    'severity' => $analysis->severity ?? 'medium',
-                ]);
-
-                // Update livestock status
-                $livestock->markAsSick();
-            }
-
-            Log::info("LivestockAnalysis: Created disease record for {$analysis->diagnosis} on livestock {$livestock->id}");
-        } catch (\Exception $e) {
-            Log::error('LivestockAnalysis: Failed to create disease record - '.$e->getMessage());
-        }
-    }
-
-    /**
-     * Quick heuristic to determine if a disease is likely contagious.
-     */
-    protected function isLikelyContagious(string $diseaseName): bool
-    {
-        $contagiousKeywords = [
-            'foot and mouth', 'anthrax', 'rift valley', 'brucellosis',
-            'tuberculosis', 'pneumonia', 'mastitis', 'tick', 'parasite',
-            'virus', 'bacterial', 'infection', 'fever', 'contagious',
-        ];
-
-        $diseaseLower = strtolower($diseaseName);
-
-        foreach ($contagiousKeywords as $keyword) {
-            if (str_contains($diseaseLower, $keyword)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

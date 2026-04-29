@@ -35,22 +35,29 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}">
-                                @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="tag_number" class="form-label">Tag Number</label>
-                                <input type="text" class="form-control @error('tag_number') is-invalid @enderror" id="tag_number" name="tag_number" value="{{ old('tag_number') }}">
-                                @error('tag_number')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                         <div class="row">
+                             <div class="col-md-6 mb-3">
+                                 <label for="name" class="form-label">Name</label>
+                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}">
+                                 @error('name')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                 @enderror
+                             </div>
+                             <div class="col-md-6 mb-3">
+                                 <label for="tag_number" class="form-label">Tag Number</label>
+                                 <input type="text" class="form-control @error('tag_number') is-invalid @enderror" id="tag_number" name="tag_number" value="{{ old('tag_number') }}">
+                                 @error('tag_number')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                 @enderror
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="col-md-12 mb-3">
+                                 <label for="tracking_id" class="form-label">Tracking ID (Auto-generated)</label>
+                                 <input type="text" class="form-control-plaintext bg-light" id="tracking_id" name="tracking_id" readonly value="KE-___ - ____ - ____">
+                                 <small class="text-muted">Format: KE-{farm_code}-{year}-{serial}</small>
+                             </div>
+                         </div>
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="gender" class="form-label">Gender</label>

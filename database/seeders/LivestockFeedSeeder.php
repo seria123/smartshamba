@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\FeedType;
-use App\Models\LivestockDisease;
 use App\Models\LivestockType;
 use Illuminate\Database\Seeder;
 
@@ -33,50 +32,5 @@ class LivestockFeedSeeder extends Seeder
         foreach ($feedTypes as $feed) {
             FeedType::firstOrCreate(['name' => $feed['name']], $feed);
         }
-
-        // Only seed diseases if livestock exist
-        // Commented out until livestock are seeded first
-        /*
-        $diseases = [
-            [
-                'name' => 'Foot and Mouth Disease',
-                'species' => 'Cattle',
-                'cause' => 'Virus',
-                'symptoms' => 'Blisters on mouth and feet, drooling, lameness',
-                'transmission' => 'Direct contact, contaminated equipment',
-                'prevention' => 'Vaccination, quarantine',
-                'treatment' => 'Supportive care',
-                'mortality_rate' => 5.00,
-                'severity' => 'high',
-            ],
-            [
-                'name' => 'Mastitis',
-                'species' => 'Cattle',
-                'cause' => 'Bacteria',
-                'symptoms' => 'Swollen udder, pain, abnormal milk',
-                'transmission' => 'Dirty milking equipment',
-                'prevention' => 'Hygiene during milking',
-                'treatment' => 'Antibiotics',
-                'mortality_rate' => 1.00,
-                'severity' => 'medium',
-            ],
-            [
-                'name' => 'Newcastle Disease',
-                'species' => 'Poultry',
-                'cause' => 'Virus',
-                'symptoms' => 'Sneezing, paralysis, drop in egg production',
-                'transmission' => 'Airborne, contaminated feed',
-                'prevention' => 'Vaccination',
-                'treatment' => 'No cure',
-                'mortality_rate' => 50.00,
-                'severity' => 'high',
-            ],
-        ];
-
-        foreach ($diseases as $disease) {
-            // Requires livestock to exist first
-            // LivestockDisease::create($disease);
-        }
-        */
     }
 }

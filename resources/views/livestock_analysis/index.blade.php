@@ -8,9 +8,6 @@
             <a href="{{ route('livestock_analysis.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i> New Analysis
             </a>
-            <a href="{{ route('diseases.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-heartbeat me-1"></i> View Diseases
-            </a>
         </div>
     </div>
 
