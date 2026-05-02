@@ -1,214 +1,129 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
-
-use App\Http\Controllers\AutomationController;
-use App\Http\Controllers\BuyerController;
+use App\Http\Controllers\AlertController;
 use App\Http\Controllers\CropAnalysisController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\ExportController;
-use App\Http\Controllers\FarmController;
-use App\Http\Controllers\FeedTypeController;
-use App\Http\Controllers\LivestockTrackingController;
-use App\Http\Controllers\CropController;
 use App\Http\Controllers\CropCycleController;
-use App\Http\Controllers\FertilizerController;
-use App\Http\Controllers\FertilizerTypeController;
-use App\Http\Controllers\FertilizerApplicationController;
-use App\Http\Controllers\FeedUsageController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FarmerController;
+use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FieldController;
-use App\Http\Controllers\FoodStockController;
-use App\Http\Controllers\HarvestController;
-use App\Http\Controllers\IrrigationController;
- use App\Http\Controllers\LivestockAnalysisController;
- use App\Http\Controllers\LivestockController;
- use App\Http\Controllers\LivestockTypeController;
- use App\Http\Controllers\LivestockWoundAnalysisController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\RevenueController;
-use App\Http\Controllers\SensorController;
+use App\Http\Controllers\LivestockAnalysisController;
+use App\Http\Controllers\LivestockController;
+use App\Http\Controllers\LivestockTypeController;
+use App\Http\Controllers\PlantingScheduleController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkerController;
+use App\Models\Farmer;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
-
-// Include authentication routes
-require __DIR__.'/auth.php';
-
 Route::get('/', function () {
-    return redirect()->route('dashboard');
+    return view('welcome');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Authentication
-|--------------------------------------------------------------------------
-*/
+// Alert routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('alerts', AlertController::class);
+});
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('livestock', LivestockController::class);
+    Route::post('livestock/{livestock}/mark-read', [LivestockController::class, 'markAsRead'])->name('livestock.markRead');
+    Route::get('livestock/{livestock}/locations', [LivestockController::class, 'locationHistory'])->name('livestock.locations.index');
+    Route::get('livestock/{livestock}/locations/create', [LivestockController::class, 'createLocation'])->name('livestock.locations.create');
+    Route::post('livestock/{livestock}/locations', [LivestockController::class, 'storeLocation'])->name('livestock.locations.store');
+    Route::get('livestock/{livestock}/movements', [LivestockController::class, 'movementHistory'])->name('livestock.movements.index');
+    Route::get('livestock/{livestock}/grazing-patterns', [LivestockController::class, 'grazingPatterns'])->name('livestock.grazing.patterns');
+});
 
-/*
-|--------------------------------------------------------------------------
-| Profile (Authenticated)
-|--------------------------------------------------------------------------
-*/
+Route::middleware(['auth'])->group(function () {
+    Route::resource('livestock-types', LivestockTypeController::class);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('livestock-analysis', LivestockAnalysisController::class);
+    Route::get('livestock/{livestock}/analysis-history', [LivestockAnalysisController::class, 'livestockHistory'])
+        ->name('livestock.analysis-history');
+});
+
+Route::get('/dashboard', function () {
+    $recentAnalyses = null;
+    if (auth()->check()) {
+        $query = \App\Models\CropAnalysis::with(['cropCycle.crop', 'cropCycle.field'])
+            ->orderBy('created_at', 'desc')
+            ->limit(6);
+        
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+        
+        $recentAnalyses = $query->get();
+    }
+    
+    return view('dashboard', compact('recentAnalyses'));
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
-    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Main App (Authenticated)
-|--------------------------------------------------------------------------
-*/
-
+// Farm CRUD routes
 Route::middleware(['auth'])->group(function () {
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
     Route::resource('farms', FarmController::class);
-    Route::resource('fields', FieldController::class);
-    Route::resource('sensors', SensorController::class);
-    Route::resource('automation', AutomationController::class);
-
-    Route::get('automation/rules/reorder', [AutomationController::class, 'reorder'])->name('automation.rules.reorder');
-    Route::post('automation/rules/update-order', [AutomationController::class, 'updateOrder'])->name('automation.rules.update-order');
-    Route::get('automation/process', [AutomationController::class, 'process'])->name('automation.process');
-
-    Route::resource('automation_rules', \App\Http\Controllers\AutomationRuleController::class);
-    Route::post('automation_rules/{automation_rule}/toggle', [AutomationRuleController::class, 'toggle'])->name('automation_rules.toggle');
-
-      Route::resource('crops', CropController::class);
-      Route::resource('crop_analysis', CropAnalysisController::class);
-      Route::post('crop_analysis/{crop_analysis}/mark-reviewed', [CropAnalysisController::class, 'markReviewed'])->name('crop_analysis.markReviewed');
-      
-       Route::resource('crop_cycles', CropCycleController::class);
-       Route::get('crop_cycles/{crop_cycle}/analyze', [CropCycleController::class, 'analyze'])->name('crop_cycles.analyze');
-
-       // Fertilizer Management Routes
-       Route::resource('fertilizer_types', FertilizerTypeController::class);
-       Route::resource('fertilizers', FertilizerController::class);
-       Route::resource('fertilizer_applications', FertilizerApplicationController::class);
-
-       // Feed Management Routes
-       Route::resource('feed_usages', FeedUsageController::class);
-
-      /*
-      |--------------------------------------------------------------------------
-      | Livestock
-      |--------------------------------------------------------------------------
-      */
-
-     // Livestock Tracking Routes (MUST come before resource route to avoid conflicts)
-     Route::get('livestock/tracking', [LivestockTrackingController::class, 'index'])->name('livestock_tracking.index');
-     Route::get('livestock/tracking/recent-movements', [LivestockTrackingController::class, 'recentMovements'])->name('livestock_tracking.recent-movements');
-     Route::get('livestock/tracking/by-location', [LivestockTrackingController::class, 'byLocation'])->name('livestock_tracking.by-location');
-
-     // Individual livestock location tracking
-     Route::get('livestock/{livestock}/locations', [LivestockController::class, 'locationHistory'])->name('livestock.locations.index');
-     Route::get('livestock/{livestock}/locations/current', [LivestockController::class, 'currentLocation'])->name('livestock.locations.current');
-     Route::get('livestock/{livestock}/locations/create', [LivestockController::class, 'createLocation'])->name('livestock.locations.create');
-     Route::post('livestock/{livestock}/locations', [LivestockController::class, 'storeLocation'])->name('livestock.locations.store');
-     Route::get('livestock/{livestock}/movements', [LivestockController::class, 'movementHistory'])->name('livestock.movements.index');
-     Route::get('livestock/{livestock}/grazing-patterns', [LivestockController::class, 'grazingPatterns'])->name('livestock.grazing.patterns');
-
-     Route::resource('livestock', LivestockController::class);
-
-     Route::resource('livestock_types', LivestockTypeController::class)->names([
-        'index' => 'livestock-types.index',
-        'create' => 'livestock-types.create',
-        'store' => 'livestock-types.store',
-        'show' => 'livestock-types.show',
-        'edit' => 'livestock-types.edit',
-        'update' => 'livestock-types.update',
-        'destroy' => 'livestock-types.destroy',
-     ]);
-
-     Route::get('livestock/{livestock}/analysis-history', [LivestockAnalysisController::class, 'livestockHistory'])->name('livestock_analysis.livestockHistory');
-
-     Route::resource('livestock_analysis', LivestockAnalysisController::class);
-     Route::post('livestock_analysis/{livestockAnalysis}/mark-reviewed', [LivestockAnalysisController::class, 'markReviewed'])->name('livestock_analysis.markReviewed');
-
-     /*
-     |--------------------------------------------------------------------------
-     | Wounds
-     |--------------------------------------------------------------------------
-     */
-
-    Route::resource('wounds', LivestockWoundAnalysisController::class);
-    Route::patch('wounds/{wound}/treated', [LivestockWoundAnalysisController::class, 'markTreated'])->name('wounds.treated');
-    Route::patch('wounds/{wound}/healed', [LivestockWoundAnalysisController::class, 'markHealed'])->name('wounds.healed');
-    Route::get('wounds/high-urgency', [LivestockWoundAnalysisController::class, 'highUrgency'])->name('wounds.highUrgency');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Other Modules
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource('feed_types', FeedTypeController::class);
-
-    Route::resource('alerts', \App\Http\Controllers\AlertController::class);
-    Route::post('alerts/{alert}/mark-read', [\App\Http\Controllers\AlertController::class, 'markAsRead'])->name('alerts.markAsRead');
-
-    Route::resource('tasks', \App\Http\Controllers\TaskController::class);
-
-    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
-
-    Route::resource('irrigation', IrrigationController::class);
-    Route::post('irrigation/{irrigation}/start', [IrrigationController::class, 'start'])->name('irrigation.start');
-    Route::post('irrigation/{irrigation}/stop', [IrrigationController::class, 'stop'])->name('irrigation.stop');
-    Route::get('irrigation/logs', [IrrigationController::class, 'logs'])->name('irrigation.logs');
-
-    Route::resource('reports', ReportController::class)->except(['store']);
-    Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
-
-    Route::resource('exports', ExportController::class)->only(['index']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
+// Field CRUD routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('fields', FieldController::class);
+});
 
-Route::prefix('admin')
-    ->middleware(['auth', 'role:admin'])
-    ->group(function () {
+// Crop Cycle CRUD routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('crop_cycles', CropCycleController::class);
+});
 
-        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+// Crop Analysis routes (Image-based disease detection)
+Route::middleware(['auth'])->group(function () {
+    Route::get('crop_analyses', [CropAnalysisController::class, 'index'])->name('crop_analyses.index');
+    Route::get('crop_analyses/create', [CropAnalysisController::class, 'create'])->name('crop_analyses.create');
+    Route::post('crop_analyses', [CropAnalysisController::class, 'store'])->name('crop_analyses.store');
+    Route::get('crop_analyses/{crop_analysis}', [CropAnalysisController::class, 'show'])->name('crop_analyses.show');
+    Route::delete('crop_analyses/{crop_analysis}', [CropAnalysisController::class, 'destroy'])->name('crop_analyses.destroy');
+    Route::post('crop_analyses/{crop_analysis}/mark-reviewed', [CropAnalysisController::class, 'markReviewed'])->name('crop_analyses.markReviewed');
+});
 
-        Route::resource('workers', WorkerController::class);
-        Route::post('workers/{worker}/terminate', [WorkerController::class, 'terminate'])->name('workers.terminate');
+// Planting Schedule routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('planting-schedules', [PlantingScheduleController::class, 'index'])->name('planting-schedules.index');
+    Route::get('planting-schedules/calendar', [PlantingScheduleController::class, 'calendar'])->name('planting-schedules.calendar');
+    Route::get('planting-schedules/create', [PlantingScheduleController::class, 'create'])->name('planting-schedules.create');
+    Route::post('planting-schedules', [PlantingScheduleController::class, 'store'])->name('planting-schedules.store');
+    Route::get('planting-schedules/{plantingSchedule}', [PlantingScheduleController::class, 'show'])->name('planting-schedules.show');
+    Route::get('planting-schedules/{plantingSchedule}/edit', [PlantingScheduleController::class, 'edit'])->name('planting-schedules.edit');
+    Route::put('planting-schedules/{plantingSchedule}', [PlantingScheduleController::class, 'update'])->name('planting-schedules.update');
+    Route::delete('planting-schedules/{plantingSchedule}', [PlantingScheduleController::class, 'destroy'])->name('planting-schedules.destroy');
+});
 
-        Route::resource('harvests', HarvestController::class);
-        Route::get('harvests/dashboard', [HarvestController::class, 'dashboard'])->name('harvests.dashboard');
-        Route::get('harvests/statistics', [HarvestController::class, 'statistics'])->name('harvests.statistics');
+// Finance Routes (Income, Expenses, Reports)
+Route::middleware(['auth'])->group(function () {
+    Route::resource('revenues', \App\Http\Controllers\RevenueController::class);
+    Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
+    Route::get('expenses/summary', [\App\Http\Controllers\ExpenseController::class, 'summary'])->name('expenses.summary');
+    Route::resource('reports', \App\Http\Controllers\ReportController::class);
+    Route::post('reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
+    Route::post('revenues/{revenue}/mark-paid', [\App\Http\Controllers\RevenueController::class, 'markAsPaid'])->name('revenues.markAsPaid');
+});
 
-        Route::resource('food-stocks', FoodStockController::class);
+// Worker / Labor Management routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('workers', WorkerController::class);
+    Route::get('workers/{worker}/attendance', [WorkerController::class, 'attendance'])->name('workers.attendance');
+    Route::post('workers/{worker}/attendance', [WorkerController::class, 'storeAttendance'])->name('workers.attendance.store');
+    Route::get('workers/{worker}/wages', [WorkerController::class, 'wages'])->name('workers.wages');
+    Route::post('workers/{worker}/wages', [WorkerController::class, 'storeWage'])->name('workers.wages.store');
+    Route::put('workers/{worker}/wages/{wage}', [WorkerController::class, 'updateWage'])->name('workers.wages.update');
+    Route::get('workers/{worker}/tasks', [WorkerController::class, 'tasks'])->name('workers.tasks');
+    Route::post('workers/{worker}/terminate', [WorkerController::class, 'terminate'])->name('workers.terminate');
+});
 
-        Route::resource('expenses', ExpenseController::class);
-        Route::get('expenses/summary', [ExpenseController::class, 'summary'])->name('expenses.summary');
-
-        Route::resource('revenues', RevenueController::class);
-        Route::post('revenues/{revenue}/mark-paid', [RevenueController::class, 'markAsPaid'])->name('revenues.mark-paid');
-
-        Route::resource('buyers', BuyerController::class);
-        Route::resource('orders', OrderController::class);
-    });
+require __DIR__.'/auth.php';

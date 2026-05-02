@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-camera text-primary me-2"></i>New Livestock Analysis</h2>
-        <a href="{{ route('livestock_analysis.index') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('livestock-analysis.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-1"></i> Back to Analyses
         </a>
     </div>
@@ -18,7 +18,7 @@
                         <strong>How it works:</strong> Upload a clear photo of your livestock. Our AI will analyze the image for potential diseases and provide treatment recommendations.
                     </div>
 
-                    <form action="{{ route('livestock_analysis.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('livestock-analysis.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-4">
@@ -71,7 +71,7 @@
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-search me-1"></i> Analyze Image
                             </button>
-                            <a href="{{ route('livestock_analysis.index') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('livestock-analysis.index') }}" class="btn btn-outline-secondary">
                                 Cancel
                             </a>
                         </div>

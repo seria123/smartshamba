@@ -70,7 +70,7 @@ class AdminController extends Controller
 
         Worker::create($validated);
 
-        return redirect()->route('admin.dashboard')
+        return redirect()->route('dashboard')
             ->with('success', 'Worker onboarded successfully');
     }
 
@@ -84,7 +84,7 @@ class AdminController extends Controller
             'termination_date' => now(),
         ]);
 
-        return redirect()->route('admin.dashboard')
+        return redirect()->route('dashboard')
             ->with('success', 'Worker terminated successfully');
     }
 }

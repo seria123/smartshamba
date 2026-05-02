@@ -27,17 +27,17 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label class="form-label">Crop (Optional)</label>
-                                    <select name="crop_id" class="form-select">
-                                        <option value="">Select Crop</option>
-                                        @foreach(\App\Models\Crop::all() as $crop)
-                                        <option value="{{ $crop->id }}" {{ $revenue->crop_id == $crop->id ? 'selected' : '' }}>
-                                            {{ $crop->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        <div class="mb-3">
+                            <label for="livestock_id" class="form-label">Livestock (for livestock sales)</label>
+                            <select class="form-control" id="livestock_id" name="livestock_id">
+                                <option value="">-- Select Livestock --</option>
+                                @foreach($livestock ?? [] as $animal)
+                                    <option value="{{ $animal->id }}" {{ old('livestock_id', $revenue->livestock_id) == $animal->id ? 'selected' : '' }}>
+                                        {{ $animal->tag_number ?? 'Untagged' }} - {{ $animal->name ?? 'Unnamed' }} ({{ $animal->type->name ?? 'Unknown' }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">

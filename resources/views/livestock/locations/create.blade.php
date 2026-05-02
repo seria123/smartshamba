@@ -2,129 +2,258 @@
 
 @section('title', 'Record Location - SmartShamba')
 
-@section('content')
-<div class="space-y-6">
-    <!-- Page Header -->
+@section('header')
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
-            <a href="{{ route('livestock.show', $livestock) }}" class="text-gray-500 hover:text-gray-700">
+            <a href="{{ route('livestock.show', $livestock) }}" 
+               class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition">
                 <i class="fas fa-arrow-left"></i>
+                <span>Back to Animal</span>
             </a>
-            <h1 class="text-3xl font-bold text-gray-800">Record Location</h1>
-            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">{{ $livestock->name ?? 'Unnamed' }}</span>
+            <h1 class="text-3xl font-bold text-gray-800 tracking-wide">Record Location</h1>
+            <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-medium">
+                {{ $livestock->name ?? 'Unnamed' }}
+            </span>
         </div>
     </div>
+@endsection
 
-    <!-- Location Form -->
-    <div class="bg-white rounded-lg shadow-md p-6">
+@section('content')
+<div class="space-y-6">
+    
+    <!-- Quick Info Bar -->
+    <x-ui.card class="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                    <i class="fas fa-map-marker-alt text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-blue-700 font-medium">Current Location</p>
+                    @if($livestock->currentLocation)
+                        <p class="text-lg font-semibold text-blue-900">
+                            {{ $livestock->currentLocation->field->name ?? $livestock->currentLocation->farm->name ?? 'Unknown' }}
+                        </p>
+                        <p class="text-xs text-blue-600">
+                            Since {{ $livestock->currentLocation->entered_at->diffForHumans() }}
+                        </p>
+                    @else
+                        <p class="text-sm text-blue-600">No location recorded</p>
+                    @endif
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-blue-700 font-medium">Total Location Records</p>
+                <p class="text-2xl font-bold text-blue-700">{{ $livestock->locations_count ?? 0 }}</p>
+            </div>
+        </div>
+    </x-ui.card>
+
+    <!-- Location Recording Form -->
+    <x-ui.card>
         <form action="{{ route('livestock.locations.store', $livestock) }}" method="POST" id="locationForm">
             @csrf
 
+            <h3 class="font-bold text-lg text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-map-marked-alt text-emerald-600 mr-2"></i>
+                Movement Details
+            </h3>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
                 <!-- Location Type -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Location Type *</label>
-                    <select name="location_type" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary" required>
-                        <option value="field">Field</option>
-                        <option value="farm">General Farm Area</option>
-                        <option value="pasture">Pasture</option>
-                        <option value="barn">Barn</option>
-                        <option value="sick_bay">Sick Bay</option>
-                        <option value="transport">In Transit</option>
-                        <option value="other">Other</option>
+                    <label for="location_type" class="block text-sm font-medium text-gray-700 mb-2">
+                        Location Type *
+                    </label>
+                    <select name="location_type" id="location_type" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option value="">Select location type...</option>
+                        <option value="field">📍 Field</option>
+                        <option value="farm">🏢 General Farm Area</option>
+                        <option value="pasture">🌾 Pasture</option>
+                        <option value="barn">🏠 Barn</option>
+                        <option value="sick_bay">🏥 Sick Bay</option>
+                        <option value="transport">🚚 In Transit</option>
+                        <option value="other">📋 Other</option>
                     </select>
                 </div>
 
                 <!-- Movement Type -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Movement Type *</label>
-                    <select name="movement_type" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary" required>
-                        <option value="grazing">Grazing</option>
-                        <option value="resting">Resting</option>
-                        <option value="feeding">Feeding</option>
-                        <option value="treatment">Treatment</option>
-                        <option value="inspection">Inspection</option>
-                        <option value="transport">Transport</option>
-                        <option value="birth">Birth/Calving</option>
-                        <option value="other">Other</option>
+                    <label for="movement_type" class="block text-sm font-medium text-gray-700 mb-2">
+                        Movement Type *
+                    </label>
+                    <select name="movement_type" id="movement_type" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option value="">Select movement type...</option>
+                        <option value="grazing">🌿 Grazing</option>
+                        <option value="resting">😴 Resting</option>
+                        <option value="feeding">🍽️ Feeding</option>
+                        <option value="treatment">💊 Treatment</option>
+                        <option value="inspection">🔍 Inspection</option>
+                        <option value="transport">🚚 Transport</option>
+                        <option value="birth">🐄 Birth/Calving</option>
+                        <option value="other">📋 Other</option>
                     </select>
                 </div>
 
                 <!-- Field -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Field</label>
-                    <select name="field_id" id="fieldSelect" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
-                        <option value="">Select Field (optional)</option>
+                    <label for="field_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Field (optional)
+                    </label>
+                    <select name="field_id" id="fieldSelect" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option value="">Select field...</option>
                         @foreach($fields as $field)
-                        <option value="{{ $field->id }}" 
-                            data-lat="{{ $field->gps_latitude ?? '' }}" 
-                            data-lng="{{ $field->gps_longitude ?? '' }}"
-                            >{{ $field->name }} - {{ $field->farm->name ?? 'No Farm' }}
-                            @if($field->gps_latitude && $field->gps_longitude)
-                                📍
-                            @endif
-                        </option>
+                            <option value="{{ $field->id }}" 
+                                data-lat="{{ $field->gps_latitude ?? '' }}" 
+                                data-lng="{{ $field->gps_longitude ?? '' }}"
+                                {{ old('field_id') == $field->id ? 'selected' : '' }}>
+                                {{ $field->name }} - {{ $field->farm->name ?? 'No Farm' }}
+                                @if($field->gps_latitude && $field->gps_longitude)
+                                    📍
+                                @endif
+                            </option>
                         @endforeach
                     </select>
                     <p class="text-xs text-gray-500 mt-1" id="fieldCoords">
-                        @if($fields->first()?->gps_latitude && $fields->first()?->gps_longitude)
-                            Fields with 📍 have GPS coordinates
-                        @endif
+                        Fields with 📍 have saved GPS coordinates
                     </p>
                 </div>
 
                 <!-- Farm -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Farm</label>
-                    <select name="farm_id" id="farmSelect" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
-                        <option value="">Select Farm (optional)</option>
+                    <label for="farm_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Farm (optional)
+                    </label>
+                    <select name="farm_id" id="farmSelect" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option value="">Select farm...</option>
                         @foreach(\App\Models\Farm::all() as $farm)
-                        <option value="{{ $farm->id }}" 
-                            data-lat="{{ $farm->gps_latitude ?? '' }}" 
-                            data-lng="{{ $farm->gps_longitude ?? '' }}"
-                            {{ $livestock->farm_id == $farm->id ? 'selected' : '' }}>
-                            {{ $farm->name }}
-                            @if($farm->gps_latitude && $farm->gps_longitude) 📍 @endif
-                        </option>
+                            <option value="{{ $farm->id }}" 
+                                data-lat="{{ $farm->gps_latitude ?? '' }}" 
+                                data-lng="{{ $farm->gps_longitude ?? '' }}"
+                                {{ $livestock->farm_id == $farm->id || old('farm_id') == $farm->id ? 'selected' : '' }}>
+                                {{ $farm->name }}
+                                @if($farm->gps_latitude && $farm->gps_longitude)
+                                    📍
+                                @endif
+                            </option>
                         @endforeach
                     </select>
                     <p class="text-xs text-gray-500 mt-1" id="farmCoords">
-                        @if(\App\Models\Farm::first()?->gps_latitude && \App\Models\Farm::first()?->gps_longitude)
-                            Farms with 📍 have GPS coordinates
-                        @endif
+                        Farms with 📍 have saved GPS coordinates
                     </p>
                 </div>
 
-                <!-- GPS Coordinates (Auto-detected) -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        GPS Coordinates 
-                        <button type="button" id="getLocationBtn" class="ml-2 text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded">
-                            <i class="fas fa-location-arrow mr-1"></i>Get My Location
+                <!-- GPS Coordinates Section -->
+                <div class="md:col-span-2 border-2 border-dashed border-gray-200 rounded-lg p-6 bg-gray-50">
+                    <div class="flex items-center justify-between mb-4">
+                        <label class="block text-sm font-medium text-gray-700 flex items-center">
+                            <i class="fas fa-satellite-dish text-emerald-600 mr-2"></i>
+                            GPS Coordinates
+                        </label>
+                        <button type="button" id="getLocationBtn" 
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                            <i class="fas fa-location-arrow mr-2"></i>
+                            Get My Location
                         </button>
-                    </label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" step="any" name="gps_latitude" id="latitude" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Latitude" min="-90" max="90" value="{{ old('gps_latitude', $initialLat ?? '') }}">
-                        <input type="number" step="any" name="gps_longitude" id="longitude" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Longitude" min="-180" max="180" value="{{ old('gps_longitude', $initialLng ?? '') }}">
                     </div>
-                    <p class="text-xs text-gray-500 mt-1" id="locationStatus">Click "Get My Location" or select a field/farm to auto-fill</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="latitude" class="block text-sm font-medium text-gray-600 mb-1">
+                                Latitude
+                            </label>
+                            <input type="number" name="gps_latitude" id="latitude" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-lg"
+                                step="any" placeholder="-90.00000000" min="-90" max="90"
+                                value="{{ old('gps_latitude', $initialLat ?? '') }}">
+                        </div>
+                        <div>
+                            <label for="longitude" class="block text-sm font-medium text-gray-600 mb-1">
+                                Longitude
+                            </label>
+                            <input type="number" name="gps_longitude" id="longitude" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-lg"
+                                step="any" placeholder="-180.00000000" min="-180" max="180"
+                                value="{{ old('gps_longitude', $initialLng ?? '') }}">
+                        </div>
+                    </div>
+                    
+                    <div id="locationStatus" class="mt-3 text-sm">
+                        @if(isset($initialLat) && isset($initialLng) && $initialLat && $initialLng)
+                            <span class="text-green-600 flex items-center">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                GPS pre-filled from current farm location
+                            </span>
+                        @else
+                            <span class="text-gray-500">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Click "Get My Location" or select a field/farm to auto-fill GPS coordinates
+                            </span>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Notes -->
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
-                    <textarea name="notes" rows="3" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Any additional details about this location or movement..."></textarea>
+                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
+                        Movement Notes (optional)
+                    </label>
+                    <textarea name="notes" id="notes" rows="4" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+                        placeholder="Add any additional details about this movement, animal behavior, weather conditions, etc...">{{ old('notes') }}</textarea>
                 </div>
             </div>
 
-            <div class="mt-6 flex justify-end space-x-3">
-                <a href="{{ route('livestock.show', $livestock) }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Cancel</a>
-                <button type="submit" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition">
-                    <i class="fas fa-save mr-2"></i>Record Location
-                </button>
+            <!-- Submit Section -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-info-circle text-gray-400"></i>
+                        <span class="text-sm text-gray-500">
+                            All required fields marked with *
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('livestock.show', $livestock) }}" 
+                           class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </a>
+                        <button type="submit"
+                            class="inline-flex items-center px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-[1.02]">
+                            <i class="fas fa-map-marker-check mr-2"></i>
+                            Create & Record Location
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
-    </div>
+    </x-ui.card>
+
+    <!-- Tips Card -->
+    <x-ui.card>
+        <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0 mt-0.5">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-800 mb-1">Quick Tips for Location Recording</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• GPS coordinates help track animal movement patterns over time</li>
+                    <li>• Select a field or farm to auto-fill saved coordinates</li>
+                    <li>• Use "Get My Location" when you're at the actual field</li>
+                    <li>• Movement type helps categorize animal activities</li>
+                    <li>• Treatment movements can be linked to health records</li>
+                </ul>
+            </div>
+        </div>
+    </x-ui.card>
+
 </div>
 @endsection
 
@@ -137,58 +266,78 @@ document.addEventListener('DOMContentLoaded', function() {
     const locationStatus = document.getElementById('locationStatus');
     const fieldSelect = document.getElementById('fieldSelect');
     const farmSelect = document.getElementById('farmSelect');
+    const locationTypeSelect = document.getElementById('location_type');
+    const movementTypeSelect = document.getElementById('movement_type');
 
     // Pre-fill from initial values (farm GPS) if present
     @if(isset($initialLat) && isset($initialLng) && $initialLat && $initialLng)
         latitudeInput.value = "{{ $initialLat }}";
         longitudeInput.value = "{{ $initialLng }}";
-        locationStatus.textContent = 'GPS pre-filled from current farm location';
-        locationStatus.className = 'text-xs text-green-500 mt-1';
+        locationStatus.innerHTML = '<span class="text-green-600 flex items-center"><i class="fas fa-check-circle mr-1"></i>GPS pre-filled from current farm location</span>';
     @endif
 
-    // Auto-detect location from browser
+    // Auto-detect location from browser with high accuracy
     getLocationBtn.addEventListener('click', function() {
         if (!navigator.geolocation) {
-            locationStatus.textContent = 'Geolocation is not supported by this browser.';
-            locationStatus.className = 'text-xs text-red-500 mt-1';
+            locationStatus.innerHTML = '<span class="text-red-600"><i class="fas fa-exclamation-circle mr-1"></i>Geolocation is not supported by this browser.</span>';
             return;
         }
 
-        locationStatus.textContent = 'Getting location...';
-        locationStatus.className = 'text-xs text-blue-500 mt-1';
+        locationStatus.innerHTML = '<span class="text-blue-600"><i class="fas fa-spinner fa-spin mr-1"></i>Getting location...</span>';
         getLocationBtn.disabled = true;
+        getLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Getting Location...';
 
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 const lat = position.coords.latitude.toFixed(8);
                 const lng = position.coords.longitude.toFixed(8);
+                const accuracy = Math.round(position.coords.accuracy);
                 
                 latitudeInput.value = lat;
                 longitudeInput.value = lng;
-                locationStatus.textContent = `Location captured: ${lat}, ${lng} (accuracy: ${Math.round(position.coords.accuracy)}m)`;
-                locationStatus.className = 'text-xs text-green-500 mt-1';
+                
+                let accuracyClass = 'text-green-600';
+                if (accuracy > 50) accuracyClass = 'text-orange-600';
+                if (accuracy > 100) accuracyClass = 'text-red-600';
+                
+                locationStatus.innerHTML = `<span class="${accuracyClass} flex items-center">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    Location captured: ${lat}, ${lng}
+                    <span class="ml-2">(Accuracy: ~${accuracy}m)</span>
+                </span>`;
+                
                 getLocationBtn.disabled = false;
+                getLocationBtn.innerHTML = '<i class="fas fa-location-arrow mr-2"></i>Get My Location';
             },
             function(error) {
                 let msg = 'Unable to retrieve location.';
+                let icon = 'fa-times-circle';
+                
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        msg = 'Location access denied. Please enable location permissions.';
+                        msg = 'Location access denied. Please enable location permissions in your browser settings.';
+                        icon = 'fa-ban';
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        msg = 'Location information unavailable.';
+                        msg = 'Location information unavailable. Please check your network connection.';
+                        icon = 'fa-wifi';
                         break;
                     case error.TIMEOUT:
-                        msg = 'Location request timed out.';
+                        msg = 'Location request timed out. Please try again.';
+                        icon = 'fa-clock';
                         break;
                 }
-                locationStatus.textContent = msg;
-                locationStatus.className = 'text-xs text-red-500 mt-1';
+                
+                locationStatus.innerHTML = `<span class="text-red-600 flex items-center">
+                    <i class="fas ${icon} mr-1"></i>${msg}
+                </span>`;
+                
                 getLocationBtn.disabled = false;
+                getLocationBtn.innerHTML = '<i class="fas fa-location-arrow mr-2"></i>Get My Location';
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
+                timeout: 15000,
                 maximumAge: 0
             }
         );
@@ -204,33 +353,54 @@ document.addEventListener('DOMContentLoaded', function() {
         if (lat && lng) {
             latitudeInput.value = lat;
             longitudeInput.value = lng;
-            fieldCoords.textContent = `Field coordinates: ${lat}, ${lng}`;
-            locationStatus.textContent = 'GPS auto-filled from field data';
-            locationStatus.className = 'text-xs text-green-500 mt-1';
+            fieldCoords.innerHTML = `<span class="text-green-600 flex items-center">
+                <i class="fas fa-map-marker-alt mr-1"></i>
+                Field coordinates: ${lat}, ${lng}
+            </span>`;
+            locationStatus.innerHTML = '<span class="text-green-600 flex items-center"><i class="fas fa-check-circle mr-1"></i>GPS auto-filled from field data</span>';
         } else {
-            fieldCoords.textContent = 'No GPS data for this field';
+            fieldCoords.innerHTML = '<span class="text-orange-600">No GPS data for this field. Enter manually or select another field.</span>';
         }
     });
 
-    // Auto-populate from farm selection
+    // Auto-populate from farm selection (only if lat/lng not set from field)
     farmSelect.addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
         const lat = selectedOption.dataset.lat;
         const lng = selectedOption.dataset.lng;
         const farmCoords = document.getElementById('farmCoords');
         
-        if (lat && lng) {
-            // Only fill if lat/lng not already set from field
-            if (!latitudeInput.value && !longitudeInput.value) {
-                latitudeInput.value = lat;
-                longitudeInput.value = lng;
-            }
-            farmCoords.textContent = `Farm coordinates: ${lat}, ${lng}`;
-            locationStatus.textContent = 'GPS auto-filled from farm data';
-            locationStatus.className = 'text-xs text-green-500 mt-1';
-        } else {
-            farmCoords.textContent = 'No GPS data for this farm';
+        // Check if lat/lng inputs are already filled
+        const latFilled = latitudeInput.value.trim() !== '';
+        const lngFilled = longitudeInput.value.trim() !== '';
+        
+        if (lat && lng && !latFilled && !lngFilled) {
+            latitudeInput.value = lat;
+            longitudeInput.value = lng;
+            farmCoords.innerHTML = `<span class="text-green-600 flex items-center">
+                <i class="fas fa-map-marker-alt mr-1"></i>
+                Farm coordinates: ${lat}, ${lng}
+            </span>`;
+            locationStatus.innerHTML = '<span class="text-green-600 flex items-center"><i class="fas fa-check-circle mr-1"></i>GPS auto-filled from farm data</span>';
+        } else if (!latFilled && !lngFilled) {
+            farmCoords.innerHTML = '<span class="text-orange-600">No GPS data for this farm</span>';
         }
+    });
+
+    // Update placeholder based on selected movement type
+    movementTypeSelect.addEventListener('change', function() {
+        const movementType = this.value;
+        let placeholder = 'Add any additional details about this movement...';
+        
+        if (movementType === 'treatment') {
+            placeholder = 'Enter treatment details, medication administered, dosage, etc...';
+        } else if (movementType === 'birth') {
+            placeholder = 'Enter birth details: number of offspring, any complications, etc...';
+        } else if (movementType === 'inspection') {
+            placeholder = 'Enter inspection findings, observations, recommendations...';
+        }
+        
+        document.getElementById('notes').placeholder = placeholder;
     });
 });
 </script>

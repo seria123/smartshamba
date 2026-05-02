@@ -52,6 +52,37 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                 </div>
 
+                <!-- Rainfall Zone -->
+                <div>
+                    <label for="rainfall_zone" class="block text-sm font-medium text-gray-700 mb-2">Rainfall Zone</label>
+                    <input type="text" name="rainfall_zone" id="rainfall_zone" value="{{ old('rainfall_zone') }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="e.g., High, Medium, Low">
+                </div>
+
+                <!-- Topography -->
+                <div>
+                    <label for="topography" class="block text-sm font-medium text-gray-700 mb-2">Topography</label>
+                    <select name="topography" id="topography" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Select Topography</option>
+                        <option value="flat" {{ old('topography') == 'flat' ? 'selected' : '' }}>Flat</option>
+                        <option value="sloped" {{ old('topography') == 'sloped' ? 'selected' : '' }}>Sloped</option>
+                        <option value="mixed" {{ old('topography') == 'mixed' ? 'selected' : '' }}>Mixed</option>
+                    </select>
+                </div>
+
+                <!-- Water Source -->
+                <div>
+                    <label for="water_source" class="block text-sm font-medium text-gray-700 mb-2">Water Source</label>
+                    <select name="water_source" id="water_source" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Select Water Source</option>
+                        <option value="borehole" {{ old('water_source') == 'borehole' ? 'selected' : '' }}>Borehole</option>
+                        <option value="river" {{ old('water_source') == 'river' ? 'selected' : '' }}>River</option>
+                        <option value="rain" {{ old('water_source') == 'rain' ? 'selected' : '' }}>Rain</option>
+                        <option value="irrigation system" {{ old('water_source') == 'irrigation system' ? 'selected' : '' }}>Irrigation System</option>
+                    </select>
+                </div>
+
                 <!-- Soil Type -->
                 <div>
                     <label for="soil_type" class="block text-sm font-medium text-gray-700 mb-2">Soil Type</label>
@@ -106,15 +137,50 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ old('description') }}</textarea>
             </div>
 
-            <!-- Submit Buttons -->
-            <div class="mt-6 flex justify-end space-x-3">
-                <a href="{{ route('fields.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-                    Cancel
-                </a>
-                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
-                    <i class="fas fa-save mr-2"></i>Create Field
-                </button>
+            <!-- Livestock Management Details -->
+            <div class="mt-6 p-4 border rounded bg-blue-50">
+                <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+                    <i class="fas fa-cow text-blue-600 mr-2"></i>
+                    Livestock Management Details
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="feed_requirements" class="block text-sm font-medium text-gray-700 mb-2">Feed Requirements</label>
+                        <textarea name="feed_requirements" id="feed_requirements" rows="2" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ old('feed_requirements') }}</textarea>
+                    </div>
+                    <div>
+                        <label for="vaccination_schedule" class="block text-sm font-medium text-gray-700 mb-2">Vaccination Schedule</label>
+                        <textarea name="vaccination_schedule" id="vaccination_schedule" rows="2" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ old('vaccination_schedule') }}</textarea>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="housing_requirements" class="block text-sm font-medium text-gray-700 mb-2">Housing Requirements</label>
+                    <textarea name="housing_requirements" id="housing_requirements" rows="2" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ old('housing_requirements') }}</textarea>
+                </div>
             </div>
+
+            <!-- Submit Buttons -->
+            <div class="mt-8 flex justify-between items-center">
+
+    <!-- Cancel -->
+    <a href="{{ route('fields.index') }}"
+       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-100 transition">
+        <i class="fas fa-arrow-left mr-2"></i>
+        Cancel
+    </a>
+
+    <!-- Create Button -->
+    <button type="submit"
+        class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-xl shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition duration-200">
+
+        <i class="fas fa-seedling mr-2"></i>
+        Create Field
+    </button>
+
+</div>
         </form>
     </div>
 </div>

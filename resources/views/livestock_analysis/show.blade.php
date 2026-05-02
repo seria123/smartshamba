@@ -6,14 +6,14 @@
         <h2><i class="fas fa-clipboard-check text-primary me-2"></i>Analysis Results</h2>
         <div>
             @if($analysis->status === 'analyzed')
-                <form action="{{ route('livestock_analysis.markReviewed', $analysis) }}" method="POST" class="d-inline">
+                <form action="{{ route('livestock-analysis.markReviewed', $analysis) }}" method="POST" class="d-inline">
                     @csrf
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-check me-1"></i> Mark Reviewed
                     </button>
                 </form>
             @endif
-            <a href="{{ route('livestock_analysis.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('livestock-analysis.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-1"></i> Back
             </a>
         </div>

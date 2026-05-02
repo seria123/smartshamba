@@ -53,6 +53,37 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                 </div>
 
+                <!-- Rainfall Zone -->
+                <div>
+                    <label for="rainfall_zone" class="block text-sm font-medium text-gray-700 mb-2">Rainfall Zone</label>
+                    <input type="text" name="rainfall_zone" id="rainfall_zone" value="{{ old('rainfall_zone', $field->rainfall_zone) }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="e.g., High, Medium, Low">
+                </div>
+
+                <!-- Topography -->
+                <div>
+                    <label for="topography" class="block text-sm font-medium text-gray-700 mb-2">Topography</label>
+                    <select name="topography" id="topography" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Select Topography</option>
+                        <option value="flat" {{ old('topography', $field->topography) == 'flat' ? 'selected' : '' }}>Flat</option>
+                        <option value="sloped" {{ old('topography', $field->topography) == 'sloped' ? 'selected' : '' }}>Sloped</option>
+                        <option value="mixed" {{ old('topography', $field->topography) == 'mixed' ? 'selected' : '' }}>Mixed</option>
+                    </select>
+                </div>
+
+                <!-- Water Source -->
+                <div>
+                    <label for="water_source" class="block text-sm font-medium text-gray-700 mb-2">Water Source</label>
+                    <select name="water_source" id="water_source" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Select Water Source</option>
+                        <option value="borehole" {{ old('water_source', $field->water_source) == 'borehole' ? 'selected' : '' }}>Borehole</option>
+                        <option value="river" {{ old('water_source', $field->water_source) == 'river' ? 'selected' : '' }}>River</option>
+                        <option value="rain" {{ old('water_source', $field->water_source) == 'rain' ? 'selected' : '' }}>Rain</option>
+                        <option value="irrigation system" {{ old('water_source', $field->water_source) == 'irrigation system' ? 'selected' : '' }}>Irrigation System</option>
+                    </select>
+                </div>
+
                 <!-- Soil Type -->
                 <div>
                     <label for="soil_type" class="block text-sm font-medium text-gray-700 mb-2">Soil Type</label>

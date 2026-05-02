@@ -15,12 +15,18 @@ class Farm extends Model
         'user_id',
         'name',
         'location',
+        'farm_type',
+        'ownership_type',
+        'latitude',
+        'longitude',
         'size_hectares',
         'description',
+        'farm_operation_details',
     ];
 
     protected $casts = [
         'size_hectares' => 'decimal:2',
+        'farm_operation_details' => 'array',
     ];
 
     /**

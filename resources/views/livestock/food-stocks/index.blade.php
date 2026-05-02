@@ -11,10 +11,6 @@
         </a>
     </div>
 
-    @php
-    $feedTypes = \App\Models\FeedType::with(['foodStocks' => function($q) { $q->where('is_active', true); }])->get();
-    @endphp
-
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
         @foreach($feedTypes as $ft)
         @php $total = $ft->foodStocks->sum('quantity'); @endphp

@@ -13,7 +13,7 @@ class CropCycleController extends Controller
      */
     public function index()
     {
-        $cropCycles = CropCycle::with(['farm'])->get();
+        $cropCycles = CropCycle::with(['farm', 'field', 'crop'])->get();
         return view('crop_cycles.index', compact('cropCycles'));
     }
 
@@ -23,96 +23,11 @@ class CropCycleController extends Controller
     public function create()
     {
         $farms = \App\Models\Farm::all();
-        return view('crop_cycles.create', compact('farms'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'crop_name' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'expected_harvest' => 'required|date|after_or_equal:start_date',
-            'farm_id' => 'required|exists:farms,id',
-        ]);
-
-        $cropCycle = CropCycle::create($request->all());
-
-        return redirect()->route('crop_cycles.show', $cropCycle)
-            ->with('success', 'Crop cycle created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(CropCycle $cropCycle)
-    {
-        $analysisService = new CropCycleAnalysisService();
-        $analysis = $analysisService->analyze($cropCycle);
-
-        return view('crop_cycles.show', compact('cropCycle', $analysis));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CropCycle $cropCycle)
-    {
-        $farms = \App\Models\Farm::all();
-        return view('crop_cycles.edit', compact('cropCycle', $farms));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, CropCycle $cropCycle)
-    {
-        $request->validate([
-            'crop_name' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'expected_harvest' => 'required|date|after_or_equal:start_date',
-            'farm_id' => 'required|exists:farms,id',
-        ]);
-
-        $cropCycle->update($request->all());
-
-        return redirect()->route('crop_cycles.show', $cropCycle)
-            ->with('success', 'Crop cycle updated successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CropCycle $cropCycle)
-    {
-        $cropCycle->delete();
-
-        return redirect()->route('crop_cycles.index')
-            ->with('success', 'Crop cycle deleted successfully.');
-    }
-
-    /**
-     * Get analysis for a crop cycle.
-     */
-    public function analyze(CropCycle $cropCycle)
-    {
-        $analysisService = new CropCycleAnalysisService();
-        $analysis = $analysisService->analyze($cropCycle);
-
-        return response()->json($analysis);
-    }
-}
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $fields = \App\Models\Field::with('farm')->get();
+        $fields = \App\Models\Field::all();
         $crops = \App\Models\Crop::all();
-        return view('crop_cycles.create', compact('fields', 'crops'));
+        // Get crop cycles that have at least one harvest
+        $cropCycles = \App\Models\CropCycle::whereHas('harvests')->get();
+        return view('crop_cycles.create', compact('farms', 'fields', 'crops', 'cropCycles'));
     }
 
     /**
@@ -120,14 +35,44 @@ class CropCycleController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'field_id' => 'required|exists:fields,id',
             'crop_id' => 'required|exists:crops,id',
+            'farm_id' => 'required|exists:farms,id',
+            // Basic Crop Identity
+            'category' => 'nullable|string|max:255',
+            'variety' => 'nullable|string|max:255',
+            'season' => 'nullable|string|in:rain-fed,irrigated',
             'start_date' => 'required|date',
             'expected_harvest_date' => 'nullable|date|after_or_equal:start_date',
+            // Land & Soil
+            'soil_type_override' => 'nullable|string|max:255',
+            'ph_level' => 'nullable|numeric|between:0,14',
+            'previous_crop_cycle_id' => 'nullable|exists:crop_cycles,id',
+            // Water & Irrigation
+            'irrigation_type' => 'nullable|string|max:255',
+            'irrigation_schedule' => 'nullable|string',
+            'drainage' => 'nullable|string',
+            'water_source_override' => 'nullable|string|max:255',
         ]);
 
-        $cropCycle = CropCycle::create($request->all());
+        $validated['current_stage'] = 'planning';
+        $cropCycle = CropCycle::create($validated);
+
+        // Handle Inputs if provided
+        if ($request->has('input_type')) {
+            foreach ($request->input('input_type') as $index => $type) {
+                if (!empty($type)) {
+                    $cropCycle->inputs()->create([
+                        'input_type' => $type,
+                        'name' => $request->input('input_name')[$index] ?? null,
+                        'quantity' => $request->input('input_quantity')[$index] ?? null,
+                        'cost' => $request->input('input_cost')[$index] ?? null,
+                        'application_date' => $request->input('input_date')[$index] ?? null,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('crop_cycles.show', $cropCycle)
             ->with('success', 'Crop cycle created successfully.');
@@ -138,6 +83,18 @@ class CropCycleController extends Controller
      */
     public function show(CropCycle $cropCycle)
     {
+        $cropCycle->load([
+            'farm', 
+            'field', 
+            'crop', 
+            'previousCycle', 
+            'stages', 
+            'inputs', 
+            'activities', 
+            'harvests', 
+            'revenues',
+            'analyses' // Load disease analyses
+        ]);
         $analysisService = new CropCycleAnalysisService();
         $analysis = $analysisService->analyze($cropCycle);
 
@@ -149,9 +106,14 @@ class CropCycleController extends Controller
      */
     public function edit(CropCycle $cropCycle)
     {
-        $fields = \App\Models\Field::with('farm')->get();
+        $farms = \App\Models\Farm::all();
+        $fields = \App\Models\Field::all();
         $crops = \App\Models\Crop::all();
-        return view('crop_cycles.edit', compact('cropCycle', 'fields', 'crops'));
+        $cropCycles = \App\Models\CropCycle::where('id', '!=', $cropCycle->id)->whereHas('harvests')->get();
+        $workers = \App\Models\Worker::all();
+        $cropCycle->load(['stages', 'inputs', 'activities']);
+
+        return view('crop_cycles.edit', compact('cropCycle', 'farms', 'fields', 'crops', 'cropCycles', 'workers'));
     }
 
     /**
@@ -159,14 +121,28 @@ class CropCycleController extends Controller
      */
     public function update(Request $request, CropCycle $cropCycle)
     {
-        $request->validate([
+        $validated = $request->validate([
             'field_id' => 'required|exists:fields,id',
             'crop_id' => 'required|exists:crops,id',
+            'farm_id' => 'required|exists:farms,id',
+            // Basic Crop Identity
+            'category' => 'nullable|string|max:255',
+            'variety' => 'nullable|string|max:255',
+            'season' => 'nullable|string|in:rain-fed,irrigated',
             'start_date' => 'required|date',
             'expected_harvest_date' => 'nullable|date|after_or_equal:start_date',
+            // Land & Soil
+            'soil_type_override' => 'nullable|string|max:255',
+            'ph_level' => 'nullable|numeric|between:0,14',
+            'previous_crop_cycle_id' => 'nullable|exists:crop_cycles,id',
+            // Water & Irrigation
+            'irrigation_type' => 'nullable|string|max:255',
+            'irrigation_schedule' => 'nullable|string',
+            'drainage' => 'nullable|string',
+            'water_source_override' => 'nullable|string|max:255',
         ]);
 
-        $cropCycle->update($request->all());
+        $cropCycle->update($validated);
 
         return redirect()->route('crop_cycles.show', $cropCycle)
             ->with('success', 'Crop cycle updated successfully.');

@@ -41,7 +41,7 @@ class FoodStockController extends Controller
         }
 
         $stocks = $query->orderBy('expiry_date', 'asc')->paginate(20);
-        $feedTypes = FeedType::all();
+        $feedTypes = FeedType::with(['foodStocks' => function($q) { $q->where('is_active', true); }])->get();
         $suppliers = Supplier::all();
 
         return view('livestock.food-stocks.index', compact('stocks', 'feedTypes', 'suppliers'));

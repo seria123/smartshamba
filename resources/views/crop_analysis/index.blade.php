@@ -42,7 +42,7 @@
     {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1><i class="fas fa-leaf"></i> AI Crop Analysis</h1>
-        <a href="{{ route('crop_analysis.create') }}" class="btn btn-primary">
+        <a href="{{ route('crop_analyses.create') }}" class="btn btn-primary">
             <i class="fas fa-camera"></i> New Analysis
         </a>
     </div>
@@ -50,25 +50,36 @@
     {{-- 🔍 FILTER --}}
     <form method="GET" class="mb-4">
         <div class="row g-2">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <select name="status" class="form-select">
                     <option value="">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="analyzed">Analyzed</option>
-                    <option value="reviewed">Reviewed</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="analyzed" {{ request('status') === 'analyzed' ? 'selected' : '' }}>Analyzed</option>
+                    <option value="reviewed" {{ request('status') === 'reviewed' ? 'selected' : '' }}>Reviewed</option>
                 </select>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <select name="severity" class="form-select">
                     <option value="">All Severity</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low" {{ request('severity') === 'low' ? 'selected' : '' }}>Low</option>
+                    <option value="medium" {{ request('severity') === 'medium' ? 'selected' : '' }}>Medium</option>
+                    <option value="high" {{ request('severity') === 'high' ? 'selected' : '' }}>High</option>
                 </select>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <select name="crop_cycle_id" class="form-select">
+                    <option value="">All Crop Cycles</option>
+                    @foreach($cropCycles as $cycle)
+                    <option value="{{ $cycle->id }}" {{ request('crop_cycle_id') == $cycle->id ? 'selected' : '' }}>
+                        {{ $cycle->crop->name ?? $cycle->crop_name }} - {{ $cycle->start_date?->format('M Y') ?? 'N/A' }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-3">
                 <button class="btn btn-outline-primary w-100">
                     🔍 Filter
                 </button>
@@ -83,7 +94,7 @@
                 <i class="fas fa-leaf fa-4x text-muted mb-3"></i>
                 <h4>No crop analyses yet</h4>
                 <p class="text-muted">Upload a photo of your crops to detect diseases and get recommendations.</p>
-                <a href="{{ route('crop_analysis.create') }}" class="btn btn-primary">
+                <a href="{{ route('crop_analyses.create') }}" class="btn btn-primary">
                     <i class="fas fa-camera"></i> Start Analysis
                 </a>
             </div>
@@ -98,14 +109,10 @@
                     $confidenceColor = $confidence > 80 ? 'success' : ($confidence > 50 ? 'warning' : 'danger');
                 @endphp
 
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 border-{{ $analysis->severity_color ?? 'secondary' }} shadow-sm">
-
-                        {{-- IMAGE --}}
+                        {{-- PRIMARY IMAGE --}}
                         <img src="{{ Storage::url($analysis->image_path) }}"
                              class="card-img-top"
                              style="height: 200px; object-fit: cover;">
-
                         <div class="card-body">
 
                             {{-- STATUS + SEVERITY --}}
@@ -125,6 +132,17 @@
                             <h5 class="card-title">
                                 {{ $analysis->diagnosis ?? 'Unknown Condition' }}
                             </h5>
+
+                            {{-- CROP CYCLE INFO --}}
+                            @if($analysis->cropCycle)
+                                <small class="text-muted d-block mb-2">
+                                    <i class="fas fa-seedling"></i>
+                                    {{ $analysis->cropCycle->crop->name ?? $analysis->cropCycle->crop_name }}
+                                    @if($analysis->cropCycle->field)
+                                        • {{ $analysis->cropCycle->field->name }}
+                                    @endif
+                                </small>
+                            @endif
 
                             {{-- DESCRIPTION --}}
                             <p class="card-text small text-muted">
@@ -155,13 +173,13 @@
                         {{-- ACTIONS --}}
                         <div class="card-footer bg-white d-flex justify-content-between flex-wrap gap-1">
 
-                            <a href="{{ route('crop_analysis.show', $analysis) }}"
+                            <a href="{{ route('crop_analyses.show', $analysis) }}"
                                class="btn btn-sm btn-outline-primary">
                                 View
                             </a>
 
                             @if($analysis->status !== 'reviewed')
-                                <form action="{{ route('crop_analysis.markReviewed', $analysis) }}" method="POST">
+                                <form action="{{ route('crop_analyses.markReviewed', $analysis) }}" method="POST">
                                     @csrf
                                     <button class="btn btn-sm btn-outline-success">
                                         ✔ Reviewed
@@ -169,7 +187,7 @@
                                 </form>
                             @endif
 
-                            <form action="{{ route('crop_analysis.destroy', $analysis) }}" method="POST">
+                            <form action="{{ route('crop_analyses.destroy', $analysis) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger"
@@ -187,7 +205,7 @@
 
         {{-- PAGINATION --}}
         <div class="d-flex justify-content-center">
-            {{ $analyses->links() }}
+            {{ $analyses->appends(request()->except('page'))->links() }}
         </div>
 
     @endif

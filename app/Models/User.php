@@ -76,8 +76,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'user';
     }
 
-    public function farmer(): HasOne
-    {
-        return $this->hasOne(Farmer::class);
-    }
+   public function farmer()
+{
+    return $this->hasOne(\App\Models\Farmer::class);
+}
+
+public function farm()
+{
+    return $this->hasOne(\App\Models\Farm::class);
+}
 }

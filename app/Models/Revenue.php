@@ -13,6 +13,8 @@ class Revenue extends Model
     protected $fillable = [
         'farm_id',
         'crop_id',
+        'livestock_id',
+        'crop_cycle_id',
         'buyer_id',
         'amount',
         'sale_date',
@@ -35,21 +37,40 @@ class Revenue extends Model
     ];
 
     const STATUS_PENDING = 'pending';
-
     const STATUS_PARTIAL = 'partial';
-
     const STATUS_PAID = 'paid';
-
     const STATUS_OVERDUE = 'overdue';
 
+    /**
+     * Get the farm that owns the revenue.
+     */
     public function farm(): BelongsTo
     {
         return $this->belongsTo(Farm::class);
     }
 
+    /**
+     * Get the crop that owns the revenue.
+     */
     public function crop(): BelongsTo
     {
         return $this->belongsTo(Crop::class);
+    }
+
+    /**
+     * Get the crop cycle that owns the revenue.
+     */
+    public function cropCycle(): BelongsTo
+    {
+        return $this->belongsTo(CropCycle::class);
+    }
+
+    /**
+     * Get the buyer.
+     */
+    public function livestock(): BelongsTo
+    {
+        return $this->belongsTo(Livestock::class);
     }
 
     public function buyer(): BelongsTo

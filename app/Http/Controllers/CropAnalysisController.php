@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\CropAnalysis;
+use App\Models\CropAnalysisImage;
 use App\Models\Field;
+use App\Models\CropCycle;
 use App\Services\CropAnalysisService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,73 +24,105 @@ class CropAnalysisController extends Controller
     // 📊 LIST ANALYSES
     public function index()
     {
-        $query = CropAnalysis::with(['field', 'user'])
+        $query = CropAnalysis::with(['field', 'user', 'cropCycle', 'cropCycle.crop'])
             ->orderBy('created_at', 'desc');
 
-        if (! Auth::user()->isAdmin()) {
+        if (!Auth::user()->isAdmin()) {
             $query->where('user_id', Auth::id());
+        }
+
+        // Filter by crop_cycle if provided
+        if (request('crop_cycle_id')) {
+            $query->where('crop_cycle_id', request('crop_cycle_id'));
         }
 
         $analyses = $query->paginate(10);
 
-        return view('crop_analysis.index', compact('analyses'));
+        // Get crop cycles for filter dropdown
+        $cropCycles = Auth::user()->isAdmin()
+            ? CropCycle::all()
+            : CropCycle::whereHas('field', fn($q) => $q->where('user_id', Auth::id()))->get();
+
+        return view('crop_analysis.index', compact('analyses', 'cropCycles'));
     }
 
     // ➕ CREATE FORM
     public function create()
     {
         $fields = Field::where('user_id', Auth::id())->get();
+        $cropCycles = CropCycle::whereHas('field', fn($q) => $q->where('user_id', Auth::id()))
+            ->orWhereHas('farm', fn($q) => $q->where('user_id', Auth::id()))
+            ->with(['crop', 'field'])
+            ->orderBy('start_date', 'desc')
+            ->get();
 
-        return view('crop_analysis.create', compact('fields'));
+        return view('crop_analysis.create', compact('fields', 'cropCycles'));
     }
 
     // 🚀 STORE (MAIN ENTRY POINT FOR ANALYSIS)
     public function store(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|max:10240', // Max 10MB
+            'images' => 'required|array|min:1',
+            'images.*' => 'image|max:10240',
             'field_id' => 'nullable|exists:fields,id',
+            'crop_cycle_id' => 'nullable|exists:crop_cycles,id',
         ]);
 
         try {
-            $imageFile = $request->file('image');
-            
-            // Enhanced upload diagnostics
-            Log::info('Upload diagnostics', [
-                'hasFile' => $request->hasFile('image'),
-                'fileValid' => $imageFile->isValid(),
-                'originalName' => $imageFile->getClientOriginalName(),
-                'mimeType' => $imageFile->getMimeType(),
-                'size' => $imageFile->getSize(),
-                'error' => $imageFile->getError(),
-            ]);
-
-            if (!$imageFile->isValid()) {
-                throw new \Exception('Uploaded file is corrupted or invalid');
+            $imageFiles = $request->file('images');
+            if (!$imageFiles || count($imageFiles) === 0) {
+                throw new \Exception('At least one image is required');
             }
 
+            // Derive field_id from crop_cycle if not provided (for weather context)
+            $fieldId = $request->field_id;
+            $cropCycleId = $request->crop_cycle_id;
+            if (!$fieldId && $cropCycleId) {
+                $cropCycle = CropCycle::find($cropCycleId);
+                if ($cropCycle) {
+                    $fieldId = $cropCycle->field_id;
+                }
+            }
+
+            // Process the first image for AI analysis
+            $primaryImage = $imageFiles[0];
             $analysis = $this->analysisService->analyze(
-                $imageFile,
-                $request->field_id
+                $primaryImage,
+                $fieldId,
+                $cropCycleId
             );
 
             if (!$analysis || !$analysis->id) {
                 throw new \Exception('Analysis failed - no result returned');
             }
 
+            // Store additional images
+            if (count($imageFiles) > 1) {
+                foreach (array_slice($imageFiles, 1) as $index => $image) {
+                    $path = $this->storeImage($image, 'crop-analyses');
+                    CropAnalysisImage::create([
+                        'crop_analysis_id' => $analysis->id,
+                        'image_path' => $path,
+                        'order' => $index + 1,
+                        'label' => 'Additional Image ' . ($index + 2),
+                    ]);
+                }
+            }
+
             return redirect()
-                ->route('crop_analysis.show', $analysis->id)
+                ->route('crop_analyses.show', $analysis->id)
                 ->with('success', 'Analysis completed successfully');
 
         } catch (\Exception $e) {
-            Log::error('Crop analysis error: '.$e->getMessage(), [
+            Log::error('Crop analysis error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'user_id' => Auth::id(),
             ]);
-            
+
             return back()
                 ->withInput()
-                ->with('error', 'Analysis failed: '.$e->getMessage())
+                ->with('error', 'Analysis failed: ' . $e->getMessage())
                 ->with('error_details', 'Please try again with a clearer image. If the problem persists, check that API keys are configured.');
         }
     }
@@ -96,16 +130,24 @@ class CropAnalysisController extends Controller
     // 👁 SHOW SINGLE ANALYSIS
     public function show($id)
     {
-        $crop_analysis = CropAnalysis::with(['field', 'user'])->findOrFail($id);
+        $cropAnalysis = CropAnalysis::with(['field', 'user', 'cropCycle', 'cropCycle.crop', 'images'])
+            ->findOrFail($id);
 
-        return view('crop_analysis.show', compact('crop_analysis'));
+        // Authorization check
+        if ($cropAnalysis->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('crop_analysis.show', compact('cropAnalysis'));
     }
 
     // ✔ MARK AS REVIEWED
-    public function markReviewed(CropAnalysis $crop_analysis)
+    public function markReviewed(CropAnalysis $cropAnalysis)
     {
-        if ($crop_analysis->status !== 'reviewed') {
-            $crop_analysis->update(['status' => 'reviewed']);
+        $this->authorizeAccess($cropAnalysis);
+
+        if ($cropAnalysis->status !== 'reviewed') {
+            $cropAnalysis->update(['status' => 'reviewed']);
         }
 
         return back()->with('success', 'Analysis marked as reviewed.');
@@ -114,18 +156,23 @@ class CropAnalysisController extends Controller
     // 🗑 DELETE
     public function destroy(CropAnalysis $cropAnalysis)
     {
-        if ($cropAnalysis->user_id !== Auth::id() && ! Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorizeAccess($cropAnalysis);
 
+        // Delete primary image
         if ($cropAnalysis->image_path) {
             Storage::disk('public')->delete($cropAnalysis->image_path);
+        }
+
+        // Delete additional images
+        foreach ($cropAnalysis->images as $image) {
+            Storage::disk('public')->delete($image->image_path);
+            $image->delete();
         }
 
         $cropAnalysis->delete();
 
         return redirect()
-            ->route('crop_analysis.index')
+            ->route('crop_analyses.index')
             ->with('success', 'Analysis deleted successfully.');
     }
 
@@ -141,5 +188,19 @@ class CropAnalysisController extends Controller
             ->get();
 
         return view('crop_analysis.field_history', compact('field', 'analyses'));
+    }
+
+    // Helper: Store uploaded image
+    private function storeImage($image, string $directory): string
+    {
+        return $image->store($directory, 'public');
+    }
+
+    // Helper: Authorize access to analysis
+    private function authorizeAccess(CropAnalysis $analysis): void
+    {
+        if ($analysis->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized');
+        }
     }
 }

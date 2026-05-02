@@ -64,7 +64,7 @@ class LivestockAnalysisController extends Controller
             $validated['livestock_id'] ?? null
         );
 
-        return redirect()->route('livestock_analysis.show', $analysis)
+        return redirect()->route('livestock-analysis.show', $analysis)
             ->with('success', 'Livestock analysis completed successfully!');
     }
 
@@ -76,7 +76,7 @@ class LivestockAnalysisController extends Controller
         $analysis = LivestockAnalysis::find($id);
 
         if (! $analysis) {
-            return redirect()->route('livestock_analysis.index')
+            return redirect()->route('livestock-analysis.index')
                 ->with('error', 'Analysis not found.');
         }
 
@@ -117,7 +117,7 @@ class LivestockAnalysisController extends Controller
 
         $livestockAnalysis->delete();
 
-        return redirect()->route('livestock_analysis.index')
+        return redirect()->route('livestock-analysis.index')
             ->with('success', 'Analysis deleted successfully.');
     }
 

@@ -82,5 +82,9 @@
             </tbody>
         </table>
     </div>
+
+    <div class="mt-6">
+        {{ $crops->links() }}
+    </div>
 </div>
 @endsection

@@ -16,7 +16,7 @@
             </p>
         </div>
         <div>
-            <a href="{{ route('livestock_analysis.create', ['livestock_id' => $livestock->id]) }}" 
+            <a href="{{ route('livestock-analysis.create', ['livestock_id' => $livestock->id]) }}" 
                class="btn btn-primary">
                 <i class="fas fa-camera me-1"></i> New Analysis
             </a>
@@ -30,7 +30,7 @@
         <div class="alert alert-info">
             <i class="fas fa-info-circle me-2"></i>
             No analyses recorded for this animal yet. 
-            <a href="{{ route('livestock_analysis.create', ['livestock_id' => $livestock->id]) }}" class="alert-link">Upload first image</a>
+            <a href="{{ route('livestock-analysis.create', ['livestock_id' => $livestock->id]) }}" class="alert-link">Upload first image</a>
         </div>
     @else
         <div class="row">
@@ -68,7 +68,7 @@
                     </div>
 
                     <div class="card-footer bg-transparent">
-                        <a href="{{ route('livestock_analysis.show', $analysis) }}" 
+                         <a href="{{ route('livestock-analysis.show', $analysis) }}"
                            class="btn btn-sm btn-outline-primary w-100">
                             <i class="fas fa-eye"></i> View Details
                         </a>

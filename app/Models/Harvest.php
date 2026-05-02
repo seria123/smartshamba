@@ -14,6 +14,7 @@ class Harvest extends Model
         'crop_id',
         'field_id',
         'farm_id',
+        'crop_cycle_id',
         'harvest_date',
         'harvest_batch',
         'quantity_harvested',
@@ -39,21 +40,14 @@ class Harvest extends Model
     ];
 
     const GRADE_A = 'grade_a';
-
     const GRADE_B = 'grade_b';
-
     const GRADE_C = 'grade_c';
-
     const GRADE_REJECT = 'reject';
 
     const STORAGE_FIELD = 'field';
-
     const STORAGE_BARN = 'barn';
-
     const STORAGE_WAREHOUSE = 'warehouse';
-
     const STORAGE_COLD_STORAGE = 'cold_storage';
-
     const STORAGE_SOLD_IMMEDIATELY = 'sold_immediately';
 
     public function crop(): BelongsTo
@@ -69,6 +63,11 @@ class Harvest extends Model
     public function farm(): BelongsTo
     {
         return $this->belongsTo(Farm::class);
+    }
+
+    public function cropCycle(): BelongsTo
+    {
+        return $this->belongsTo(CropCycle::class);
     }
 
     public function calculateLossPercentage(): void

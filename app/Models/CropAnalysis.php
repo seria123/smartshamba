@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Field;
+use App\Models\User;
+use App\Models\CropCycle;
 
 class CropAnalysis extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'field_id',
+        'crop_cycle_id',
         'user_id',
         'image_path',
         'diagnosis',
@@ -27,11 +28,6 @@ class CropAnalysis extends Model
         'status',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'detected_issues' => 'array',
         'confidence_score' => 'decimal:2',
@@ -39,25 +35,35 @@ class CropAnalysis extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * Get the field that owns the crop analysis.
-     */
-    public function field()
+    public function field(): BelongsTo
     {
         return $this->belongsTo(Field::class);
     }
 
-    /**
-     * Get the user that owns the crop analysis.
-     */
-    public function user()
+    public function cropCycle(): BelongsTo
+    {
+        return $this->belongsTo(CropCycle::class);
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get severity color for display.
-     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(CropAnalysisImage::class)->orderBy('order');
+    }
+
+    public function getAllImagesAttribute(): array
+    {
+        $images = [$this->image_path];
+        foreach ($this->images as $img) {
+            $images[] = $img->image_path;
+        }
+        return $images;
+    }
+
     public function getSeverityColorAttribute(): string
     {
         return match ($this->severity) {
@@ -68,9 +74,6 @@ class CropAnalysis extends Model
         };
     }
 
-    /**
-     * Get status color for display.
-     */
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {
@@ -81,9 +84,6 @@ class CropAnalysis extends Model
         };
     }
 
-    /**
-     * Common plant diseases for AI detection simulation.
-     */
     public static function getCommonDiseases(): array
     {
         return [

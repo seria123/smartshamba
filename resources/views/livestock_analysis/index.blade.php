@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-cow text-primary me-2"></i>Livestock Disease Analyses</h2>
         <div>
-            <a href="{{ route('livestock_analysis.create') }}" class="btn btn-primary">
+            <a href="{{ route('livestock-analysis.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i> New Analysis
             </a>
         </div>
@@ -15,7 +15,7 @@
         <div class="alert alert-info">
             <i class="fas fa-info-circle me-2"></i>
             No analyses yet. 
-            <a href="{{ route('livestock_analysis.create') }}" class="alert-link">Upload an image</a> to start AI-powered disease detection.
+            <a href="{{ route('livestock-analysis.create') }}" class="alert-link">Upload an image</a> to start AI-powered disease detection.
         </div>
     @else
         <div class="row">
@@ -76,7 +76,7 @@
 
                     <div class="card-footer bg-transparent">
                         <div class="btn-group w-100">
-                            <a href="{{ route('livestock_analysis.show', $analysis) }}" 
+                             <a href="{{ route('livestock-analysis.show', $analysis) }}"
                                class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-eye"></i> View
                             </a>

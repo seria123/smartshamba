@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\CustomDashboard;
-use App\Http\Controllers\AdminController;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -72,6 +71,10 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-academic-cap')
                     ->collapsible(false),
                 NavigationGroup::make()
+                    ->label('Planning')
+                    ->icon('heroicon-o-calendar')
+                    ->collapsible(false),
+                NavigationGroup::make()
                     ->label('Finance')
                     ->icon('heroicon-o-currency-dollar')
                     ->collapsible(false),
@@ -115,8 +118,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Crop Cycles')
                     ->label('Crop Cycles')
                     ->icon('heroicon-o-seedling')
-                    ->url(fn (): string => route('crop-cycles.index'))
-                    ->isActiveWhen(fn (): bool => request()->routeIs('crop-cycles.*'))
+                    ->url(fn (): string => route('filament.admin.resources.crop-cycles.index'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.crop-cycles.*'))
                     ->group('Farm Operations')
                     ->sort(5),
                 NavigationItem::make('Crop Stages')
@@ -140,6 +143,22 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn (): bool => request()->routeIs('inputs.*'))
                     ->group('Farm Operations')
                     ->sort(8),
+
+                // Planning
+                NavigationItem::make('Planting Schedule')
+                    ->label('Planting Schedule')
+                    ->icon('heroicon-o-calendar-alt')
+                    ->url(fn (): string => route('planting-schedules.index'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('planting-schedules.index'))
+                    ->group('Planning')
+                    ->sort(1),
+                NavigationItem::make('Crop Calendar')
+                    ->label('Crop Calendar')
+                    ->icon('heroicon-o-calendar-days')
+                    ->url(fn (): string => route('filament.admin.pages.planting-calendar'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.planting-calendar'))
+                    ->group('Planning')
+                    ->sort(2),
 
                 // Finance
                 NavigationItem::make('Expenses')

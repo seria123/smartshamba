@@ -11,29 +11,29 @@ class Farmer extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'first_name',
-        'last_name',
-        'phone',
-        'national_id',
-        'date_of_birth',
-        'gender',
-        'address',
-        'village',
-        'ward',
-        'district',
-        'region',
-        'latitude',
-        'longitude',
-        'farm_size_hectares',
-        'farm_type',
-        'crop_history',
-        'farming_methods',
-        'notes',
-        'is_active',
-    ];
+ protected $fillable = [
+    'user_id',
+    'first_name',
+    'last_name',
+    'phone',
+    'national_id',
+    'date_of_birth',
+    'gender',
+    'address',
+    'village',
+    'ward',
+    'district',
+    'region',
+    'latitude',
+    'longitude',
+    'farm_size_hectares',
+    'farm_type',
 
+    // ✅ ADD THESE
+    'crop_history',
+    'farming_methods',
+    'is_active',
+];
     protected $casts = [
         'crop_history' => 'array',
         'farming_methods' => 'array',
@@ -61,6 +61,6 @@ class Farmer extends Model
 
     public function fullName(): string
     {
-        return "{$this->first_name} {$this->last_name}";
+        return trim("{$this->first_name} {$this->last_name}");
     }
 }

@@ -8,12 +8,44 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Activity extends Model
 {
+    protected $fillable = [
+        'crop_stage_id',
+        'crop_cycle_id',
+        'activity_name',
+        'description',
+        'cost',
+        'activity_date',
+        'worker_id',
+        'labor_type',
+    ];
+
+    protected $casts = [
+        'cost' => 'decimal:2',
+        'activity_date' => 'date',
+    ];
+
     /**
      * Get the crop stage that owns the activity.
      */
     public function cropStage(): BelongsTo
     {
         return $this->belongsTo(CropStage::class);
+    }
+
+    /**
+     * Get the crop cycle that owns the activity.
+     */
+    public function cropCycle(): BelongsTo
+    {
+        return $this->belongsTo(CropCycle::class);
+    }
+
+    /**
+     * Get the worker that performed the activity.
+     */
+    public function worker(): BelongsTo
+    {
+        return $this->belongsTo(Worker::class);
     }
 
     /**

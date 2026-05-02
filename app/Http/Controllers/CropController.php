@@ -13,7 +13,7 @@ class CropController extends Controller
      */
     public function index()
     {
-        $crops = Crop::with('field')->get();
+        $crops = Crop::with('field')->paginate(20);
 
         return view('crops.index', compact('crops'));
     }
@@ -68,7 +68,15 @@ class CropController extends Controller
     {
         $crop->load('field');
 
-        return view('crops.show', compact('crop'));
+        // Get latest disease analysis for this crop
+        $latestAnalysis = null;
+        if ($crop->field) {
+            $latestAnalysis = \App\Models\CropAnalysis::where('field_id', $crop->field_id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+        }
+
+        return view('crops.show', compact('crop', 'latestAnalysis'));
     }
 
     /**

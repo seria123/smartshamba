@@ -14,7 +14,7 @@ class FieldController extends Controller
      */
     public function index()
     {
-        $fields = Field::with(['farm', 'sensors'])->get();
+        $fields = Field::with(['farm', 'crop'])->withCount('sensors')->get();
 
         return view('fields.index', compact('fields'));
     }
@@ -39,6 +39,9 @@ class FieldController extends Controller
             'name' => 'required|string|max:255',
             'size_hectares' => 'nullable|numeric|min:0',
             'location' => 'nullable|string|max:255',
+            'rainfall_zone' => 'nullable|string|max:255',
+            'topography' => 'nullable|string|in:flat,sloped,mixed',
+            'water_source' => 'nullable|string|max:255',
             'soil_type' => 'nullable|string|max:255',
             'gps_latitude' => 'nullable|between:-90,90',
             'gps_longitude' => 'nullable|between:-180,180',
@@ -83,6 +86,9 @@ class FieldController extends Controller
             'name' => 'required|string|max:255',
             'size_hectares' => 'nullable|numeric|min:0',
             'location' => 'nullable|string|max:255',
+            'rainfall_zone' => 'nullable|string|max:255',
+            'topography' => 'nullable|string|in:flat,sloped,mixed',
+            'water_source' => 'nullable|string|max:255',
             'soil_type' => 'nullable|string|max:255',
             'gps_latitude' => 'nullable|between:-90,90',
             'gps_longitude' => 'nullable|between:-180,180',

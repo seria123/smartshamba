@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\CropAnalysis;
 use App\Models\Field;
+use App\Models\CropCycle;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +27,7 @@ class CropAnalysisService extends BaseAnalysisService
     /**
      * Perform crop analysis on an uploaded image.
      */
-    public function analyze(UploadedFile $image, ?int $fieldId = null)
+    public function analyze(UploadedFile $image, ?int $fieldId = null, ?int $cropCycleId = null)
     {
         $path = $this->storeImage($image, 'crop-analyses');
 
@@ -46,8 +47,12 @@ class CropAnalysisService extends BaseAnalysisService
                     'detected_issues' => $result['detected_issues'],
                     'confidence' => $result['confidence'],
                 ],
-                $fieldId,
-                ['weather_data' => $weather ? json_encode($weather) : null]
+                $fieldId, // relationId (for field_id)
+                [
+                    'field_id' => $fieldId,
+                    'crop_cycle_id' => $cropCycleId,
+                    'weather_data' => $weather ? json_encode($weather) : null,
+                ]
             );
 
             return $analysis;
@@ -66,7 +71,11 @@ class CropAnalysisService extends BaseAnalysisService
                     'confidence' => 0,
                 ],
                 $fieldId,
-                ['weather_data' => null]
+                [
+                    'field_id' => $fieldId,
+                    'crop_cycle_id' => $cropCycleId,
+                    'weather_data' => null,
+                ]
             );
 
             return $analysis;

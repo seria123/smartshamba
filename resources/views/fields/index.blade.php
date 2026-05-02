@@ -47,7 +47,7 @@
                         <td class="px-6 py-4 text-sm">
                             <span class="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 text-blue-800 text-xs font-bold">
                                 <i class="fas fa-satellite-dish mr-1.5"></i>
-                                {{ $field->sensors->count() }}
+                                {{ $field->sensors_count }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">

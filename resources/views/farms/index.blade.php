@@ -20,6 +20,8 @@
                  <tr>
                      <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
                      <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
+                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Ownership</th>
                      <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Size (ha)</th>
                      <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Fields</th>
                      <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
@@ -37,7 +39,18 @@
                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-relaxed">
                              {{ $farm->location ?? 'N/A' }}
                          </td>
+                         <td class="px-6 py-4 whitespace-nowrap">
+                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                 {{ $farm->farm_type == 'crop' ? 'bg-green-100 text-green-800' : '' }}
+                                 {{ $farm->farm_type == 'livestock' ? 'bg-blue-100 text-blue-800' : '' }}
+                                 {{ $farm->farm_type == 'mixed' ? 'bg-yellow-100 text-yellow-800' : '' }}">
+                                 {{ ucfirst($farm->farm_type ?? 'N/A') }}
+                             </span>
+                         </td>
                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                             {{ ucfirst($farm->ownership_type ?? 'N/A') }}
+                         </td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
                              {{ $farm->size_hectares ?? 'N/A' }} ha
                          </td>
                          <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
@@ -58,14 +71,14 @@
                                  </button>
                              </form>
                         </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No farms found. Create one to get started.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
-@endsection
+                     </tr>
+                 @empty
+                     <tr>
+                         <td colspan="7" class="px-6 py-4 text-center text-gray-500">No farms found. Create one to get started.</td>
+                     </tr>
+                 @endforelse
+             </tbody>
+         </table>
+     </div>
+ </div>
+ @endsection

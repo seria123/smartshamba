@@ -12,6 +12,7 @@ class WeatherData extends Model
 
     protected $fillable = [
         'farm_id',
+        'crop_cycle_id',
         'recorded_at',
         'temperature',
         'humidity',
@@ -42,7 +43,6 @@ class WeatherData extends Model
         'visibility' => 'decimal:2',
     ];
 
-    // Weather Conditions
     const CONDITION_CLEAR = 'clear';
     const CONDITION_CLOUDY = 'cloudy';
     const CONDITION_PARTLY_CLOUDY = 'partly_cloudy';
@@ -56,6 +56,11 @@ class WeatherData extends Model
     public function farm(): BelongsTo
     {
         return $this->belongsTo(Farm::class);
+    }
+
+    public function cropCycle(): BelongsTo
+    {
+        return $this->belongsTo(CropCycle::class);
     }
 
     public function getTemperatureFAttribute(): float
