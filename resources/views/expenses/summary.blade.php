@@ -4,9 +4,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title mb-0">Expenses Summary</h4>
+                    <h4 class="card-title mb-0">Profit & Loss Statement - {{ $year }}</h4>
                     <div class="d-flex gap-2">
                         <form method="GET" class="d-flex gap-2">
                             <select name="year" class="form-select" onchange="this.form.submit()">
@@ -24,38 +24,40 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <!-- Summary Cards -->
                     <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h3 class="mb-0">KES {{ number_format($totalRevenue, 2) }}</h3>
+                                    <small>Total Revenue</small>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-4">
                             <div class="card bg-danger text-white">
                                 <div class="card-body text-center">
-                                    <h3 class="mb-0">{{ number_format($typeExpenses->sum('total'), 2) }}</h3>
-                                    <small>Total Expenses ({{ $year }})</small>
+                                    <h3 class="mb-0">KES {{ number_format($totalExpenses, 2) }}</h3>
+                                    <small>Total Expenses</small>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card bg-info text-white">
+                            <div class="card {{ $netProfit >= 0 ? 'bg-emerald-600' : 'bg-rose-600' }} text-white">
                                 <div class="card-body text-center">
-                                    <h3 class="mb-0">{{ $typeExpenses->count() }}</h3>
-                                    <small>Expense Categories</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body text-center">
-                                    <h3 class="mb-0">{{ number_format($typeExpenses->avg('total'), 2) }}</h3>
-                                    <small>Average per Category</small>
+                                    <h3 class="mb-0">KES {{ number_format($netProfit, 2) }}</h3>
+                                    <small>Net {{ $netProfit >= 0 ? 'Profit' : 'Loss' }}</small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Monthly Profit/Loss Chart -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="mb-0">Monthly Expenses - {{ $year }}</h5>
+                                    <h5 class="mb-0">Monthly Profit/Loss - {{ $year }}</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -63,19 +65,38 @@
                                             <thead>
                                                 <tr>
                                                     <th>Month</th>
-                                                    <th class="text-end">Amount</th>
+                                                    <th class="text-end">Revenue</th>
+                                                    <th class="text-end">Expenses</th>
+                                                    <th class="text-end">Profit/Loss</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @for($m = 1; $m <= 12; $m++)
+                                                @php
+                                                    $monthRevenue = $monthlyRevenue->get($m, 0);
+                                                    $monthExpense = $monthlyExpenses->get($m, 0);
+                                                    $monthProfit = $monthRevenue - $monthExpense;
+                                                @endphp
                                                 <tr>
                                                     <td>{{ \Carbon\Carbon::createFromDate($year, $m, 1)->format('F') }}</td>
-                                                    <td class="text-end {{ $monthlyExpenses->get($m) ? 'text-danger fw-bold' : 'text-muted' }}">
-                                                        {{ number_format($monthlyExpenses->get($m, 0), 2) }}
+                                                    <td class="text-end text-success">{{ number_format($monthRevenue, 2) }}</td>
+                                                    <td class="text-end text-danger">{{ number_format($monthExpense, 2) }}</td>
+                                                    <td class="text-end {{ $monthProfit >= 0 ? 'text-emerald-600' : 'text-rose-600' }} fw-bold">
+                                                        KES {{ number_format($monthProfit, 2) }}
                                                     </td>
                                                 </tr>
                                                 @endfor
                                             </tbody>
+                                            <tfoot class="table-dark">
+                                                <tr>
+                                                    <th>Total</th>
+                                                    <th class="text-end text-success">KES {{ number_format($totalRevenue, 2) }}</th>
+                                                    <th class="text-end text-danger">KES {{ number_format($totalExpenses, 2) }}</th>
+                                                    <th class="text-end {{ $netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400' }} fw-bold">
+                                                        KES {{ number_format($netProfit, 2) }}
+                                                    </th>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
@@ -83,6 +104,7 @@
                         </div>
                     </div>
 
+                    <!-- Expenses by Type -->
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card">
@@ -125,39 +147,37 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Revenue by Crop -->
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="mb-0">Percentage by Type</h5>
+                                    <h5 class="mb-0">Revenue by Crop</h5>
                                 </div>
                                 <div class="card-body">
-                                    @php $total = $typeExpenses->sum('total'); @endphp
-                                    @foreach($typeExpenses as $type)
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <span>{{ match($type->expense_type) {
-                                                'inputs' => 'Inputs',
-                                                'labor' => 'Labor',
-                                                'equipment' => 'Equipment',
-                                                'fertilizer' => 'Fertilizer',
-                                                'seeds' => 'Seeds',
-                                                'pesticides' => 'Pesticides',
-                                                'fuel' => 'Fuel',
-                                                'maintenance' => 'Maintenance',
-                                                'transport' => 'Transport',
-                                                'other' => 'Other',
-                                                default => $type->expense_type
-                                            } }}</span>
-                                            <span class="fw-bold">{{ number_format(($type->total / $total) * 100, 1) }}%</span>
-                                        </div>
-                                        <div class="progress" style="height: 10px;">
-                                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ ($type->total / $total) * 100 }}%"></div>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Crop</th>
+                                                    <th class="text-end">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($revenueByCrop as $revenue)
+                                                <tr>
+                                                    <td>{{ $revenue->crop->name ?? 'Unknown' }}</td>
+                                                    <td class="text-end text-success">{{ number_format($revenue->total, 2) }}</td>
+                                                </tr>
+                                                @endforeach
+                                                @if($revenueByCrop->isEmpty())
+                                                <tr>
+                                                    <td colspan="2" class="text-center text-muted">No revenue recorded for this year.</td>
+                                                </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    @endforeach
-                                    @if($total == 0)
-                                    <p class="text-muted text-center">No expenses recorded for this year.</p>
-                                    @endif
                                 </div>
                             </div>
                         </div>

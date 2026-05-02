@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use App\Models\Revenue;
 use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
@@ -122,6 +123,31 @@ class ExpenseController extends Controller
             ->groupBy('expense_type')
             ->get();
 
-        return view('expenses.summary', compact('monthlyExpenses', 'typeExpenses', 'year'));
+        $monthlyRevenue = Revenue::selectRaw('MONTH(sale_date) as month, SUM(amount) as total')
+            ->whereYear('sale_date', $year)
+            ->groupBy('month')
+            ->pluck('total', 'month');
+
+        $revenueByCrop = Revenue::selectRaw('crop_id, SUM(amount) as total')
+            ->whereYear('sale_date', $year)
+            ->whereNotNull('crop_id')
+            ->groupBy('crop_id')
+            ->with('crop:id,name')
+            ->get();
+
+        $totalRevenue = Revenue::whereYear('sale_date', $year)->sum('amount');
+        $totalExpenses = $typeExpenses->sum('total');
+        $netProfit = $totalRevenue - $totalExpenses;
+
+        return view('expenses.summary', compact(
+            'monthlyExpenses',
+            'typeExpenses',
+            'monthlyRevenue',
+            'revenueByCrop',
+            'year',
+            'totalRevenue',
+            'totalExpenses',
+            'netProfit'
+        ));
     }
 }

@@ -12,15 +12,18 @@
             </div>
 
             <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Report Configuration</h5>
+                </div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('reports.generate') }}">
                         @csrf
 
-                        <div class="row">
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="farm_id" class="form-label">Farm *</label>
-                                    <select class="form-control @error('farm_id') is-invalid @enderror" 
+                                    <select class="form-select @error('farm_id') is-invalid @enderror" 
                                             id="farm_id" name="farm_id" required>
                                         <option value="">Select Farm</option>
                                         @foreach($farms as $farm)
@@ -35,7 +38,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="report_type" class="form-label">Report Type *</label>
-                                    <select class="form-control @error('report_type') is-invalid @enderror" 
+                                    <select class="form-select @error('report_type') is-invalid @enderror" 
                                             id="report_type" name="report_type" required>
                                         <option value="">Select Type</option>
                                         @foreach($reportTypes as $key => $label)
@@ -49,7 +52,7 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="title" class="form-label">Report Title *</label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror" 
                                    id="title" name="title" value="{{ old('title') }}" required>
@@ -58,16 +61,16 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control @error('description') is-invalid @enderror" 
-                                      id="description" name="description" rows="2">{{ old('description') }}</textarea>
+                                      id="description" name="description" rows="3">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="row">
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="report_period_start" class="form-label">Period Start *</label>
@@ -90,7 +93,7 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-cog"></i> Generate Report
                             </button>

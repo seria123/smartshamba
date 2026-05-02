@@ -12,7 +12,8 @@
                     <form action="{{ route('expenses.update', $expense) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <div class="row">
+
+                        <div class="row mb-4">
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Farm *</label>
@@ -28,8 +29,22 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
+                                    <label class="form-label">Crop (Optional)</label>
+                                    <select name="crop_id" class="form-select">
+                                        <option value="">Select Crop</option>
+                                        @foreach(\App\Models\Crop::all() as $crop)
+                                        <option value="{{ $crop->id }}" {{ $expense->crop_id == $crop->id ? 'selected' : '' }}>
+                                            {{ $crop->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
                                     <label class="form-label">Expense Type *</label>
                                     <select name="expense_type" class="form-select" required>
+                                        <option value="">Select Type</option>
                                         <option value="inputs" {{ $expense->expense_type === 'inputs' ? 'selected' : '' }}>Inputs</option>
                                         <option value="labor" {{ $expense->expense_type === 'labor' ? 'selected' : '' }}>Labor</option>
                                         <option value="equipment" {{ $expense->expense_type === 'equipment' ? 'selected' : '' }}>Equipment</option>
@@ -43,14 +58,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label class="form-label">Date *</label>
-                                    <input type="date" name="expense_date" class="form-control" value="{{ $expense->expense_date->format('Y-m-d') }}" required>
-                                </div>
-                            </div>
                         </div>
-                        <div class="row">
+
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Description *</label>
@@ -59,11 +69,20 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label class="form-label">Amount *</label>
+                                    <label class="form-label">Amount (KES) *</label>
                                     <input type="number" step="0.01" name="amount" class="form-control" value="{{ old('amount', $expense->amount) }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Date *</label>
+                                    <input type="date" name="expense_date" class="form-control" value="{{ $expense->expense_date->format('Y-m-d') }}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Category</label>
                                     <select name="category" class="form-select">
@@ -74,35 +93,27 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Payment Method</label>
-                                    <input type="text" name="payment_method" class="form-control" value="{{ old('payment_method', $expense->payment_method) }}">
+                                    <select name="payment_method" class="form-select">
+                                        <option value="">Select Method</option>
+                                        <option value="cash" {{ $expense->payment_method === 'cash' ? 'selected' : '' }}>Cash</option>
+                                        <option value="bank_transfer" {{ $expense->payment_method === 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                                        <option value="mobile_money" {{ $expense->payment_method === 'mobile_money' ? 'selected' : '' }}>Mobile Money</option>
+                                        <option value="cheque" {{ $expense->payment_method === 'cheque' ? 'selected' : '' }}>Cheque</option>
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Receipt Number</label>
                                     <input type="text" name="receipt_number" class="form-control" value="{{ old('receipt_number', $expense->receipt_number) }}">
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Crop (Optional)</label>
-                                    <select name="crop_id" class="form-select">
-                                        <option value="">Select Crop</option>
-                                        @foreach(\App\Models\Crop::all() as $crop)
-                                        <option value="{{ $crop->id }}" {{ $expense->crop_id == $crop->id ? 'selected' : '' }}>
-                                            {{ $crop->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Worker (Optional)</label>
@@ -117,10 +128,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-3">
+
+                        <div class="mb-4">
                             <label class="form-label">Notes</label>
                             <textarea name="notes" class="form-control" rows="3">{{ old('notes', $expense->notes) }}</textarea>
                         </div>
+
                         <div class="d-flex gap-2">
                             <a href="{{ route('expenses.show', $expense) }}" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary">Update Expense</button>

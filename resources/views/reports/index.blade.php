@@ -13,11 +13,14 @@
 
             <!-- Filters -->
             <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Filter Reports</h5>
+                </div>
                 <div class="card-body">
-                    <form method="GET" class="row g-3">
+                    <form method="GET" class="row g-4">
                         <div class="col-md-3">
-                            <label>Farm</label>
-                            <select name="farm_id" class="form-control">
+                            <label class="form-label">Farm</label>
+                            <select name="farm_id" class="form-select">
                                 <option value="">All Farms</option>
                                 @foreach($farms as $farm)
                                     <option value="{{ $farm->id }}" {{ request('farm_id') == $farm->id ? 'selected' : '' }}>{{ $farm->name }}</option>
@@ -25,8 +28,8 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Report Type</label>
-                            <select name="report_type" class="form-control">
+                            <label class="form-label">Report Type</label>
+                            <select name="report_type" class="form-select">
                                 <option value="">All Types</option>
                                 <option value="daily_summary" {{ request('report_type') == 'daily_summary' ? 'selected' : '' }}>Daily Summary</option>
                                 <option value="weekly_summary" {{ request('report_type') == 'weekly_summary' ? 'selected' : '' }}>Weekly Summary</option>
@@ -37,8 +40,8 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Status</label>
-                            <select name="status" class="form-control">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
                                 <option value="">All Statuses</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="generating" {{ request('status') == 'generating' ? 'selected' : '' }}>Generating</option>
@@ -47,8 +50,10 @@
                             </select>
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary me-2">Filter</button>
-                            <a href="{{ route('reports.index') }}" class="btn btn-secondary">Reset</a>
+                            <div class="d-flex gap-2 w-100">
+                                <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+                                <a href="{{ route('reports.index') }}" class="btn btn-secondary">Reset</a>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -56,6 +61,9 @@
 
             <!-- Reports Table -->
             <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Reports List</h5>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -90,19 +98,21 @@
                                         </td>
                                         <td>{{ $report->created_at->format('M d, Y H:i') }}</td>
                                         <td>
-                                            <a href="{{ route('reports.show', $report) }}" class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            @if($report->status === 'completed')
-                                                <a href="{{ route('reports.download', $report) }}" class="btn btn-sm btn-success">
-                                                    <i class="fas fa-download"></i>
+                                            <div class="d-flex gap-1">
+                                                <a href="{{ route('reports.show', $report) }}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i>
                                                 </a>
-                                            @endif
+                                                @if($report->status === 'completed')
+                                                    <a href="{{ route('reports.download', $report) }}" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center">No reports found.</td>
+                                        <td colspan="8" class="text-center py-4">No reports found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
