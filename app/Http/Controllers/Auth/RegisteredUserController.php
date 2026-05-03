@@ -30,34 +30,35 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-   public function store(Request $request)
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-        'password' => ['required', 'confirmed', Password::defaults()],
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-    ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-    // 👉 assign role
-    $user->assignRole('farmer');
+        // 👉 assign role
+        $user->assignRole('farmer');
 
-    // 👉 create farmer profile (minimal for now)
-    Farmer::create([
-        'user_id' => $user->id,
-        'first_name' => $request->name,
-        'last_name' => '',
-    ]);
+        // 👉 create farmer profile (minimal for now)
+        Farmer::create([
+            'user_id' => $user->id,
+            'first_name' => $request->name,
+            'last_name' => '',
+        ]);
 
-    event(new Registered($user));
+        event(new Registered($user));
 
-    Auth::login($user);
+        Auth::login($user);
 
-    return redirect()->route('farms.onboarding');
+        return redirect()->route('farms.create');
+    }
 }
-}
+

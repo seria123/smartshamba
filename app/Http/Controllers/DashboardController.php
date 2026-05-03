@@ -7,7 +7,7 @@ use App\Models\Farm;
 use App\Models\Field;
 use App\Models\Harvest;
 use App\Models\Sensor;
-use App\Models\Worker;
+use App\Models\Staff;
 
 class DashboardController extends Controller
 {
@@ -23,8 +23,8 @@ class DashboardController extends Controller
         $activeSensors = Sensor::where('status', 'active')->count();
 
         // Worker statistics
-        $totalWorkers = Worker::count();
-        $activeWorkers = Worker::where('status', 'active')->count();
+        $totalWorkers = Staff::count();
+        $activeWorkers = Staff::where('status', 'active')->count();
 
         // Harvest statistics
         $totalHarvests = Harvest::count();

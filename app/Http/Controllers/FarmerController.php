@@ -17,7 +17,7 @@ class FarmerController extends Controller
         $crops = \App\Models\Crop::select('id', 'name')->orderBy('name')->get();
         $livestockTypes = \App\Models\LivestockType::select('id', 'name')->orderBy('name')->get();
 
-        return view('farms.onboarding', compact('crops', 'livestockTypes'));
+        return view('farms.create', compact('crops', 'livestockTypes'));
     }
 
     /**

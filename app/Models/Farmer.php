@@ -11,29 +11,28 @@ class Farmer extends Model
 {
     use HasFactory;
 
- protected $fillable = [
-    'user_id',
-    'first_name',
-    'last_name',
-    'phone',
-    'national_id',
-    'date_of_birth',
-    'gender',
-    'address',
-    'village',
-    'ward',
-    'district',
-    'region',
-    'latitude',
-    'longitude',
-    'farm_size_hectares',
-    'farm_type',
+    protected $fillable = [
+        'user_id',
+        'first_name',
+        'last_name',
+        'phone',
+        'national_id',
+        'date_of_birth',
+        'gender',
+        'address',
+        'village',
+        'ward',
+        'district',
+        'region',
+        'latitude',
+        'longitude',
+        'farm_size_hectares',
+        'farm_type',
+        'crop_history',
+        'farming_methods',
+        'is_active',
+    ];
 
-    // ✅ ADD THESE
-    'crop_history',
-    'farming_methods',
-    'is_active',
-];
     protected $casts = [
         'crop_history' => 'array',
         'farming_methods' => 'array',
@@ -57,6 +56,11 @@ class Farmer extends Model
     public function cropHistories(): HasMany
     {
         return $this->hasMany(CropHistory::class);
+    }
+
+    public function yieldEstimations(): HasMany
+    {
+        return $this->hasMany(YieldEstimation::class);
     }
 
     public function fullName(): string

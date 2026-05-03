@@ -119,7 +119,7 @@
                                     <label class="form-label">Worker (Optional)</label>
                                     <select name="worker_id" class="form-select">
                                         <option value="">Select Worker</option>
-                                        @foreach(\App\Models\Worker::all() as $worker)
+                                        @foreach(\App\Models\Staff::all() as $worker)
                                         <option value="{{ $worker->id }}" {{ $expense->worker_id == $worker->id ? 'selected' : '' }}>
                                             {{ $worker->fullName() }}
                                         </option>

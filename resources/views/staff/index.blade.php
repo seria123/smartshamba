@@ -6,9 +6,9 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title mb-0">Worker / Labor Management</h4>
-                    <a href="{{ route('workers.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Worker
+                    <h4 class="card-title mb-0">Staff / Labor Management</h4>
+                    <a href="{{ route('staff.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Staff
                     </a>
                 </div>
                 <div class="card-body">
@@ -59,36 +59,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($workers as $worker)
+                                @forelse($staff as $staffMember)
                                 <tr>
                                     <td>
-                                        <a href="{{ route('workers.show', $worker) }}">
-                                            {{ $worker->fullName() }}
+                                        <a href="{{ route('staff.show', $staffMember) }}">
+                                            {{ $staffMember->fullName() }}
                                         </a>
                                     </td>
-                                    <td>{{ $worker->phone ?? 'N/A' }}</td>
+                                    <td>{{ $staffMember->phone ?? 'N/A' }}</td>
                                     <td>
-                                        <span class="badge bg-info">{{ ucfirst(str_replace('_', ' ', $worker->role)) }}</span>
+                                        <span class="badge bg-info">{{ ucfirst(str_replace('_', ' ', $staffMember->role)) }}</span>
                                     </td>
-                                    <td>{{ number_format($worker->daily_wage, 2) }}</td>
-                                    <td>{{ $worker->hire_date->format('M d, Y') }}</td>
+                                    <td>{{ number_format($staffMember->daily_wage, 2) }}</td>
+                                    <td>{{ $staffMember->hire_date->format('M d, Y') }}</td>
                                     <td>
-                                        <span class="badge bg-{{ $worker->status === 'active' ? 'success' : ($worker->status === 'inactive' ? 'warning' : 'secondary') }}">
-                                            {{ ucfirst($worker->status) }}
+                                        <span class="badge bg-{{ $staffMember->status === 'active' ? 'success' : ($staffMember->status === 'inactive' ? 'warning' : 'secondary') }}">
+                                            {{ ucfirst($staffMember->status) }}
                                         </span>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('workers.show', $worker) }}" class="btn btn-outline-primary">
+                                            <a href="{{ route('staff.show', $staffMember) }}" class="btn btn-outline-primary">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('workers.edit', $worker) }}" class="btn btn-outline-secondary">
+                                            <a href="{{ route('staff.edit', $staffMember) }}" class="btn btn-outline-secondary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="{{ route('workers.attendance', $worker) }}" class="btn btn-outline-info">
+                                            <a href="{{ route('staff.attendance', $staffMember) }}" class="btn btn-outline-info">
                                                 <i class="fas fa-calendar-check"></i>
                                             </a>
-                                            <a href="{{ route('workers.wages', $worker) }}" class="btn btn-outline-success">
+                                            <a href="{{ route('staff.wages', $staffMember) }}" class="btn btn-outline-success">
                                                 <i class="fas fa-dollar-sign"></i>
                                             </a>
                                         </div>
@@ -97,7 +97,7 @@
                                 @empty
                                 <tr>
                                     <td colspan="7" class="text-center text-muted py-4">
-                                        No workers found. <a href="{{ route('workers.create') }}">Add your first worker</a>
+                                        No staff members found. <a href="{{ route('staff.create') }}">Add your first staff member</a>
                                     </td>
                                 </tr>
                                 @endforelse
@@ -106,7 +106,7 @@
                     </div>
 
                     <div class="d-flex justify-content-center">
-                        {{ $workers->links() }}
+                       {{ $staff->links() }}
                     </div>
                 </div>
             </div>

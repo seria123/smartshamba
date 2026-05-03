@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alert;
-use App\Models\Worker;
+use App\Models\Staff;
 use Illuminate\Http\Request;
 use App\Models\Farm;
 use App\Models\Field;
@@ -24,7 +24,7 @@ class AdminController extends Controller
         'total_fields' => Field::count(),
         'total_sensors' => Sensor::count(),
         'active_sensors' => Sensor::where('status', 'active')->count(),
-        'total_workers' => Worker::count(),
+        'total_staff' => Staff::count(),
         'total_harvests' => Harvest::count(),
     ];
 
@@ -46,7 +46,7 @@ class AdminController extends Controller
 }
 
     /**
-     * Onboard a new worker (admin only).
+     * Onboard a new staff member (admin only).
      */
     public function onboardWorker(Request $request)
     {
@@ -68,23 +68,23 @@ class AdminController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        Worker::create($validated);
+        Staff::create($validated);
 
         return redirect()->route('dashboard')
-            ->with('success', 'Worker onboarded successfully');
+            ->with('success', 'Staff member onboarded successfully');
     }
 
     /**
-     * Fire/terminate a worker (admin only).
+     * Fire/terminate a staff member (admin only).
      */
-    public function fireWorker(Worker $worker)
+    public function fireWorker(Staff $staff)
     {
-        $worker->update([
+        $staff->update([
             'status' => 'terminated',
             'termination_date' => now(),
         ]);
 
         return redirect()->route('dashboard')
-            ->with('success', 'Worker terminated successfully');
+            ->with('success', 'Staff member terminated successfully');
     }
 }

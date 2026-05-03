@@ -11,7 +11,8 @@ use App\Http\Controllers\LivestockController;
 use App\Http\Controllers\LivestockTypeController;
 use App\Http\Controllers\PlantingScheduleController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\WorkerController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\YieldEstimationController;
 use App\Models\Farmer;
 use Illuminate\Support\Facades\Route;
 
@@ -64,6 +65,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -107,23 +109,30 @@ Route::middleware(['auth'])->group(function () {
 // Finance Routes (Income, Expenses, Reports)
 Route::middleware(['auth'])->group(function () {
     Route::resource('revenues', \App\Http\Controllers\RevenueController::class);
-    Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
     Route::get('expenses/summary', [\App\Http\Controllers\ExpenseController::class, 'summary'])->name('expenses.summary');
+    Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
     Route::resource('reports', \App\Http\Controllers\ReportController::class);
     Route::post('reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
     Route::post('revenues/{revenue}/mark-paid', [\App\Http\Controllers\RevenueController::class, 'markAsPaid'])->name('revenues.markAsPaid');
 });
 
-// Worker / Labor Management routes
+// Staff / Labor Management routes
 Route::middleware(['auth'])->group(function () {
-    Route::resource('workers', WorkerController::class);
-    Route::get('workers/{worker}/attendance', [WorkerController::class, 'attendance'])->name('workers.attendance');
-    Route::post('workers/{worker}/attendance', [WorkerController::class, 'storeAttendance'])->name('workers.attendance.store');
-    Route::get('workers/{worker}/wages', [WorkerController::class, 'wages'])->name('workers.wages');
-    Route::post('workers/{worker}/wages', [WorkerController::class, 'storeWage'])->name('workers.wages.store');
-    Route::put('workers/{worker}/wages/{wage}', [WorkerController::class, 'updateWage'])->name('workers.wages.update');
-    Route::get('workers/{worker}/tasks', [WorkerController::class, 'tasks'])->name('workers.tasks');
-    Route::post('workers/{worker}/terminate', [WorkerController::class, 'terminate'])->name('workers.terminate');
+    Route::resource('staff', StaffController::class);
+    Route::get('staff/{staff}/attendance', [StaffController::class, 'attendance'])->name('staff.attendance');
+    Route::post('staff/{staff}/attendance', [StaffController::class, 'storeAttendance'])->name('staff.attendance.store');
+    Route::get('staff/{staff}/wages', [StaffController::class, 'wages'])->name('staff.wages');
+    Route::post('staff/{staff}/wages', [StaffController::class, 'storeWage'])->name('staff.wages.store');
+    Route::put('staff/{staff}/wages/{wage}', [StaffController::class, 'updateWage'])->name('staff.wages.update');
+    Route::get('staff/{staff}/tasks', [StaffController::class, 'tasks'])->name('staff.tasks');
+    Route::post('staff/{staff}/terminate', [StaffController::class, 'terminate'])->name('staff.terminate');
+});
+
+// Yield Analysis Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('yield_estimations/dashboard', [YieldEstimationController::class, 'dashboard'])->name('yield_estimations.dashboard');
+    Route::get('yield_estimations/statistics', [YieldEstimationController::class, 'statistics'])->name('yield_estimations.statistics');
+    Route::resource('yield_estimations', YieldEstimationController::class);
 });
 
 require __DIR__.'/auth.php';

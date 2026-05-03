@@ -71,45 +71,60 @@
                             <a href="{{ route('crop_analyses.index') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
                                 <i class="fas fa-search w-5"></i>Disease Detection
                             </a>
-                        </div>
-                    </div>
+                     </div>
+                </div>
 
-                    <div class="relative group">
-                        <button class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('revenues.*') || request()->routeIs('expenses.*') || request()->routeIs('reports.*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200' : 'text-gray-600 hover:bg-gray-100 hover:text-emerald-600' }}">
-                            <i class="fas fa-chart-line mr-2"></i>Finance
-                            <i class="fas fa-chevron-down text-xs ml-1 transition-transform group-hover:rotate-180"></i>
-                        </button>
-                        <div class="hidden group-hover:block absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                            <a href="{{ route('revenues.index') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
-                                <i class="fas fa-dollar-sign w-5"></i>Income / Sales
-                            </a>
-                            <a href="{{ route('expenses.index') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
-                                <i class="fas fa-receipt w-5"></i>Expenses
-                            </a>
-                            <a href="{{ route('expenses.summary') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
-                                <i class="fas fa-chart-pie w-5"></i>Profit & Loss
-                            </a>
-                            <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
-                                <i class="fas fa-file-alt w-5"></i>Reports
-                            </a>
-                        </div>
+                <!-- Analytics -->
+                <div class="relative group">
+                    <button class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('reports.*') || request()->routeIs('yield_estimations.*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200' : 'text-gray-600 hover:bg-gray-100 hover:text-emerald-600' }}">
+                        <i class="fas fa-chart-line mr-2"></i>Analytics
+                        <i class="fas fa-chevron-down text-xs ml-1 transition-transform group-hover:rotate-180"></i>
+                    </button>
+                    <div class="hidden group-hover:block absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                        <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <i class="fas fa-file-alt w-5"></i>Reports
+                        </a>
+                        <a href="{{ route('yield_estimations.dashboard') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <i class="fas fa-chart-pie w-5"></i>Yield Analysis
+                        </a>
                     </div>
+                </div>
 
-                    <a href="{{ route('workers.index') }}"
-                       class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('workers.*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200' : 'text-gray-600 hover:bg-gray-100 hover:text-emerald-600' }}">
-                        <i class="fas fa-users mr-2"></i>Team
-                    </a>
+                <!-- Finance -->
+                <div class="relative group">
+                    <button class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('revenues.*') || request()->routeIs('expenses.*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200' : 'text-gray-600 hover:bg-gray-100 hover:text-emerald-600' }}">
+                        <i class="fas fa-chart-line mr-2"></i>Finance
+                        <i class="fas fa-chevron-down text-xs ml-1 transition-transform group-hover:rotate-180"></i>
+                    </button>
+                    <div class="hidden group-hover:block absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                        <a href="{{ route('revenues.index') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <i class="fas fa-dollar-sign w-5"></i>Income / Sales
+                        </a>
+                        <a href="{{ route('expenses.index') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <i class="fas fa-receipt w-5"></i>Expenses
+                        </a>
+                        <a href="{{ route('expenses.summary') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
+                            <i class="fas fa-chart-pie w-5"></i>Profit & Loss
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team (Staff) -->
+                <a href="{{ route('staff.index') }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('staff.*') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200' : 'text-gray-600 hover:bg-gray-100 hover:text-emerald-600' }}">
+                    <i class="fas fa-users mr-2"></i>Team
+                </a>
                 </div>
 
                 <!-- User + Mobile Toggle -->
                 <div class="flex items-center space-x-3">
                     <!-- User -->
-                    <div class="hidden md:flex items-center gap-2">
+                    <a href="{{ route('profile.edit') }}" class="hidden md:flex items-center gap-2 hover:bg-emerald-50 px-2 py-1 rounded-lg transition">
                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
                             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                         </div>
                         <span class="text-sm text-gray-700 hidden lg:block">{{ Auth::user()->name ?? 'User' }}</span>
-                    </div>
+                    </a>
 
                     <!-- Logout -->
                     <form method="POST" action="{{ route('logout') }}" class="hidden md:block">
@@ -143,11 +158,20 @@
             <a href="{{ route('crop_cycles.index') }}" class="flex items-center gap-2 px-4 py-3 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg">
                 <i class="fas fa-seedling"></i>Crops
             </a>
+            <a href="{{ route('yield_estimations.dashboard') }}" class="flex items-center gap-2 px-4 py-3 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg">
+                <i class="fas fa-chart-pie"></i>Yield Analysis
+            </a>
+            <a href="{{ route('reports.index') }}" class="flex items-center gap-2 px-4 py-3 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg">
+                <i class="fas fa-file-alt"></i>Reports
+            </a>
             <a href="{{ route('revenues.index') }}" class="flex items-center gap-2 px-4 py-3 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg">
                 <i class="fas fa-chart-line"></i>Finance
             </a>
-            <a href="{{ route('workers.index') }}" class="flex items-center gap-2 px-4 py-3 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg">
+            <a href="{{ route('staff.index') }}" class="flex items-center gap-2 px-4 py-3 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg">
                 <i class="fas fa-users"></i>Team
+            </a>
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-3 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg">
+                <i class="fas fa-user-circle"></i>My Profile
             </a>
             <div class="border-t border-gray-200 pt-2 mt-2">
                 <p class="text-sm text-gray-500 px-4 mb-2">{{ Auth::user()->name ?? 'User' }}</p>

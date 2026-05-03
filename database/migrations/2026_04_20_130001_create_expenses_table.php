@@ -19,7 +19,10 @@ return new class extends Migration
             $table->string('category');
             $table->string('payment_method')->nullable();
             $table->string('receipt_number')->nullable();
-            $table->foreignId('worker_id')->nullable()->constrained()->onDelete('set null');
+          $table->foreignId('staff_id')
+      ->nullable()
+      ->constrained('staff')
+      ->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();
 

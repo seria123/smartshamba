@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('worker_attendances', function (Blueprint $table) {
+        Schema::create('staff_attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('worker_id')->constrained()->onDelete('cascade');
+            $table->foreignId('staff_id')->constrained()->onDelete('cascade');
             $table->date('date');
             $table->time('clock_in')->nullable();
             $table->time('clock_out')->nullable();
@@ -19,13 +19,13 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->index(['worker_id', 'date']);
-            $table->unique(['worker_id', 'date']);
+            $table->index(['staff_id', 'date']);
+            $table->unique(['staff_id', 'date']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('worker_attendances');
+        Schema::dropIfExists('staff_attendances');
     }
 };

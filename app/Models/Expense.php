@@ -20,7 +20,7 @@ class Expense extends Model
         'category',
         'payment_method',
         'receipt_number',
-        'worker_id',
+        'staff_id',
         'notes',
     ];
 
@@ -67,9 +67,9 @@ class Expense extends Model
         return $this->belongsTo(Crop::class);
     }
 
-    public function worker(): BelongsTo
+    public function staff(): BelongsTo
     {
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Staff::class);
     }
 
     public function getTypeLabelAttribute(): string

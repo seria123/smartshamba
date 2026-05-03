@@ -7,10 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">
-                        Attendance: {{ $worker->fullName() }}
+                        Attendance: {{ $staff->fullName() }}
                     </h4>
                     <div class="btn-group">
-                        <a href="{{ route('workers.show', $worker) }}" class="btn btn-outline-secondary">
+                        <a href="{{ route('staff.show', $staff) }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-2"></i> Back
                         </a>
                     </div>
@@ -127,7 +127,7 @@
                 <h5 class="modal-title">Record Attendance</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('workers.attendance.store', $worker) }}" method="POST">
+            <form action="{{ route('staff.attendance.store', $staff) }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

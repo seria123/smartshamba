@@ -36,7 +36,7 @@
 
             @auth
                 @if (!auth()->user()->farm)
-                    <a href="{{ route('farms.onboarding') }}"
+                    <a href="{{ route('farms.create') }}"
                        class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded bg-yellow-600 text-white hover:bg-yellow-700">
                         <i class="fas fa-seedling w-5"></i>
                         <span>Complete Setup</span>
@@ -138,8 +138,8 @@
                 <i class="fas fa-chart-line w-5"></i>
                 <span>Reports</span>
             </a>
-            <a href="#"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded opacity-50 cursor-not-allowed">
+            <a href="{{ route('yield_estimations.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('yield_estimations.*') ? 'bg-green-700 text-yellow-300' : '' }}">
                 <i class="fas fa-chart-pie w-5"></i>
                 <span>Yield Analysis</span>
             </a>
@@ -147,17 +147,18 @@
 
     </nav>
 
-    <!-- User Info -->
-    <div class="p-4 border-t border-green-700">
-        <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium truncate">{{ Auth::user()->name ?? 'User' }}</p>
-                <p class="text-xs text-green-300 truncate">{{ Auth::user()->role ?? 'farmer' }}</p>
-            </div>
-        </div>
-    </div>
+     <!-- User Info -->
+     <div class="p-4 border-t border-green-700">
+         <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 hover:bg-green-700 p-2 rounded transition">
+             <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                 {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+             </div>
+             <div class="flex-1 min-w-0">
+                 <p class="text-sm font-medium truncate">{{ Auth::user()->name ?? 'User' }}</p>
+                 <p class="text-xs text-green-300 truncate">{{ Auth::user()->role ?? 'farmer' }}</p>
+             </div>
+             <i class="fas fa-user-circle text-green-300"></i>
+         </a>
+     </div>
 
 </aside>

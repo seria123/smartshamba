@@ -118,34 +118,16 @@ class CropAnalysisService extends BaseAnalysisService
      * Normalize Plant.id response structure and enrich with AI recommendation.
      */
     protected function normalizeAndEnrich(array $data): array
-    {
-        $diseaseName = $data['disease_name']
-            ?? $data['result']['disease']['name']
-            ?? $data['result']['classification']['suggestion']
-            ?? 'Unknown disease';
+{
+    // ✅ Trust the already formatted PlantIdService response
+    $data['disease_name'] = $data['disease_name'] ?? 'Unknown disease';
+    $data['severity'] = $data['severity'] ?? 'medium';
+    $data['confidence'] = $data['confidence'] ?? 0;
+    $data['description'] = $data['description'] ?? '';
 
-        $severity = $data['severity']
-            ?? $data['result']['severity']
-            ?? 'medium';
-
-        $confidence = $data['confidence']
-            ?? $data['result']['score']
-            ?? 0;
-
-        $description = $data['description']
-            ?? $data['result']['disease']['description']
-            ?? '';
-
-        $data['disease_name'] = $diseaseName;
-        $data['severity'] = $severity;
-        $data['confidence'] = $confidence;
-        $data['description'] = $description;
-
-        $data = $this->enrich($data);
-
-        return $data;
-    }
-
+    // 🚀 Add recommendation
+    return $this->enrich($data);
+}
     /**
      * Enrich result with AI-generated recommendation.
      */

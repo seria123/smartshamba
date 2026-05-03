@@ -3,21 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Farm;
-use App\Models\Worker;
-use App\Models\WorkerAttendance;
-use App\Models\WorkerWage;
+use App\Models\Staff;
+use App\Models\StaffAttendance;
+use App\Models\StaffWage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class WorkerController extends Controller
+class StaffController extends Controller
 {
     /**
-     * Display a listing of workers.
+     * Display a listing of staff.
      */
     public function index(Request $request): View
     {
-        $query = Worker::with(['farm']);
+        $query = Staff::with(['farm']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -41,47 +41,47 @@ class WorkerController extends Controller
             $query->where('farm_id', $request->farm_id);
         }
 
-        $workers = $query->orderBy('first_name', 'asc')->paginate(15);
+        $staff = $query->orderBy('first_name', 'asc')->paginate(15);
         $farms = Farm::all();
 
-        return view('workers.index', compact('workers', 'farms'));
+        return view('staff.index', compact('staff', 'farms'));
     }
 
     /**
-     * Show the form for creating a new worker.
+     * Show the form for creating a new staff.
      */
     public function create(): View
     {
         $farms = Farm::all();
 
         $roles = [
-            Worker::ROLE_GENERAL_WORKER => 'General Worker',
-            Worker::ROLE_SUPERVISOR => 'Supervisor',
-            Worker::ROLE_TECHNICIAN => 'Technician',
-            Worker::ROLE_DRIVER => 'Driver',
-            Worker::ROLE_HARVESTER => 'Harvester',
-            Worker::ROLE_PLANTING => 'Planting',
-            Worker::ROLE_IRRIGATION => 'Irrigation',
+            Staff::ROLE_GENERAL_WORKER => 'General Worker',
+            Staff::ROLE_SUPERVISOR => 'Supervisor',
+            Staff::ROLE_TECHNICIAN => 'Technician',
+            Staff::ROLE_DRIVER => 'Driver',
+            Staff::ROLE_HARVESTER => 'Harvester',
+            Staff::ROLE_PLANTING => 'Planting',
+            Staff::ROLE_IRRIGATION => 'Irrigation',
         ];
 
         $paymentTypes = [
-            Worker::PAYMENT_DAILY => 'Daily',
-            Worker::PAYMENT_WEEKLY => 'Weekly',
-            Worker::PAYMENT_MONTHLY => 'Monthly',
-            Worker::PAYMENT_PIECE_RATE => 'Piece Rate',
+            Staff::PAYMENT_DAILY => 'Daily',
+            Staff::PAYMENT_WEEKLY => 'Weekly',
+            Staff::PAYMENT_MONTHLY => 'Monthly',
+            Staff::PAYMENT_PIECE_RATE => 'Piece Rate',
         ];
 
         $statuses = [
-            Worker::STATUS_ACTIVE => 'Active',
-            Worker::STATUS_INACTIVE => 'Inactive',
-            Worker::STATUS_TERMINATED => 'Terminated',
+            Staff::STATUS_ACTIVE => 'Active',
+            Staff::STATUS_INACTIVE => 'Inactive',
+            Staff::STATUS_TERMINATED => 'Terminated',
         ];
 
-        return view('workers.create', compact('farms', 'roles', 'paymentTypes', 'statuses'));
+        return view('staff.create', compact('farms', 'roles', 'paymentTypes', 'statuses'));
     }
 
     /**
-     * Store a newly created worker in storage.
+     * Store a newly created staff in storage.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -90,7 +90,7 @@ class WorkerController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'national_id' => 'required|string|max:100|unique:workers,national_id',
+            'national_id' => 'required|string|max:100|unique:staff,national_id',
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|string|max:50',
             'role' => 'required|string',
@@ -105,18 +105,18 @@ class WorkerController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        Worker::create($validated);
+        Staff::create($validated);
 
-        return redirect()->route('workers.index')
-            ->with('success', 'Worker created successfully.');
+        return redirect()->route('staff.index')
+            ->with('success', 'Staff member created successfully.');
     }
 
     /**
-     * Display the specified worker.
+     * Display the specified staff.
      */
-    public function show(Worker $worker): View
+    public function show(Staff $staff): View
     {
-        $worker->load([
+        $staff->load([
             'farm',
             'attendances' => function ($query) {
                 $query->orderBy('date', 'desc')->limit(10);
@@ -129,53 +129,53 @@ class WorkerController extends Controller
             },
         ]);
 
-        return view('workers.show', compact('worker'));
+        return view('staff.show', compact('staff'));
     }
 
     /**
-     * Show the form for editing the specified worker.
+     * Show the form for editing the specified staff.
      */
-    public function edit(Worker $worker): View
+    public function edit(Staff $staff): View
     {
         $farms = Farm::all();
 
         $roles = [
-            Worker::ROLE_GENERAL_WORKER => 'General Worker',
-            Worker::ROLE_SUPERVISOR => 'Supervisor',
-            Worker::ROLE_TECHNICIAN => 'Technician',
-            Worker::ROLE_DRIVER => 'Driver',
-            Worker::ROLE_HARVESTER => 'Harvester',
-            Worker::ROLE_PLANTING => 'Planting',
-            Worker::ROLE_IRRIGATION => 'Irrigation',
+            Staff::ROLE_GENERAL_WORKER => 'General Worker',
+            Staff::ROLE_SUPERVISOR => 'Supervisor',
+            Staff::ROLE_TECHNICIAN => 'Technician',
+            Staff::ROLE_DRIVER => 'Driver',
+            Staff::ROLE_HARVESTER => 'Harvester',
+            Staff::ROLE_PLANTING => 'Planting',
+            Staff::ROLE_IRRIGATION => 'Irrigation',
         ];
 
         $paymentTypes = [
-            Worker::PAYMENT_DAILY => 'Daily',
-            Worker::PAYMENT_WEEKLY => 'Weekly',
-            Worker::PAYMENT_MONTHLY => 'Monthly',
-            Worker::PAYMENT_PIECE_RATE => 'Piece Rate',
+            Staff::PAYMENT_DAILY => 'Daily',
+            Staff::PAYMENT_WEEKLY => 'Weekly',
+            Staff::PAYMENT_MONTHLY => 'Monthly',
+            Staff::PAYMENT_PIECE_RATE => 'Piece Rate',
         ];
 
         $statuses = [
-            Worker::STATUS_ACTIVE => 'Active',
-            Worker::STATUS_INACTIVE => 'Inactive',
-            Worker::STATUS_TERMINATED => 'Terminated',
+            Staff::STATUS_ACTIVE => 'Active',
+            Staff::STATUS_INACTIVE => 'Inactive',
+            Staff::STATUS_TERMINATED => 'Terminated',
         ];
 
-        return view('workers.edit', compact('worker', 'farms', 'roles', 'paymentTypes', 'statuses'));
+        return view('staff.edit', compact('staff', 'farms', 'roles', 'paymentTypes', 'statuses'));
     }
 
     /**
-     * Update the specified worker in storage.
+     * Update the specified staff in storage.
      */
-    public function update(Request $request, Worker $worker): RedirectResponse
+    public function update(Request $request, Staff $staff): RedirectResponse
     {
         $validated = $request->validate([
             'farm_id' => 'required|exists:farms,id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'national_id' => 'required|string|max:100|unique:workers,national_id,'.$worker->id,
+            'national_id' => 'required|string|max:100|unique:staff,national_id,'.$staff->id,
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|string|max:50',
             'role' => 'required|string',
@@ -190,39 +190,39 @@ class WorkerController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $worker->update($validated);
+        $staff->update($validated);
 
-        return redirect()->route('workers.show', $worker)
-            ->with('success', 'Worker updated successfully.');
+        return redirect()->route('staff.show', $staff)
+            ->with('success', 'Staff member updated successfully.');
     }
 
     /**
-     * Remove the specified worker from storage.
+     * Remove the specified staff from storage.
      */
-    public function destroy(Worker $worker): RedirectResponse
+    public function destroy(Staff $staff): RedirectResponse
     {
-        $worker->delete();
+        $staff->delete();
 
-        return redirect()->route('workers.index')
-            ->with('success', 'Worker deleted successfully.');
+        return redirect()->route('staff.index')
+            ->with('success', 'Staff member deleted successfully.');
     }
 
     /**
-     * Show worker attendance management page.
+     * Show staff attendance management page.
      */
-    public function attendance(Worker $worker): View
+    public function attendance(Staff $staff): View
     {
-        $worker->load(['farm', 'attendances' => function ($query) {
+        $staff->load(['farm', 'attendances' => function ($query) {
             $query->orderBy('date', 'desc')->paginate(30);
         }]);
 
-        return view('workers.attendance', compact('worker'));
+        return view('staff.attendance', compact('staff'));
     }
 
     /**
-     * Store attendance record for a worker.
+     * Store attendance record for a staff.
      */
-    public function storeAttendance(Request $request, Worker $worker): RedirectResponse
+    public function storeAttendance(Request $request, Staff $staff): RedirectResponse
     {
         $validated = $request->validate([
             'date' => 'required|date',
@@ -231,9 +231,9 @@ class WorkerController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $attendance = WorkerAttendance::firstOrCreate(
+        $attendance = StaffAttendance::firstOrCreate(
             [
-                'worker_id' => $worker->id,
+                'staff_id' => $staff->id,
                 'date' => $validated['date'],
             ],
             [
@@ -247,21 +247,21 @@ class WorkerController extends Controller
     }
 
     /**
-     * Show worker wages page.
+     * Show staff wages page.
      */
-    public function wages(Worker $worker): View
+    public function wages(Staff $staff): View
     {
-        $worker->load(['farm', 'wages' => function ($query) {
+        $staff->load(['farm', 'wages' => function ($query) {
             $query->orderBy('payment_date', 'desc')->paginate(20);
         }]);
 
-        return view('workers.wages', compact('worker'));
+        return view('staff.wages', compact('staff'));
     }
 
     /**
-     * Store wage payment for a worker.
+     * Store wage payment for a staff.
      */
-    public function storeWage(Request $request, Worker $worker): RedirectResponse
+    public function storeWage(Request $request, Staff $staff): RedirectResponse
     {
         $validated = $request->validate([
             'payment_date' => 'required|date',
@@ -271,9 +271,9 @@ class WorkerController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        WorkerWage::create([
-            'worker_id' => $worker->id,
-            'farm_id' => $worker->farm_id,
+        StaffWage::create([
+            'staff_id' => $staff->id,
+            'farm_id' => $staff->farm_id,
             'payment_date' => $validated['payment_date'],
             'amount' => $validated['amount'],
             'payment_method' => $validated['payment_method'],
@@ -285,9 +285,9 @@ class WorkerController extends Controller
     }
 
     /**
-     * Update wage payment for a worker.
+     * Update wage payment for a staff.
      */
-    public function updateWage(Request $request, WorkerWage $wage): RedirectResponse
+    public function updateWage(Request $request, StaffWage $wage): RedirectResponse
     {
         $this->authorize('update', $wage);
 
@@ -301,36 +301,36 @@ class WorkerController extends Controller
 
         $wage->update($validated);
 
-        return redirect()->route('workers.wages', $wage->worker)
+        return redirect()->route('staff.wages', $wage->staff)
             ->with('success', 'Wage payment updated successfully.');
     }
 
     /**
-     * Show worker tasks page.
+     * Show staff tasks page.
      */
-    public function tasks(Worker $worker): View
+    public function tasks(Staff $staff): View
     {
-        $worker->load([
+        $staff->load([
             'farm',
             'tasks' => function ($query) {
                 $query->orderBy('scheduled_date', 'desc')->paginate(20);
             },
         ]);
 
-        return view('workers.tasks', compact('worker'));
+        return view('staff.tasks', compact('staff'));
     }
 
     /**
-     * Terminate a worker (admin only).
+     * Terminate a staff member (admin only).
      */
-    public function terminate(Worker $worker): RedirectResponse
+    public function terminate(Staff $staff): RedirectResponse
     {
-        $worker->update([
-            'status' => Worker::STATUS_TERMINATED,
+        $staff->update([
+            'status' => Staff::STATUS_TERMINATED,
             'termination_date' => now(),
         ]);
 
-        return redirect()->route('workers.index')
-            ->with('success', 'Worker terminated successfully.');
+        return redirect()->route('staff.index')
+            ->with('success', 'Staff member terminated successfully.');
     }
 }

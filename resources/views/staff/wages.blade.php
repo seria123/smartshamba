@@ -7,10 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">
-                        Wages: {{ $worker->fullName() }}
+                        Wages: {{ $staff->fullName() }}
                     </h4>
                     <div class="btn-group">
-                        <a href="{{ route('workers.show', $worker) }}" class="btn btn-outline-secondary">
+                        <a href="{{ route('staff.show', $staff) }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-2"></i> Back
                         </a>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createWageModal">
@@ -18,24 +18,24 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h5 class="text-muted mb-2">Daily Wage</h5>
-                                    <h3 class="text-success mb-0">{{ number_format($worker->daily_wage, 2) }}</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h5 class="text-muted mb-2">Payment Type</h5>
-                                    <h3 class="mb-0">{{ ucfirst($worker->payment_type) }}</h3>
-                                </div>
-                            </div>
-                        </div>
+<div class="card-body">
+                     <div class="row mb-4">
+                         <div class="col-md-4">
+                             <div class="card">
+                                 <div class="card-body text-center">
+                                     <h5 class="text-muted mb-2">Daily Wage</h5>
+                                     <h3 class="text-success mb-0">{{ number_format($staff->daily_wage, 2) }}</h3>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="col-md-4">
+                             <div class="card">
+                                 <div class="card-body text-center">
+                                     <h5 class="text-muted mb-2">Payment Type</h5>
+                                     <h3 class="mb-0">{{ ucfirst($staff->payment_type) }}</h3>
+                                 </div>
+                             </div>
+                         </div>
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body text-center">
@@ -100,7 +100,7 @@
                                                 <h5 class="modal-title">Mark Wage as Paid</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                             </div>
-                                            <form action="{{ route('workers.wages.update', $wage) }}" method="POST">
+                                            <form action="{{ route('staff.wages.update', $wage) }}" method="POST">
                                                 @csrf
                                                 @method('PATCH')
                                                 <input type="hidden" name="status" value="paid">
@@ -150,7 +150,7 @@
                 <h5 class="modal-title">Create Wage Record</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('workers.wages.store', $worker) }}" method="POST">
+            <form action="{{ route('staff.wages.store', $staff) }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <p class="text-muted">Create a wage record based on attendance for a specific period.</p>

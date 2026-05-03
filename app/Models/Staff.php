@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Worker extends Model
+class Staff extends Model
 {
     use HasFactory;
+
+    protected $table = 'staff';
 
     protected $fillable = [
         'farm_id',
@@ -73,12 +75,12 @@ class Worker extends Model
 
     public function attendances(): HasMany
     {
-        return $this->hasMany(WorkerAttendance::class);
+        return $this->hasMany(StaffAttendance::class);
     }
 
     public function wages(): HasMany
     {
-        return $this->hasMany(WorkerWage::class);
+        return $this->hasMany(StaffWage::class);
     }
 
     public function tasks(): HasMany
@@ -96,7 +98,7 @@ class Worker extends Model
         return $this->status === self::STATUS_ACTIVE;
     }
 
-    public function getTodayAttendance(): ?WorkerAttendance
+    public function getTodayAttendance(): ?StaffAttendance
     {
         return $this->attendances()
             ->whereDate('date', now()->toDateString())
@@ -115,7 +117,7 @@ class Worker extends Model
         return (float) $this->attendances()
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
-            ->where('status', WorkerAttendance::STATUS_PRESENT)
+            ->where('status', StaffAttendance::STATUS_PRESENT)
             ->sum('hours_worked');
     }
 

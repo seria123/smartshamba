@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WorkerAttendance extends Model
+class StaffAttendance extends Model
 {
     use HasFactory;
 
-    protected $table = 'worker_attendances';
+    protected $table = 'staff_attendances';
 
     protected $fillable = [
-        'worker_id',
+        'staff_id',
         'date',
         'clock_in',
         'clock_out',
@@ -39,9 +39,9 @@ class WorkerAttendance extends Model
 
     const STATUS_ON_LEAVE = 'on_leave';
 
-    public function worker(): BelongsTo
+    public function staff(): BelongsTo
     {
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Staff::class);
     }
 
     public function calculateHoursWorked(): void

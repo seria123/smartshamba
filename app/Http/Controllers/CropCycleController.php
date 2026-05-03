@@ -110,10 +110,10 @@ class CropCycleController extends Controller
         $fields = \App\Models\Field::all();
         $crops = \App\Models\Crop::all();
         $cropCycles = \App\Models\CropCycle::where('id', '!=', $cropCycle->id)->whereHas('harvests')->get();
-        $workers = \App\Models\Worker::all();
-        $cropCycle->load(['stages', 'inputs', 'activities']);
+$staff = \App\Models\Staff::all();
+         $cropCycle->load(['stages', 'inputs', 'activities']);
 
-        return view('crop_cycles.edit', compact('cropCycle', 'farms', 'fields', 'crops', 'cropCycles', 'workers'));
+         return view('crop_cycles.edit', compact('cropCycle', 'farms', 'fields', 'crops', 'cropCycles', 'staff'));
     }
 
     /**

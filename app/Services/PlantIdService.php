@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\Log;
 
 class PlantIdService
@@ -17,75 +18,107 @@ class PlantIdService
     }
 
     public function analyzePlantHealth(UploadedFile $image): array
-    {
-        if (empty($this->apiKey)) {
-            Log::warning('Plant.id API key not configured');
-            return $this->fallback();
-        }
-
-        try {
-            $base64 = base64_encode(file_get_contents($image->getRealPath()));
-            
-            Log::info('Plant.id request', [
-                'file_size' => $image->getSize(),
-                'mime_type' => $image->getMimeType(),
-            ]);
-
-            $response = Http::timeout(60)
-                ->withHeaders([
-                    'Api-Key' => $this->apiKey,
-                    'Content-Type' => 'application/json',
-                ])
-                ->post($this->apiUrl, [
-                    'images' => [$base64],
-                    'health' => 'all',
-                    'disease_model' => 'full',
-                    'classification_level' => 'species',
-                ]);
-
-            if (!$response->successful()) {
-                Log::error('Plant.id error', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                ]);
-                return $this->fallback();
-            }
-            
-            Log::info('Plant.id response received', [
-                'status' => $response->status(),
-            ]);
-            
-            return $this->format($response->json());
-        } catch (\Throwable $e) {
-            Log::error('Plant.id exception: '.$e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return $this->fallback();
-        }
+{
+    if (empty($this->apiKey)) {
+        Log::warning('Plant.id API key not configured');
+        return $this->fallback();
     }
+
+    try {
+        // 🔥 Compress + resize image BEFORE encoding
+        $imageResized = Image::make($image->getRealPath())
+            ->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })
+            ->encode('jpg', 70);
+
+        // Convert to base64 AFTER compression
+        $base64 = base64_encode($imageResized);
+
+        Log::info('Plant.id request prepared', [
+            'original_size' => $image->getSize(),
+            'mime_type' => $image->getMimeType(),
+            'compressed_size' => strlen($base64),
+        ]);
+
+        // 🚀 API request
+        $response = Http::timeout(60)
+            ->withHeaders([
+                'Api-Key' => $this->apiKey,
+                'Content-Type' => 'application/json',
+            ])
+            ->post($this->apiUrl, [
+    'images' => [$base64],
+    'similar_images' => true, // 🔥 IMPORTANT
+    'health' => [
+        'disease' => true,
+    ],
+]);
+
+
+        // ❌ Handle API failure clearly
+        if (!$response->successful()) {
+            Log::error('Plant.id API error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return $this->fallback();
+        }
+
+        Log::info('Plant.id response received', [
+            'status' => $response->status(),
+        ]);
+
+        return $this->format($response->json());
+
+    } catch (\Throwable $e) {
+        Log::error('Plant.id exception: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return $this->fallback();
+    }
+}
 
     protected function format(array $data): array
-    {
-        $disease = data_get($data, 'result.disease.suggestions.0')
-            ?? data_get($data, 'health_assessment.diseases.0')
-            ?? data_get($data, 'result.disease')
-            ?? data_get($data, 'disease')
-            ?? null;
-        if (!$disease) {
-            return $this->fallback();
-        }
-        $name = $disease['name'] ?? $disease['species'] ?? 'Unknown condition';
-        $description = $this->getDescriptionFromEntity($disease);
-        $severityRaw = $this->mapSeverityFromEntity($disease);
-        $confidence = $disease['probability'] ?? 0;
-        return [
-            'disease_name' => $name,
-            'description' => $description,
-            'severity' => $this->mapSeverity($severityRaw),
-            'confidence' => $confidence * 100,
-            'detected_issues' => [['type' => 'plant_disease']],
-        ];
+{
+    // 🔍 Try ALL known Plant.id response paths
+    $disease = data_get($data, 'result.disease.suggestions.0')
+        ?? data_get($data, 'result.health_assessment.diseases.0')
+        ?? data_get($data, 'health_assessment.diseases.0')
+        ?? data_get($data, 'result.diseases.0')
+        ?? data_get($data, 'result.is_plant.health_assessment.diseases.0')
+        ?? null;
+
+    // 🧨 Debug safety (remove later)
+    if (!$disease) {
+        Log::warning('No disease found in API response', $data);
+        return $this->fallback();
     }
+
+    $name = $disease['name']
+        ?? $disease['species']
+        ?? $disease['disease']['name']
+        ?? 'Unknown condition';
+
+    $description = $this->getDescriptionFromEntity($disease);
+
+    $severityRaw = $this->mapSeverityFromEntity($disease);
+
+    $confidence = $disease['probability']
+        ?? $disease['score']
+        ?? 0;
+
+    return [
+        'disease_name' => $name,
+        'description' => $description,
+        'severity' => $this->mapSeverity($severityRaw),
+        'confidence' => $confidence * 100,
+        'detected_issues' => [['type' => 'plant_disease']],
+    ];
+}
 
     protected function getDescriptionFromEntity(array $disease): string
     {

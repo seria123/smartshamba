@@ -281,9 +281,9 @@ class CropCycleResource extends Resource
                                                 'contract' => 'Contract',
                                                 'other' => 'Other',
                                             ]),
-                                        Forms\Components\Select::make('worker_id')
-                                            ->label('Worker')
-                                            ->relationship('worker', 'fullName')
+                                        Forms\Components\Select::make('staff_id')
+                                            ->label('Staff')
+                                            ->relationship('staff', 'fullName')
                                             ->searchable()
                                             ->preload(),
                                     ])

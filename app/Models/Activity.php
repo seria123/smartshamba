@@ -15,7 +15,7 @@ class Activity extends Model
         'description',
         'cost',
         'activity_date',
-        'worker_id',
+        'staff_id',
         'labor_type',
     ];
 
@@ -40,12 +40,12 @@ class Activity extends Model
         return $this->belongsTo(CropCycle::class);
     }
 
-    /**
-     * Get the worker that performed the activity.
-     */
-    public function worker(): BelongsTo
+/**
+      * Get the staff member that performed the activity.
+      */
+    public function staff(): BelongsTo
     {
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Staff::class);
     }
 
     /**

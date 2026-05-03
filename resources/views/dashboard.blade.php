@@ -7,7 +7,7 @@
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
                 <h3 class="text-lg font-semibold text-blue-800 mb-2">Complete Your Farm Setup</h3>
                 <p class="text-blue-600 mb-4">Set up your farm profile to get started with SmartShamba.</p>
-                <a href="{{ route('farms.onboarding') }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <a href="{{ route('farms.create') }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                     Set Up Farm
                 </a>
             </div>

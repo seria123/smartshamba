@@ -6,69 +6,69 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0">Worker Details</h5>
+                    <h5 class="mb-0">Staff Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
                         <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
                             <i class="fas fa-user fa-3x text-white"></i>
                         </div>
-                        <h4 class="mt-3 mb-0">{{ $worker->fullName() }}</h4>
-                        <span class="badge bg-{{ $worker->status === 'active' ? 'success' : ($worker->status === 'inactive' ? 'warning' : 'secondary') }} mt-2">
-                            {{ ucfirst($worker->status) }}
+                        <h4 class="mt-3 mb-0">{{ $staff->fullName() }}</h4>
+                        <span class="badge bg-{{ $staff->status === 'active' ? 'success' : ($staff->status === 'inactive' ? 'warning' : 'secondary') }} mt-2">
+                            {{ ucfirst($staff->status) }}
                         </span>
                     </div>
 
                     <div class="list-group list-group-flush">
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Role</span>
-                            <span class="fw-semibold">{{ ucfirst(str_replace('_', ' ', $worker->role)) }}</span>
+                            <span class="fw-semibold">{{ ucfirst(str_replace('_', ' ', $staff->role)) }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Phone</span>
-                            <span>{{ $worker->phone ?? 'N/A' }}</span>
+                            <span>{{ $staff->phone ?? 'N/A' }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">National ID</span>
-                            <span>{{ $worker->national_id ?? 'N/A' }}</span>
+                            <span>{{ $staff->national_id ?? 'N/A' }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Daily Wage</span>
-                            <span class="fw-semibold text-success">{{ number_format($worker->daily_wage, 2) }}</span>
+                            <span class="fw-semibold text-success">{{ number_format($staff->daily_wage, 2) }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Payment Type</span>
-                            <span>{{ ucfirst($worker->payment_type) }}</span>
+                            <span>{{ ucfirst($staff->payment_type) }}</span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Hire Date</span>
-                            <span>{{ $worker->hire_date->format('M d, Y') }}</span>
+                            <span>{{ $staff->hire_date->format('M d, Y') }}</span>
                         </div>
-                        @if($worker->termination_date)
+                        @if($staff->termination_date)
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Termination Date</span>
-                            <span>{{ $worker->termination_date->format('M d, Y') }}</span>
+                            <span>{{ $staff->termination_date->format('M d, Y') }}</span>
                         </div>
                         @endif
-                        @if($worker->emergency_contact)
+                        @if($staff->emergency_contact)
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Emergency Contact</span>
-                            <span>{{ $worker->emergency_contact }} ({{ $worker->emergency_phone ?? 'N/A' }})</span>
+                            <span>{{ $staff->emergency_contact }} ({{ $staff->emergency_phone ?? 'N/A' }})</span>
                         </div>
                         @endif
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
-                        <a href="{{ route('workers.edit', $worker) }}" class="btn btn-primary">
-                            <i class="fas fa-edit me-2"></i> Edit Worker
+                        <a href="{{ route('staff.edit', $staff) }}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i> Edit Staff
                         </a>
-                        <a href="{{ route('workers.attendance', $worker) }}" class="btn btn-info text-white">
+                        <a href="{{ route('staff.attendance', $staff) }}" class="btn btn-info text-white">
                             <i class="fas fa-calendar-check me-2"></i> View Attendance
                         </a>
-                        <a href="{{ route('workers.wages', $worker) }}" class="btn btn-success">
+                        <a href="{{ route('staff.wages', $staff) }}" class="btn btn-success">
                             <i class="fas fa-dollar-sign me-2"></i> View Wages
                         </a>
-                        <a href="{{ route('workers.tasks', $worker) }}" class="btn btn-warning">
+                        <a href="{{ route('staff.tasks', $staff) }}" class="btn btn-warning">
                             <i class="fas fa-tasks me-2"></i> Assigned Tasks
                         </a>
                     </div>
@@ -82,7 +82,7 @@
                     <h5 class="mb-0">Recent Attendance</h5>
                 </div>
                 <div class="card-body">
-                    @if($worker->attendances->count() > 0)
+                    @if($staff->attendances->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-sm">
                             <thead>
@@ -95,7 +95,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($worker->attendances->take(10) as $attendance)
+                                @foreach($staff->attendances->take(10) as $attendance)
                                 <tr>
                                     <td>{{ $attendance->date->format('M d, Y') }}</td>
                                     <td>
@@ -117,13 +117,13 @@
                 </div>
             </div>
 
-            @if($worker->notes)
+            @if($staff->notes)
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Notes</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-0">{{ $worker->notes }}</p>
+                    <p class="mb-0">{{ $staff->notes }}</p>
                 </div>
             </div>
             @endif

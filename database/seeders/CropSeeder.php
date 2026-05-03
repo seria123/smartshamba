@@ -171,6 +171,7 @@ class CropSeeder extends Seeder
                 'season_type' => 'short_rain',
                 'days_to_maturity' => 120,
                 'average_yield_per_hectare' => 1500,
+                'yield_unit' => 'kg',
             ],
         ];
 

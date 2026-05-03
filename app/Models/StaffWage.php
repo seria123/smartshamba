@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WorkerWage extends Model
+class StaffWage extends Model
 {
     use HasFactory;
 
-    protected $table = 'worker_wages';
+    protected $table = 'staff_wages';
 
     protected $fillable = [
-        'worker_id',
+        'staff_id',
         'farm_id',
         'period_start',
         'period_end',
@@ -55,9 +55,9 @@ class WorkerWage extends Model
 
     const PAYMENT_METHOD_MOBILE_MONEY = 'mobile_money';
 
-    public function worker(): BelongsTo
+    public function staff(): BelongsTo
     {
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Staff::class);
     }
 
     public function farm(): BelongsTo

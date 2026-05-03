@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('worker_wages', function (Blueprint $table) {
+        Schema::create('staff_wages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('worker_id')->constrained()->onDelete('cascade');
+            $table->foreignId('staff_id')->constrained()->onDelete('cascade');
             $table->foreignId('farm_id')->constrained()->onDelete('cascade');
             $table->date('period_start');
             $table->date('period_end');
@@ -26,13 +26,13 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->index(['worker_id', 'period_start', 'period_end']);
+            $table->index(['staff_id', 'period_start', 'period_end']);
             $table->index('status');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('worker_wages');
+        Schema::dropIfExists('staff_wages');
     }
 };

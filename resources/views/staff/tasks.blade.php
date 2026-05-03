@@ -7,9 +7,9 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">
-                        Assigned Tasks: {{ $worker->fullName() }}
+                        Assigned Tasks: {{ $staff->fullName() }}
                     </h4>
-                    <a href="{{ route('workers.show', $worker) }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('staff.show', $staff) }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i> Back
                     </a>
                 </div>
@@ -53,7 +53,7 @@
                                 @empty
                                 <tr>
                                     <td colspan="7" class="text-center text-muted py-4">
-                                        No tasks assigned to this worker
+                                        No tasks assigned to this staff member
                                     </td>
                                 </tr>
                                 @endforelse

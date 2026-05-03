@@ -10,7 +10,7 @@ class ExpenseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Expense::with(['farm', 'crop', 'worker']);
+        $query = Expense::with(['farm', 'crop', 'staff']);
 
         if ($request->filled('search')) {
             $query->where('description', 'like', "%{$request->search}%");
@@ -42,7 +42,7 @@ class ExpenseController extends Controller
 
     public function show(Expense $expense)
     {
-        $expense->load(['farm', 'crop', 'worker']);
+        $expense->load(['farm', 'crop', 'staff']);
 
         return view('expenses.show', compact('expense'));
     }
@@ -64,7 +64,7 @@ class ExpenseController extends Controller
             'category' => 'required|string',
             'payment_method' => 'nullable|string',
             'receipt_number' => 'nullable|string',
-            'worker_id' => 'nullable|exists:workers,id',
+            'staff_id' => 'nullable|exists:staff,id',
             'notes' => 'nullable|string',
         ]);
 
@@ -91,7 +91,7 @@ class ExpenseController extends Controller
             'category' => 'required|string',
             'payment_method' => 'nullable|string',
             'receipt_number' => 'nullable|string',
-            'worker_id' => 'nullable|exists:workers,id',
+            'staff_id' => 'nullable|exists:staff,id',
             'notes' => 'nullable|string',
         ]);
 
