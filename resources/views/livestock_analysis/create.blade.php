@@ -61,9 +61,9 @@
                                 <option value="">-- General Analysis (no specific animal) --</option>
                                 @foreach($livestock as $animal)
                                     <option value="{{ $animal->id }}" 
-                                            {{ old('livestock_id') == $animal->id ? 'selected' : '' }}>
+                                            {{ old('livestock_id', $selectedLivestockId) == $animal->id ? 'selected' : '' }}>
                                         {{ $animal->tag_number ?? 'Untagged' }} • 
-                                        {{ $animal->type ?? 'Unknown Type' }} 
+                                        {{ $animal->type->name ?? 'Unknown Type' }} 
                                         • {{ $animal->breed ?? 'Unknown Breed' }}
                                     </option>
                                 @endforeach

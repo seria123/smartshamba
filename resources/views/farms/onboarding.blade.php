@@ -28,8 +28,24 @@
 
         <div>
             <label class="block font-medium mb-1">Location (County)</label>
-            <input type="text" name="location" class="w-full border p-2 rounded" placeholder="e.g., Nairobi County" value="{{ old('location') }}">
+            <input type="text" name="location" class="w-full border p-2 rounded" placeholder="e.g., Nairobi County" value="{{ old('location') }}" required>
             @error('location')
+                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block font-medium mb-1">Subcounty</label>
+            <input type="text" name="subcounty" class="w-full border p-2 rounded" placeholder="e.g., Kasarani" value="{{ old('subcounty') }}">
+            @error('subcounty')
+                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block font-medium mb-1">Physical Address</label>
+            <textarea name="physical_address" class="w-full border p-2 rounded" rows="3">{{ old('physical_address') }}</textarea>
+            @error('physical_address')
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -127,7 +143,93 @@
             @enderror
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+         <div>
+             <label class="block font-medium mb-1">Storage Facilities</label>
+             <select name="storage_facilities" class="w-full border p-2 rounded" required>
+                 <option value="">Select...</option>
+                 <option value="1" {{ old('storage_facilities') == '1' ? 'selected' : '' }}>✅ Yes</option>
+                 <option value="0" {{ old('storage_facilities', '0') == '0' ? 'selected' : '' }}>❌ No</option>
+             </select>
+             @error('storage_facilities')
+                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+             @enderror
+             <p class="text-gray-500 text-sm mt-1">Do you have storage facilities for produce?</p>
+          </div>
+
+          <div>
+              <label class="block font-medium mb-1">Estimated Budget (KES)</label>
+              <input type="number" name="estimated_budget" class="w-full border p-2 rounded" step="0.01" min="0" placeholder="e.g., 500000" value="{{ old('estimated_budget') }}">
+              @error('estimated_budget')
+                  <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+              @enderror
+          </div>
+
+          <div>
+              <label class="block font-medium mb-1">Main Purpose</label>
+              <select name="main_purpose" class="w-full border p-2 rounded">
+                  <option value="">Select purpose...</option>
+                  <option value="commercial" {{ old('main_purpose') == 'commercial' ? 'selected' : '' }}>Commercial</option>
+                  <option value="subsistence" {{ old('main_purpose') == 'subsistence' ? 'selected' : '' }}>Subsistence</option>
+              </select>
+              @error('main_purpose')
+                  <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+              @enderror
+          </div>
+
+          <!-- Staff Section -->
+         <div class="p-4 border rounded bg-blue-50">
+             <h3 class="font-medium text-gray-700 mb-3">👥 Staff / Labor</h3>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div>
+                     <label class="block font-medium mb-1">Permanent Staff Count</label>
+                     <input type="number" name="staff_permanent" class="w-full border p-2 rounded" min="0" value="{{ old('staff_permanent', 0) }}">
+                     @error('staff_permanent')
+                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                     @enderror
+                 </div>
+
+                 <div>
+                     <label class="block font-medium mb-1">Casual Staff Count</label>
+                     <input type="number" name="staff_casual" class="w-full border p-2 rounded" min="0" value="{{ old('staff_casual', 0) }}">
+                     @error('staff_casual')
+                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                     @enderror
+                 </div>
+             </div>
+         <div>
+             <label class="block font-medium mb-1">Storage Facilities</label>
+             <select name="storage_facilities" class="w-full border p-2 rounded" required>
+                 <option value="">Select...</option>
+                 <option value="1" {{ old('storage_facilities') == '1' ? 'selected' : '' }}>✅ Yes</option>
+                 <option value="0" {{ old('storage_facilities', '0') == '0' ? 'selected' : '' }}>❌ No</option>
+             </select>
+             @error('storage_facilities')
+                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+             @enderror
+             <p class="text-gray-500 text-sm mt-1">Do you have storage facilities for produce?</p>
+         </div>
+
+         <div>
+             <label class="block font-medium mb-1">Estimated Budget (KES)</label>
+             <input type="number" name="estimated_budget" class="w-full border p-2 rounded" step="0.01" min="0" placeholder="e.g., 500000" value="{{ old('estimated_budget') }}">
+             @error('estimated_budget')
+                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+             @enderror
+         </div>
+
+         <div>
+             <label class="block font-medium mb-1">Main Purpose</label>
+             <select name="main_purpose" class="w-full border p-2 rounded">
+                 <option value="">Select purpose...</option>
+                 <option value="commercial" {{ old('main_purpose') == 'commercial' ? 'selected' : '' }}>Commercial</option>
+                 <option value="subsistence" {{ old('main_purpose') == 'subsistence' ? 'selected' : '' }}>Subsistence</option>
+             </select>
+             @error('main_purpose')
+                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+             @enderror
+         </div>
+
+         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block font-medium mb-1">Latitude (optional)</label>
                 <input type="number" step="any" name="latitude" class="w-full border p-2 rounded" placeholder="e.g., -1.2921" value="{{ old('latitude') }}">

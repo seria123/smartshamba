@@ -42,11 +42,12 @@ class LivestockAnalysisController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $livestock = Livestock::where('user_id', Auth::id())->get();
+        $selectedLivestockId = $request->query('livestock_id');
 
-        return view('livestock_analysis.create', compact('livestock'));
+        return view('livestock_analysis.create', compact('livestock', 'selectedLivestockId'));
     }
 
     /**

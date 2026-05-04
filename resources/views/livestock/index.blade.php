@@ -165,24 +165,29 @@
                                     <a href="{{ route('livestock.show', $animal->id) }}" 
                                        class="text-emerald-600 hover:text-emerald-700" 
                                        title="View details">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                         <i class="fas fa-eye"></i>
+                                     </a>
                                     <a href="{{ route('livestock.edit', $animal->id) }}" 
                                        class="text-blue-600 hover:text-blue-700" 
                                        title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                     <a href="{{ route('livestock-analysis.create') }}?livestock_id={{ $animal->id }}"
+                                         <i class="fas fa-edit"></i>
+                                     </a>
+                                      <a href="{{ route('livestock-analysis.create') }}?livestock_id={{ $animal->id }}"
                                        class="text-rose-600 hover:text-rose-700" 
-                                       title="Analyze disease">
-                                        <i class="fas fa-virus"></i>
-                                    </a>
-                                    <a href="{{ route('livestock.locations.create', $animal->id) }}" 
+                                       title="New disease analysis">
+                                         <i class="fas fa-virus"></i>
+                                     </a>
+                                     <a href="{{ route('livestock.analysis-history', $animal) }}" 
+                                       class="text-amber-600 hover:text-amber-700" 
+                                       title="View analysis history">
+                                         <i class="fas fa-chart-line"></i>
+                                     </a>
+                                     <a href="{{ route('livestock.locations.create', $animal->id) }}" 
                                        class="text-purple-600 hover:text-purple-700" 
                                        title="Record location">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </a>
-                                </div>
+                                         <i class="fas fa-map-marker-alt"></i>
+                                     </a>
+                                 </div>
                             </td>
                         </tr>
                     @empty

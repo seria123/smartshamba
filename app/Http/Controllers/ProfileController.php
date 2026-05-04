@@ -31,6 +31,36 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
+    public function updatePreferences(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'preferred_language' => 'nullable|string|in:en,sw,fr,lu',
+            'notification_preferences' => 'nullable|array',
+            'notification_preferences.*' => 'boolean',
+            'weather_alerts' => 'boolean',
+            'ai_recommendations' => 'boolean',
+        ]);
+
+        // Convert checkboxes: when unchecked, they are not sent; ensure all keys exist as booleans
+        $preferences = $validated['notification_preferences'] ?? [];
+        // Ensure all possible keys have boolean values
+        $allKeys = ['email', 'weather', 'crop', 'livestock', 'finance', 'marketing'];
+        foreach ($allKeys as $key) {
+            if (!array_key_exists($key, $preferences)) {
+                $preferences[$key] = false;
+            } else {
+                $preferences[$key] = (bool) $preferences[$key];
+            }
+        }
+        $validated['notification_preferences'] = $preferences;
+
+        $user = $request->user();
+        $user->fill($validated);
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('status', 'preferences-updated');
+    }
+
     public function updatePassword(Request $request): RedirectResponse
     {
         $request->validateWithBag('updatePassword', [

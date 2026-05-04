@@ -31,6 +31,7 @@ class Staff extends Model
         'termination_date',
         'status',
         'notes',
+        'available_equipment',
     ];
 
     protected $casts = [
@@ -38,6 +39,7 @@ class Staff extends Model
         'hire_date' => 'date',
         'termination_date' => 'date',
         'daily_wage' => 'decimal:2',
+        'available_equipment' => 'array',
     ];
 
     const ROLE_GENERAL_WORKER = 'general_worker';

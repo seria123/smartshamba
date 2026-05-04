@@ -15,17 +15,25 @@ class Farm extends Model
         'user_id',
         'name',
         'location',
+        'subcounty',
+        'physical_address',
         'farm_type',
         'ownership_type',
         'latitude',
         'longitude',
         'size_hectares',
         'description',
+        'storage_facilities',
+        'estimated_budget',
+        'main_purpose',
+        'main_image_id',
         'farm_operation_details',
     ];
 
     protected $casts = [
         'size_hectares' => 'decimal:2',
+        'estimated_budget' => 'decimal:2',
+        'storage_facilities' => 'boolean',
         'farm_operation_details' => 'array',
     ];
 
@@ -48,5 +56,29 @@ class Farm extends Model
     public function cropCycles(): HasMany
     {
         return $this->hasMany(CropCycle::class);
+    }
+
+    /**
+     * Get the images for the farm.
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(FarmImage::class);
+    }
+
+    /**
+     * Get the documents for the farm.
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(FarmDocument::class);
+    }
+
+    /**
+     * Get the main/featured image for the farm.
+     */
+    public function mainImage(): BelongsTo
+    {
+        return $this->belongsTo(FarmImage::class, 'main_image_id');
     }
 }

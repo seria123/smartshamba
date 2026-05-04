@@ -92,6 +92,14 @@ class Livestock extends Model
         return $this->hasMany(LivestockMovement::class)->orderBy('movement_date', 'desc');
     }
 
+    /**
+     * Get the analyses for this livestock.
+     */
+    public function analyses(): HasMany
+    {
+        return $this->hasMany(LivestockAnalysis::class);
+    }
+
     public function scopeHealthy($query)
     {
         return $query->where('status', self::STATUS_HEALTHY);

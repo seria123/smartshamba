@@ -29,18 +29,39 @@
                     @enderror
                 </div>
 
-                <!-- Location -->
-                <div>
-                    <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location (County) *</label>
-                    <input type="text" name="location" id="location" value="{{ old('location') }}" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                        placeholder="e.g., Nairobi County" required>
-                    @error('location')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                 <!-- Location -->
+                 <div>
+                     <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location (County) *</label>
+                     <input type="text" name="location" id="location" value="{{ old('location') }}" 
+                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                         placeholder="e.g., Nairobi County" required>
+                     @error('location')
+                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                     @enderror
+                 </div>
 
-                <!-- Farm Type -->
+                 <!-- Subcounty -->
+                 <div>
+                     <label for="subcounty" class="block text-sm font-medium text-gray-700 mb-2">Subcounty</label>
+                     <input type="text" name="subcounty" id="subcounty" value="{{ old('subcounty') }}" 
+                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                         placeholder="e.g., Kasarani">
+                     @error('subcounty')
+                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                     @enderror
+                 </div>
+
+                 <!-- Physical Address -->
+                 <div>
+                     <label for="physical_address" class="block text-sm font-medium text-gray-700 mb-2">Physical Address</label>
+                     <textarea name="physical_address" id="physical_address" rows="3" 
+                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">{{ old('physical_address') }}</textarea>
+                     @error('physical_address')
+                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                     @enderror
+                 </div>
+
+                 <!-- Farm Type -->
                 <div>
                     <label for="farm_type" class="block text-sm font-medium text-gray-700 mb-2">Farm Type *</label>
                     <select name="farm_type" id="farm_type" 
@@ -56,23 +77,58 @@
                     @enderror
                 </div>
 
-                <!-- Ownership Type -->
-                <div>
-                    <label for="ownership_type" class="block text-sm font-medium text-gray-700 mb-2">Ownership Type *</label>
-                    <select name="ownership_type" id="ownership_type" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('ownership_type') border-red-500 @enderror"
-                        required>
-                        <option value="">Select ownership...</option>
-                        <option value="owned" {{ old('ownership_type') == 'owned' ? 'selected' : '' }}>Owned</option>
-                        <option value="leased" {{ old('ownership_type') == 'leased' ? 'selected' : '' }}>Leased</option>
-                        <option value="community" {{ old('ownership_type') == 'community' ? 'selected' : '' }}>Community</option>
-                    </select>
-                    @error('ownership_type')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                 <!-- Ownership Type -->
+                 <div>
+                     <label for="ownership_type" class="block text-sm font-medium text-gray-700 mb-2">Ownership Type *</label>
+                     <select name="ownership_type" id="ownership_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                         <option value="">Select ownership...</option>
+                         <option value="owned" {{ old('ownership_type') == 'owned' ? 'selected' : '' }}>Owned</option>
+                         <option value="leased" {{ old('ownership_type') == 'leased' ? 'selected' : '' }}>Leased</option>
+                         <option value="community" {{ old('ownership_type') == 'community' ? 'selected' : '' }}>Community</option>
+                     </select>
+                     @error('ownership_type')
+                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                     @enderror
+                 </div>
 
-                <!-- Size -->
+                  <!-- Storage Facilities -->
+                  <div>
+                      <label for="storage_facilities" class="block text-sm font-medium text-gray-700 mb-2">Storage Facilities *</label>
+                      <select name="storage_facilities" id="storage_facilities" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                          <option value="">Select...</option>
+                          <option value="1" {{ old('storage_facilities') == '1' ? 'selected' : '' }}>Yes</option>
+                          <option value="0" {{ old('storage_facilities', '0') == '0' ? 'selected' : '' }}>No</option>
+                      </select>
+                      @error('storage_facilities')
+                          <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                      @enderror
+                  </div>
+
+                  <!-- Estimated Budget -->
+                  <div>
+                      <label for="estimated_budget" class="block text-sm font-medium text-gray-700 mb-2">Estimated Budget (KES)</label>
+                      <input type="number" name="estimated_budget" id="estimated_budget" value="{{ old('estimated_budget') }}" step="0.01" min="0"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                          placeholder="e.g., 500000">
+                      @error('estimated_budget')
+                          <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                      @enderror
+                  </div>
+
+                  <!-- Main Purpose -->
+                  <div>
+                      <label for="main_purpose" class="block text-sm font-medium text-gray-700 mb-2">Main Purpose</label>
+                      <select name="main_purpose" id="main_purpose" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                          <option value="">Select purpose...</option>
+                          <option value="commercial" {{ old('main_purpose') == 'commercial' ? 'selected' : '' }}>Commercial</option>
+                          <option value="subsistence" {{ old('main_purpose') == 'subsistence' ? 'selected' : '' }}>Subsistence</option>
+                      </select>
+                      @error('main_purpose')
+                          <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                      @enderror
+                  </div>
+
+                  <!-- Size -->
                 <div>
                     <label for="size_hectares" class="block text-sm font-medium text-gray-700 mb-2">Size (Hectares)</label>
                     <input type="number" name="size_hectares" id="size_hectares" value="{{ old('size_hectares') }}" step="0.01" min="0"
@@ -163,11 +219,35 @@
                         @error('production_goal')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
-                    </div>
-                </div>
-            </div>
+                     </div>
+                 </div>
+             </div>
 
-            <!-- Description -->
+             <!-- Staff Section -->
+             <div class="mt-6 p-4 border rounded bg-blue-50">
+                 <h3 class="font-medium text-gray-700 mb-4">👥 Staff / Labor</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div>
+                         <label for="staff_permanent" class="block text-sm font-medium text-gray-700 mb-2">Number of Permanent Staff</label>
+                         <input type="number" name="staff_permanent" id="staff_permanent" value="{{ old('staff_permanent', 0) }}" min="0"
+                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                         @error('staff_permanent')
+                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                         @enderror
+                     </div>
+
+                     <div>
+                         <label for="staff_casual" class="block text-sm font-medium text-gray-700 mb-2">Number of Casual Staff</label>
+                         <input type="number" name="staff_casual" id="staff_casual" value="{{ old('staff_casual', 0) }}" min="0"
+                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                         @error('staff_casual')
+                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                         @enderror
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Description -->
             <div class="mt-6">
                 <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea name="description" id="description" rows="4" 

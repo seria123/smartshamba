@@ -1,16 +1,21 @@
 <?php
 
 use App\Http\Controllers\AlertController;
+use App\Http\Controllers\CropController;
 use App\Http\Controllers\CropAnalysisController;
 use App\Http\Controllers\CropCycleController;
 use App\Http\Controllers\FarmerController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FarmController;
+use App\Http\Controllers\FarmDocumentController;
+use App\Http\Controllers\FarmImageController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\LivestockAnalysisController;
 use App\Http\Controllers\LivestockController;
 use App\Http\Controllers\LivestockTypeController;
 use App\Http\Controllers\PlantingScheduleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SensorController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\YieldEstimationController;
 use App\Models\Farmer;
@@ -20,10 +25,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+    ->name('admin.dashboard');
+
 // Alert routes
 Route::middleware(['auth'])->group(function () {
     Route::resource('alerts', AlertController::class);
 });
+
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('livestock', LivestockController::class);
@@ -65,6 +74,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
@@ -72,11 +82,21 @@ Route::middleware('auth')->group(function () {
 // Farm CRUD routes
 Route::middleware(['auth'])->group(function () {
     Route::resource('farms', FarmController::class);
+    Route::post('farms/{farm}/images', [FarmImageController::class, 'store'])->name('farms.images.store');
+    Route::post('farms/{farm}/images/{image}/set-main', [FarmImageController::class, 'setMain'])->name('farms.images.set-main');
+    Route::delete('farms/{farm}/images/{image}', [FarmImageController::class, 'destroy'])->name('farms.images.destroy');
+    Route::post('farms/{farm}/documents', [FarmDocumentController::class, 'store'])->name('farms.documents.store');
+    Route::delete('farms/{farm}/documents/{document}', [FarmDocumentController::class, 'destroy'])->name('farms.documents.destroy');
 });
+
+// Farm onboarding (step 1)
+Route::middleware(['auth'])->post('/farms/onboarding', [FarmerController::class, 'store'])->name('farms.onboarding.store');
 
 // Field CRUD routes
 Route::middleware(['auth'])->group(function () {
     Route::resource('fields', FieldController::class);
+    Route::resource('crops', CropController::class);
+     Route::resource('sensors', SensorController::class);
 });
 
 // Crop Cycle CRUD routes

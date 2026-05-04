@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Livestock;
+use App\Models\LivestockAnalysis;
 use App\Models\LivestockType;
 use App\Models\Farm;
 use App\Models\Field;
@@ -93,6 +94,7 @@ class LivestockController extends Controller
 
         $livestock->load([
             'type',
+            'farm',
             'currentLocation.field',
             'currentLocation.farm',
         ])->loadCount([
@@ -100,7 +102,14 @@ class LivestockController extends Controller
             'movements',
         ]);
 
-        return view('livestock.show', compact('livestock'));
+        // Get recent analyses (last 5)
+        $analyses = $livestock->analyses()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('livestock.show', compact('livestock', 'analyses'));
     }
 
     public function edit(Livestock $livestock)
