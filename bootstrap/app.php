@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'admin.access' => App\Modules\UsersPermissions\Http\Middleware\EnsureAdminPermission::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
@@ -19,5 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
         App\Providers\AppServiceProvider::class,
         App\Modules\Core\Providers\CoreServiceProvider::class,
+        App\Modules\UsersPermissions\Providers\UsersPermissionsServiceProvider::class,
     ])
     ->create();

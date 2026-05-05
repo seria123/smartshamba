@@ -10,6 +10,7 @@ use App\Modules\Core\Models\Paddock;
 use App\Modules\Core\Models\Site;
 use App\Modules\Core\Models\Warehouse;
 use Database\Seeders\CoreFoundationSeeder;
+use Database\Seeders\UsersPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,8 +20,9 @@ class CoreAdminModuleTest extends TestCase
 
     public function test_core_dashboard_loads(): void
     {
-        $this->seed(CoreFoundationSeeder::class);
+        $admin = $this->adminUser();
 
+        $this->actingAs($admin);
         $this->get(route('core.dashboard'))
             ->assertOk()
             ->assertSee('Core dashboard');
@@ -49,7 +51,9 @@ class CoreAdminModuleTest extends TestCase
     public function test_basic_list_pages_load(): void
     {
         $this->coreRecords();
-        $this->seed(CoreFoundationSeeder::class);
+        $admin = $this->adminUser();
+
+        $this->actingAs($admin);
 
         foreach ([
             'core.organizations.index',
@@ -78,7 +82,8 @@ class CoreAdminModuleTest extends TestCase
 
     public function test_site_creation_rejects_missing_required_parent_records(): void
     {
-        $this->post(route('core.sites.store'), [
+        $this->actingAs($this->adminUser())
+            ->post(route('core.sites.store'), [
             'organization_id' => 999,
             'farm_id' => 999,
             'name' => 'Invalid Site',
@@ -88,7 +93,8 @@ class CoreAdminModuleTest extends TestCase
 
     public function test_field_creation_rejects_missing_required_parent_records(): void
     {
-        $this->post(route('core.fields.store'), [
+        $this->actingAs($this->adminUser())
+            ->post(route('core.fields.store'), [
             'name' => 'Invalid Field',
             'status' => 'active',
             'area_unit' => 'acres',
@@ -110,7 +116,8 @@ class CoreAdminModuleTest extends TestCase
             'status' => 'active',
         ]);
 
-        $this->post(route('core.fields.store'), [
+        $this->actingAs($this->adminUser())
+            ->post(route('core.fields.store'), [
             'organization_id' => $organization->id,
             'farm_id' => $farm->id,
             'site_id' => $otherSite->id,
@@ -169,5 +176,13 @@ class CoreAdminModuleTest extends TestCase
         ]);
 
         return [$organization->fresh(), $farm->fresh(), $site->fresh(), $field->fresh(), $paddock->fresh(), $warehouse->fresh()];
+    }
+
+    private function adminUser(): \App\Models\User
+    {
+        $this->seed(CoreFoundationSeeder::class);
+        $this->seed(UsersPermissionsSeeder::class);
+
+        return \App\Models\User::query()->where('email', 'admin@smartshamba.test')->firstOrFail();
     }
 }

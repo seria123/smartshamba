@@ -54,17 +54,26 @@ body {
 }
 
 .nav-item {
+    background: transparent;
+    border: 0;
     border-radius: 8px;
     color: #4f5f50;
     display: block;
+    font: inherit;
     padding: 10px 12px;
+    text-align: left;
     text-decoration: none;
+    width: 100%;
 }
 
 .nav-item.is-active {
     background: #e8f3e6;
     color: #245238;
     font-weight: 650;
+}
+
+.logout-button {
+    cursor: pointer;
 }
 
 .main-content {

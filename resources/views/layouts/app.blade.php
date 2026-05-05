@@ -19,10 +19,23 @@
 
                 <nav class="nav-list">
                     <a class="nav-item {{ request()->routeIs('home') ? 'is-active' : '' }}" href="{{ route('home') }}">Foundation</a>
-                    <a class="nav-item {{ request()->routeIs('core.dashboard') ? 'is-active' : '' }}" href="{{ route('core.dashboard') }}">Core</a>
-                    <a class="nav-item {{ request()->routeIs('core.organizations.*') ? 'is-active' : '' }}" href="{{ route('core.organizations.index') }}">Organizations</a>
-                    <a class="nav-item {{ request()->routeIs('core.farms.*') ? 'is-active' : '' }}" href="{{ route('core.farms.index') }}">Farms</a>
-                    <a class="nav-item {{ request()->routeIs('core.modules.*') ? 'is-active' : '' }}" href="{{ route('core.modules.index') }}">Modules</a>
+                    @auth
+                        @if (auth()->user()->canAccessAdmin('core.view'))
+                            <a class="nav-item {{ request()->routeIs('core.dashboard') ? 'is-active' : '' }}" href="{{ route('core.dashboard') }}">Core</a>
+                            <a class="nav-item {{ request()->routeIs('core.organizations.*') ? 'is-active' : '' }}" href="{{ route('core.organizations.index') }}">Organizations</a>
+                            <a class="nav-item {{ request()->routeIs('core.farms.*') ? 'is-active' : '' }}" href="{{ route('core.farms.index') }}">Farms</a>
+                            <a class="nav-item {{ request()->routeIs('core.modules.*') ? 'is-active' : '' }}" href="{{ route('core.modules.index') }}">Modules</a>
+                        @endif
+                        @if (auth()->user()->canAccessAdmin('access.manage'))
+                            <a class="nav-item {{ request()->routeIs('access.*') ? 'is-active' : '' }}" href="{{ route('access.dashboard') }}">Access</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="nav-item logout-button" type="submit">Log out</button>
+                        </form>
+                    @else
+                        <a class="nav-item {{ request()->routeIs('login') ? 'is-active' : '' }}" href="{{ route('login') }}">Log in</a>
+                    @endauth
                 </nav>
             </aside>
 
