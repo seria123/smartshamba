@@ -13,5 +13,6 @@ class DatabaseSeeder extends Seeder
         $this->call(WorkersLabourSeeder::class);
         $this->call(TasksWorkOrdersSeeder::class);
         $this->call(InventoryInputsSeeder::class);
+        $this->call(CropsModuleSeeder::class);
     }
 }

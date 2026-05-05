@@ -25,5 +25,6 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Modules\Workers\Providers\WorkersServiceProvider::class,
         App\Modules\Tasks\Providers\TasksServiceProvider::class,
         App\Modules\Inventory\Providers\InventoryServiceProvider::class,
+        App\Modules\Crops\Providers\CropsServiceProvider::class,
     ])
     ->create();

@@ -72,6 +72,32 @@ class UsersPermissionsSeeder extends Seeder
             ['stock.transfer', 'Transfer Stock', 'Inventory/Inputs'],
             ['stock.adjust', 'Adjust Stock', 'Inventory/Inputs'],
             ['stock.manage', 'Manage Stock', 'Inventory/Inputs'],
+            ['crops.view', 'View Crops', 'Crops'],
+            ['crops.manage', 'Manage Crops', 'Crops'],
+            ['crop-master.view', 'View Crop Master', 'Crops'],
+            ['crop-master.create', 'Create Crop Master', 'Crops'],
+            ['crop-master.update', 'Update Crop Master', 'Crops'],
+            ['crop-master.deactivate', 'Deactivate Crop Master', 'Crops'],
+            ['crop-seasons.view', 'View Crop Seasons', 'Crops'],
+            ['crop-seasons.create', 'Create Crop Seasons', 'Crops'],
+            ['crop-seasons.update', 'Update Crop Seasons', 'Crops'],
+            ['crop-seasons.close', 'Close Crop Seasons', 'Crops'],
+            ['crop-cycles.view', 'View Crop Cycles', 'Crops'],
+            ['crop-cycles.create', 'Create Crop Cycles', 'Crops'],
+            ['crop-cycles.update', 'Update Crop Cycles', 'Crops'],
+            ['crop-cycles.close', 'Close Crop Cycles', 'Crops'],
+            ['crop-activities.view', 'View Crop Activities', 'Crops'],
+            ['crop-activities.create', 'Create Crop Activities', 'Crops'],
+            ['crop-activities.update', 'Update Crop Activities', 'Crops'],
+            ['crop-activities.approve', 'Approve Crop Activities', 'Crops'],
+            ['crop-scouting.view', 'View Crop Scouting', 'Crops'],
+            ['crop-scouting.create', 'Create Crop Scouting', 'Crops'],
+            ['crop-treatments.view', 'View Crop Treatments', 'Crops'],
+            ['crop-treatments.create', 'Create Crop Treatments', 'Crops'],
+            ['crop-harvests.view', 'View Crop Harvests', 'Crops'],
+            ['crop-harvests.create', 'Create Crop Harvests', 'Crops'],
+            ['crop-losses.view', 'View Crop Losses', 'Crops'],
+            ['crop-losses.create', 'Create Crop Losses', 'Crops'],
         ];
 
         $permissions = [];
@@ -122,7 +148,10 @@ class UsersPermissionsSeeder extends Seeder
     private function syncRolePermissions(array $roles, array $permissions): void
     {
         $all = collect($permissions)->pluck('id')->all();
-        $readOnly = collect($permissions)->only(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'])->pluck('id')->all();
+        $cropView = ['crops.view', 'crop-master.view', 'crop-seasons.view', 'crop-cycles.view', 'crop-activities.view', 'crop-scouting.view', 'crop-treatments.view', 'crop-harvests.view', 'crop-losses.view'];
+        $cropOps = ['crops.view', 'crops.manage', 'crop-master.view', 'crop-master.create', 'crop-master.update', 'crop-master.deactivate', 'crop-seasons.view', 'crop-seasons.create', 'crop-seasons.update', 'crop-seasons.close', 'crop-cycles.view', 'crop-cycles.create', 'crop-cycles.update', 'crop-cycles.close', 'crop-activities.view', 'crop-activities.create', 'crop-activities.update', 'crop-activities.approve', 'crop-scouting.view', 'crop-scouting.create', 'crop-treatments.view', 'crop-treatments.create', 'crop-harvests.view', 'crop-harvests.create', 'crop-losses.view', 'crop-losses.create'];
+        $agronomistCropOps = ['crops.view', 'crop-master.view', 'crop-seasons.view', 'crop-cycles.view', 'crop-cycles.create', 'crop-cycles.update', 'crop-activities.view', 'crop-activities.create', 'crop-scouting.view', 'crop-scouting.create', 'crop-treatments.view', 'crop-treatments.create', 'crop-harvests.view', 'crop-harvests.create', 'crop-losses.view', 'crop-losses.create'];
+        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView))->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
@@ -211,8 +240,8 @@ class UsersPermissionsSeeder extends Seeder
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->unique()->all(),
-            'agronomist' => $taskOperators,
+            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->unique()->all(),
+            'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->unique()->all(),
             'livestock-officer' => $taskOperators,
             'storekeeper' => $inventoryOperators,
             'finance-officer' => collect($permissions)->only(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'])->pluck('id')->all(),
