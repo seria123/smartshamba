@@ -11,5 +11,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CoreFoundationSeeder::class);
         $this->call(UsersPermissionsSeeder::class);
         $this->call(WorkersLabourSeeder::class);
+        $this->call(TasksWorkOrdersSeeder::class);
     }
 }

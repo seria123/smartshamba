@@ -1,0 +1,21 @@
+<div class="field-group">
+    <label for="organization_id">Organization</label>
+    <select id="organization_id" name="organization_id" required>
+        <option value="">Select organization</option>
+        @foreach ($organizations as $organization)
+            <option value="{{ $organization->id }}" @selected((string) old('organization_id', $record?->organization_id) === (string) $organization->id)>{{ $organization->name }}</option>
+        @endforeach
+    </select>
+    @error('organization_id') <span class="error">{{ $message }}</span> @enderror
+</div>
+
+<div class="field-group">
+    <label for="farm_id">Farm</label>
+    <select id="farm_id" name="farm_id" required>
+        <option value="">Select farm</option>
+        @foreach ($farms as $farm)
+            <option value="{{ $farm->id }}" @selected((string) old('farm_id', $record?->farm_id) === (string) $farm->id)>{{ $farm->name }} - {{ $farm->organization->name }}</option>
+        @endforeach
+    </select>
+    @error('farm_id') <span class="error">{{ $message }}</span> @enderror
+</div>

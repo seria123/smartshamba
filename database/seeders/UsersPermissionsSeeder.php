@@ -43,6 +43,19 @@ class UsersPermissionsSeeder extends Seeder
             ['attendance.view', 'View Labour Attendance', 'Workers/Labour'],
             ['attendance.record', 'Record Labour Attendance', 'Workers/Labour'],
             ['attendance.update', 'Update Labour Attendance', 'Workers/Labour'],
+            ['tasks.view', 'View Tasks', 'Tasks/Work Orders'],
+            ['tasks.create', 'Create Tasks', 'Tasks/Work Orders'],
+            ['tasks.update', 'Update Tasks', 'Tasks/Work Orders'],
+            ['tasks.assign', 'Assign Tasks', 'Tasks/Work Orders'],
+            ['tasks.submit', 'Submit Tasks', 'Tasks/Work Orders'],
+            ['tasks.approve', 'Approve Tasks', 'Tasks/Work Orders'],
+            ['tasks.cancel', 'Cancel Tasks', 'Tasks/Work Orders'],
+            ['tasks.manage', 'Manage Tasks', 'Tasks/Work Orders'],
+            ['work-orders.view', 'View Work Orders', 'Tasks/Work Orders'],
+            ['work-orders.create', 'Create Work Orders', 'Tasks/Work Orders'],
+            ['work-orders.update', 'Update Work Orders', 'Tasks/Work Orders'],
+            ['work-orders.cancel', 'Cancel Work Orders', 'Tasks/Work Orders'],
+            ['work-orders.manage', 'Manage Work Orders', 'Tasks/Work Orders'],
         ];
 
         $permissions = [];
@@ -93,7 +106,7 @@ class UsersPermissionsSeeder extends Seeder
     private function syncRolePermissions(array $roles, array $permissions): void
     {
         $all = collect($permissions)->pluck('id')->all();
-        $readOnly = collect($permissions)->only(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view'])->pluck('id')->all();
+        $readOnly = collect($permissions)->only(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view'])->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
@@ -113,17 +126,69 @@ class UsersPermissionsSeeder extends Seeder
             'attendance.record',
             'attendance.update',
         ])->pluck('id')->all();
+        $taskManagers = collect($permissions)->only([
+            'core.view',
+            'core.manage',
+            'modules.view',
+            'reports.view',
+            'workers.view',
+            'workers.create',
+            'workers.update',
+            'workers.deactivate',
+            'workers.manage',
+            'teams.view',
+            'teams.create',
+            'teams.update',
+            'teams.deactivate',
+            'attendance.view',
+            'attendance.record',
+            'attendance.update',
+            'workers.view',
+            'teams.view',
+            'attendance.view',
+            'tasks.view',
+            'tasks.create',
+            'tasks.update',
+            'tasks.assign',
+            'tasks.submit',
+            'tasks.approve',
+            'tasks.cancel',
+            'tasks.manage',
+            'work-orders.view',
+            'work-orders.create',
+            'work-orders.update',
+            'work-orders.cancel',
+            'work-orders.manage',
+        ])->pluck('id')->all();
+        $taskOperators = collect($permissions)->only([
+            'core.view',
+            'access.view',
+            'modules.view',
+            'reports.view',
+            'workers.view',
+            'teams.view',
+            'attendance.view',
+            'tasks.view',
+            'tasks.create',
+            'tasks.update',
+            'work-orders.view',
+        ])->pluck('id')->all();
+        $taskSubmitters = collect($permissions)->only([
+            'core.view',
+            'tasks.view',
+            'tasks.submit',
+        ])->pluck('id')->all();
 
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => $labourOperators,
-            'agronomist' => $readOnly,
-            'livestock-officer' => $readOnly,
+            'farm-manager' => $taskManagers,
+            'agronomist' => $taskOperators,
+            'livestock-officer' => $taskOperators,
             'storekeeper' => $readOnly,
             'finance-officer' => collect($permissions)->only(['core.view', 'reports.view', 'reports.manage'])->pluck('id')->all(),
-            'farm-hand' => collect($permissions)->only(['core.view'])->pluck('id')->all(),
-            'contractor' => collect($permissions)->only(['core.view'])->pluck('id')->all(),
+            'farm-hand' => $taskSubmitters,
+            'contractor' => $taskSubmitters,
             'auditor' => $readOnly,
         ];
 
