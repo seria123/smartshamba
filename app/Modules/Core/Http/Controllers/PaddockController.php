@@ -16,7 +16,7 @@ class PaddockController
 
     protected function routeBase(): string
     {
-        return 'admin.core.paddocks';
+        return 'core.paddocks';
     }
 
     protected function label(): string

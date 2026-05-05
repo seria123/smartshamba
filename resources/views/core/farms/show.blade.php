@@ -6,7 +6,7 @@
             <p class="eyebrow">Farm</p>
             <h1>{{ $farm->name }}</h1>
         </div>
-        <a class="button secondary" href="{{ route('admin.core.farms.index') }}">Back</a>
+        <a class="button secondary" href="{{ route('core.farms.index') }}">Back</a>
     </header>
 
     <dl class="detail-list">

@@ -16,7 +16,7 @@ class WarehouseController
 
     protected function routeBase(): string
     {
-        return 'admin.core.warehouses';
+        return 'core.warehouses';
     }
 
     protected function label(): string

@@ -25,7 +25,7 @@
             <tbody>
                 @forelse ($farms as $farm)
                     <tr>
-                        <td><a href="{{ route('admin.core.farms.show', $farm) }}">{{ $farm->name }}</a></td>
+                        <td><a href="{{ route('core.farms.show', $farm) }}">{{ $farm->name }}</a></td>
                         <td>{{ $farm->organization->name }}</td>
                         <td>{{ $farm->code ?? 'Not set' }}</td>
                         <td>{{ ucfirst($farm->status) }}</td>

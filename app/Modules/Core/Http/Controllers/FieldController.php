@@ -16,7 +16,7 @@ class FieldController
 
     protected function routeBase(): string
     {
-        return 'admin.core.fields';
+        return 'core.fields';
     }
 
     protected function label(): string

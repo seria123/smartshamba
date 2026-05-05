@@ -30,7 +30,7 @@ tables are added through additive migrations only.
 
 ## Routes
 
-All routes are prefixed with `/admin/core` and named with `admin.core.`.
+All routes are prefixed with `/admin/core` and named with `core.`.
 
 - `GET /admin/core`: core dashboard.
 - `GET /admin/core/organizations`: organizations list.

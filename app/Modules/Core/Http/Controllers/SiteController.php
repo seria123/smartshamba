@@ -16,7 +16,7 @@ class SiteController
 
     protected function routeBase(): string
     {
-        return 'admin.core.sites';
+        return 'core.sites';
     }
 
     protected function label(): string

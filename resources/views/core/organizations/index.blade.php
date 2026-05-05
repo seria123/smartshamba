@@ -24,7 +24,7 @@
             <tbody>
                 @forelse ($organizations as $organization)
                     <tr>
-                        <td><a href="{{ route('admin.core.organizations.show', $organization) }}">{{ $organization->name }}</a></td>
+                        <td><a href="{{ route('core.organizations.show', $organization) }}">{{ $organization->name }}</a></td>
                         <td>{{ ucfirst($organization->status) }}</td>
                         <td>{{ $organization->farms_count }}</td>
                         <td>{{ $organization->sites_count }}</td>

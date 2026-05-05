@@ -10,7 +10,7 @@ use App\Modules\Core\Http\Controllers\SiteController;
 use App\Modules\Core\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('admin/core')->name('admin.core.')->group(function (): void {
+Route::prefix('admin/core')->name('core.')->group(function (): void {
     Route::get('/', CoreDashboardController::class)->name('dashboard');
 
     Route::resource('organizations', OrganizationController::class)->only(['index', 'show']);

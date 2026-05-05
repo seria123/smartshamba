@@ -21,7 +21,7 @@ class CoreAdminModuleTest extends TestCase
     {
         $this->seed(CoreFoundationSeeder::class);
 
-        $this->get(route('admin.core.dashboard'))
+        $this->get(route('core.dashboard'))
             ->assertOk()
             ->assertSee('Core dashboard');
     }
@@ -52,13 +52,13 @@ class CoreAdminModuleTest extends TestCase
         $this->seed(CoreFoundationSeeder::class);
 
         foreach ([
-            'admin.core.organizations.index',
-            'admin.core.farms.index',
-            'admin.core.sites.index',
-            'admin.core.fields.index',
-            'admin.core.paddocks.index',
-            'admin.core.warehouses.index',
-            'admin.core.modules.index',
+            'core.organizations.index',
+            'core.farms.index',
+            'core.sites.index',
+            'core.fields.index',
+            'core.paddocks.index',
+            'core.warehouses.index',
+            'core.modules.index',
         ] as $route) {
             $this->get(route($route))->assertOk();
         }
@@ -78,7 +78,7 @@ class CoreAdminModuleTest extends TestCase
 
     public function test_site_creation_rejects_missing_required_parent_records(): void
     {
-        $this->post(route('admin.core.sites.store'), [
+        $this->post(route('core.sites.store'), [
             'organization_id' => 999,
             'farm_id' => 999,
             'name' => 'Invalid Site',
@@ -88,7 +88,7 @@ class CoreAdminModuleTest extends TestCase
 
     public function test_field_creation_rejects_missing_required_parent_records(): void
     {
-        $this->post(route('admin.core.fields.store'), [
+        $this->post(route('core.fields.store'), [
             'name' => 'Invalid Field',
             'status' => 'active',
             'area_unit' => 'acres',
@@ -110,7 +110,7 @@ class CoreAdminModuleTest extends TestCase
             'status' => 'active',
         ]);
 
-        $this->post(route('admin.core.fields.store'), [
+        $this->post(route('core.fields.store'), [
             'organization_id' => $organization->id,
             'farm_id' => $farm->id,
             'site_id' => $otherSite->id,

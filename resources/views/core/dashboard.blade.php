@@ -19,9 +19,9 @@
     </section>
 
     <section class="actions">
-        <a class="button" href="{{ route('admin.core.sites.create') }}">New site</a>
-        <a class="button" href="{{ route('admin.core.fields.create') }}">New field</a>
-        <a class="button" href="{{ route('admin.core.paddocks.create') }}">New paddock</a>
-        <a class="button" href="{{ route('admin.core.warehouses.create') }}">New warehouse</a>
+        <a class="button" href="{{ route('core.sites.create') }}">New site</a>
+        <a class="button" href="{{ route('core.fields.create') }}">New field</a>
+        <a class="button" href="{{ route('core.paddocks.create') }}">New paddock</a>
+        <a class="button" href="{{ route('core.warehouses.create') }}">New warehouse</a>
     </section>
 @endsection
