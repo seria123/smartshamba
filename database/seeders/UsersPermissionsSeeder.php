@@ -31,6 +31,18 @@ class UsersPermissionsSeeder extends Seeder
             ['modules.manage', 'Manage Module Registry', 'Modules'],
             ['reports.view', 'View Reports', 'Reports'],
             ['reports.manage', 'Manage Reports', 'Reports'],
+            ['workers.view', 'View Workers', 'Workers/Labour'],
+            ['workers.create', 'Create Workers', 'Workers/Labour'],
+            ['workers.update', 'Update Workers', 'Workers/Labour'],
+            ['workers.deactivate', 'Deactivate Workers', 'Workers/Labour'],
+            ['workers.manage', 'Manage Workers', 'Workers/Labour'],
+            ['teams.view', 'View Labour Teams', 'Workers/Labour'],
+            ['teams.create', 'Create Labour Teams', 'Workers/Labour'],
+            ['teams.update', 'Update Labour Teams', 'Workers/Labour'],
+            ['teams.deactivate', 'Deactivate Labour Teams', 'Workers/Labour'],
+            ['attendance.view', 'View Labour Attendance', 'Workers/Labour'],
+            ['attendance.record', 'Record Labour Attendance', 'Workers/Labour'],
+            ['attendance.update', 'Update Labour Attendance', 'Workers/Labour'],
         ];
 
         $permissions = [];
@@ -81,13 +93,31 @@ class UsersPermissionsSeeder extends Seeder
     private function syncRolePermissions(array $roles, array $permissions): void
     {
         $all = collect($permissions)->pluck('id')->all();
-        $readOnly = collect($permissions)->only(['core.view', 'access.view', 'modules.view', 'reports.view'])->pluck('id')->all();
+        $readOnly = collect($permissions)->only(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view'])->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
+        $labourOperators = collect($permissions)->only([
+            'core.view',
+            'core.manage',
+            'modules.view',
+            'reports.view',
+            'workers.view',
+            'workers.create',
+            'workers.update',
+            'workers.deactivate',
+            'workers.manage',
+            'teams.view',
+            'teams.create',
+            'teams.update',
+            'teams.deactivate',
+            'attendance.view',
+            'attendance.record',
+            'attendance.update',
+        ])->pluck('id')->all();
 
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => $coreOperators,
+            'farm-manager' => $labourOperators,
             'agronomist' => $readOnly,
             'livestock-officer' => $readOnly,
             'storekeeper' => $readOnly,

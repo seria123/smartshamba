@@ -22,5 +22,6 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Providers\AppServiceProvider::class,
         App\Modules\Core\Providers\CoreServiceProvider::class,
         App\Modules\UsersPermissions\Providers\UsersPermissionsServiceProvider::class,
+        App\Modules\Workers\Providers\WorkersServiceProvider::class,
     ])
     ->create();

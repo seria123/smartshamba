@@ -29,6 +29,9 @@
                         @if (auth()->user()->canAccessAdmin('access.manage'))
                             <a class="nav-item {{ request()->routeIs('access.*') ? 'is-active' : '' }}" href="{{ route('access.dashboard') }}">Access</a>
                         @endif
+                        @if (auth()->user()->canAccessAdmin('workers.view'))
+                            <a class="nav-item {{ request()->routeIs('labour.*') ? 'is-active' : '' }}" href="{{ route('labour.dashboard') }}">Labour</a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="nav-item logout-button" type="submit">Log out</button>
