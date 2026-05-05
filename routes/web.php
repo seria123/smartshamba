@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\AlertController;
-use App\Http\Controllers\CropController;
-use App\Http\Controllers\CropAnalysisController;
-use App\Http\Controllers\CropCycleController;
-use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AlertController;
+use App\Http\Controllers\CropAnalysisController;
+use App\Http\Controllers\CropController;
+use App\Http\Controllers\CropCycleController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FarmDocumentController;
+use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\FarmImageController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\LivestockAnalysisController;
@@ -18,21 +18,41 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\YieldEstimationController;
-use App\Models\Farmer;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+// Development only: quick login as admin (only available in local environment)
+if (app()->environment('local')) {
+    Route::get('/dev-login', function () {
+        $admin = \App\Models\User::where('email', 'admin@smartshamba.com')->first();
+        if ($admin) {
+            Auth::login($admin);
+
+            return redirect()->intended(route('admin.dashboard'));
+        }
+        abort(404, 'Admin user not found. Run database seeders first.');
+    })->name('dev.login');
+}
+
+// Admin User Management is handled by Filament at /admin/users
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+    ->middleware(['auth', 'role:admin'])
     ->name('admin.dashboard');
+
+// Admin User Management
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+});
 
 // Alert routes
 Route::middleware(['auth'])->group(function () {
     Route::resource('alerts', AlertController::class);
 });
-
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('livestock', LivestockController::class);
@@ -60,14 +80,14 @@ Route::get('/dashboard', function () {
         $query = \App\Models\CropAnalysis::with(['cropCycle.crop', 'cropCycle.field'])
             ->orderBy('created_at', 'desc')
             ->limit(6);
-        
+
         if (auth()->user()->role !== 'admin') {
             $query->where('user_id', auth()->id());
         }
-        
+
         $recentAnalyses = $query->get();
     }
-    
+
     return view('dashboard', compact('recentAnalyses'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -96,7 +116,7 @@ Route::middleware(['auth'])->post('/farms/onboarding', [FarmerController::class,
 Route::middleware(['auth'])->group(function () {
     Route::resource('fields', FieldController::class);
     Route::resource('crops', CropController::class);
-     Route::resource('sensors', SensorController::class);
+    Route::resource('sensors', SensorController::class);
 });
 
 // Crop Cycle CRUD routes
