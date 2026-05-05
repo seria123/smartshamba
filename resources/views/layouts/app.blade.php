@@ -18,9 +18,11 @@
                 </a>
 
                 <nav class="nav-list">
-                    <span class="nav-item is-active">Foundation</span>
-                    <span class="nav-item">Modules</span>
-                    <span class="nav-item">Settings</span>
+                    <a class="nav-item {{ request()->routeIs('home') ? 'is-active' : '' }}" href="{{ route('home') }}">Foundation</a>
+                    <a class="nav-item {{ request()->routeIs('admin.core.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.core.dashboard') }}">Core</a>
+                    <a class="nav-item {{ request()->routeIs('admin.core.organizations.*') ? 'is-active' : '' }}" href="{{ route('admin.core.organizations.index') }}">Organizations</a>
+                    <a class="nav-item {{ request()->routeIs('admin.core.farms.*') ? 'is-active' : '' }}" href="{{ route('admin.core.farms.index') }}">Farms</a>
+                    <a class="nav-item {{ request()->routeIs('admin.core.modules.*') ? 'is-active' : '' }}" href="{{ route('admin.core.modules.index') }}">Modules</a>
                 </nav>
             </aside>
 

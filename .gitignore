@@ -24,8 +24,3 @@ storage/*.key
 !/bootstrap/cache/.gitkeep
 /storage/framework/views/*.php
 !/storage/framework/views/.gitkeep
-
-/bootstrap/cache/*.php
-!/bootstrap/cache/.gitkeep
-/storage/framework/views/*.php
-!/storage/framework/views/.gitkeep

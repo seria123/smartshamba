@@ -56,7 +56,9 @@ body {
 .nav-item {
     border-radius: 8px;
     color: #4f5f50;
+    display: block;
     padding: 10px 12px;
+    text-decoration: none;
 }
 
 .nav-item.is-active {
@@ -117,6 +119,155 @@ h1 {
 .module-card p {
     color: #647166;
     margin: 8px 0 0;
+}
+
+.content-header {
+    align-items: flex-start;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.content-header h1 {
+    font-size: 2rem;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.button,
+button {
+    background: #2f6f46;
+    border: 0;
+    border-radius: 8px;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+    font: inherit;
+    font-weight: 650;
+    padding: 10px 14px;
+    text-decoration: none;
+}
+
+.button.secondary {
+    background: #e8eee4;
+    color: #245238;
+}
+
+.table-wrap {
+    background: #ffffff;
+    border: 1px solid #dfe4d8;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border-bottom: 1px solid #edf0e9;
+    padding: 12px 14px;
+    text-align: left;
+}
+
+th {
+    color: #526253;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.detail-list {
+    background: #ffffff;
+    border: 1px solid #dfe4d8;
+    border-radius: 8px;
+    display: grid;
+    gap: 0;
+    margin: 0;
+}
+
+.detail-list div {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 180px 1fr;
+    padding: 14px 16px;
+}
+
+.detail-list div + div {
+    border-top: 1px solid #edf0e9;
+}
+
+.detail-list dt {
+    color: #526253;
+    font-weight: 650;
+}
+
+.detail-list dd {
+    margin: 0;
+}
+
+.form-panel {
+    background: #ffffff;
+    border: 1px solid #dfe4d8;
+    border-radius: 8px;
+    display: grid;
+    gap: 16px;
+    max-width: 760px;
+    padding: 20px;
+}
+
+.field-group {
+    display: grid;
+    gap: 6px;
+}
+
+label {
+    color: #334334;
+    font-weight: 650;
+}
+
+input,
+select,
+textarea {
+    border: 1px solid #cfd8cc;
+    border-radius: 8px;
+    font: inherit;
+    padding: 10px 12px;
+    width: 100%;
+}
+
+textarea {
+    min-height: 110px;
+}
+
+.error {
+    color: #b42318;
+    font-size: 0.9rem;
+}
+
+.summary-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-bottom: 28px;
+}
+
+.summary-card {
+    background: #ffffff;
+    border: 1px solid #dfe4d8;
+    border-radius: 8px;
+    padding: 18px;
+}
+
+.summary-card strong {
+    display: block;
+    font-size: 1.8rem;
 }
 
 @media (max-width: 800px) {
