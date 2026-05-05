@@ -1,0 +1,3 @@
+<div class="field-group"><label for="stock_lot_id">Stock lot</label><select id="stock_lot_id" name="stock_lot_id" required><option value="">Select lot</option>@foreach($lots as $lot)<option value="{{ $lot->id }}">{{ $lot->lot_number }} - {{ $lot->product->name }} - {{ $lot->warehouse->name }} ({{ $lot->quantity_on_hand }})</option>@endforeach</select>@error('stock_lot_id') <span class="error">{{ $message }}</span> @enderror</div>
+<div class="field-group"><label for="quantity">Quantity</label><input id="quantity" name="quantity" type="number" min="0.01" step="0.01" required>@error('quantity') <span class="error">{{ $message }}</span> @enderror</div>
+<div class="field-group"><label for="reason">Reason</label><textarea id="reason" name="reason"></textarea></div>

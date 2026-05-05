@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">Inventory</p><h1>Stock balances</h1></div><div class="actions"><a class="button" href="{{ route('inventory.stock.receive.form') }}">Receive</a><a class="button" href="{{ route('inventory.stock.issue.form') }}">Issue</a><a class="button" href="{{ route('inventory.stock.transfer.form') }}">Transfer</a><a class="button" href="{{ route('inventory.stock.adjust.form') }}">Adjust</a></div></header>
+    <div class="table-wrap"><table><thead><tr><th>Lot</th><th>Product</th><th>Farm</th><th>Warehouse</th><th>Quantity</th><th>Reserved</th><th>Unit cost</th><th>Status</th></tr></thead><tbody>@forelse($lots as $lot)<tr><td>{{ $lot->lot_number }}</td><td>{{ $lot->product->name }}</td><td>{{ $lot->farm->name }}</td><td>{{ $lot->warehouse->name }}</td><td>{{ $lot->quantity_on_hand }} {{ $lot->unit_of_measure }}</td><td>{{ $lot->reserved_quantity }}</td><td>{{ $lot->unit_cost }}</td><td>{{ ucfirst($lot->status) }}</td></tr>@empty<tr><td colspan="8">No stock lots found.</td></tr>@endforelse</tbody></table></div>{{ $lots->links() }}
+@endsection

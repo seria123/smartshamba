@@ -12,5 +12,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersPermissionsSeeder::class);
         $this->call(WorkersLabourSeeder::class);
         $this->call(TasksWorkOrdersSeeder::class);
+        $this->call(InventoryInputsSeeder::class);
     }
 }

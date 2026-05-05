@@ -56,6 +56,22 @@ class UsersPermissionsSeeder extends Seeder
             ['work-orders.update', 'Update Work Orders', 'Tasks/Work Orders'],
             ['work-orders.cancel', 'Cancel Work Orders', 'Tasks/Work Orders'],
             ['work-orders.manage', 'Manage Work Orders', 'Tasks/Work Orders'],
+            ['inventory.view', 'View Inventory', 'Inventory/Inputs'],
+            ['inventory.manage', 'Manage Inventory', 'Inventory/Inputs'],
+            ['products.view', 'View Products', 'Inventory/Inputs'],
+            ['products.create', 'Create Products', 'Inventory/Inputs'],
+            ['products.update', 'Update Products', 'Inventory/Inputs'],
+            ['products.deactivate', 'Deactivate Products', 'Inventory/Inputs'],
+            ['suppliers.view', 'View Suppliers', 'Inventory/Inputs'],
+            ['suppliers.create', 'Create Suppliers', 'Inventory/Inputs'],
+            ['suppliers.update', 'Update Suppliers', 'Inventory/Inputs'],
+            ['suppliers.deactivate', 'Deactivate Suppliers', 'Inventory/Inputs'],
+            ['stock.view', 'View Stock', 'Inventory/Inputs'],
+            ['stock.receive', 'Receive Stock', 'Inventory/Inputs'],
+            ['stock.issue', 'Issue Stock', 'Inventory/Inputs'],
+            ['stock.transfer', 'Transfer Stock', 'Inventory/Inputs'],
+            ['stock.adjust', 'Adjust Stock', 'Inventory/Inputs'],
+            ['stock.manage', 'Manage Stock', 'Inventory/Inputs'],
         ];
 
         $permissions = [];
@@ -106,7 +122,7 @@ class UsersPermissionsSeeder extends Seeder
     private function syncRolePermissions(array $roles, array $permissions): void
     {
         $all = collect($permissions)->pluck('id')->all();
-        $readOnly = collect($permissions)->only(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view'])->pluck('id')->all();
+        $readOnly = collect($permissions)->only(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'])->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
@@ -178,15 +194,28 @@ class UsersPermissionsSeeder extends Seeder
             'tasks.view',
             'tasks.submit',
         ])->pluck('id')->all();
+        $inventoryManagers = collect($permissions)->only([
+            'core.view', 'modules.view', 'reports.view',
+            'inventory.view', 'inventory.manage',
+            'products.view', 'products.create', 'products.update', 'products.deactivate',
+            'suppliers.view', 'suppliers.create', 'suppliers.update', 'suppliers.deactivate',
+            'stock.view', 'stock.receive', 'stock.issue', 'stock.transfer', 'stock.adjust', 'stock.manage',
+        ])->pluck('id')->all();
+        $inventoryOperators = collect($permissions)->only([
+            'core.view', 'inventory.view',
+            'products.view', 'products.create', 'products.update',
+            'suppliers.view', 'suppliers.create', 'suppliers.update',
+            'stock.view', 'stock.receive', 'stock.issue', 'stock.transfer', 'stock.adjust', 'stock.manage',
+        ])->pluck('id')->all();
 
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => $taskManagers,
+            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->unique()->all(),
             'agronomist' => $taskOperators,
             'livestock-officer' => $taskOperators,
-            'storekeeper' => $readOnly,
-            'finance-officer' => collect($permissions)->only(['core.view', 'reports.view', 'reports.manage'])->pluck('id')->all(),
+            'storekeeper' => $inventoryOperators,
+            'finance-officer' => collect($permissions)->only(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'])->pluck('id')->all(),
             'farm-hand' => $taskSubmitters,
             'contractor' => $taskSubmitters,
             'auditor' => $readOnly,

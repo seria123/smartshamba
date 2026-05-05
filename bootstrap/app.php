@@ -24,5 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Modules\UsersPermissions\Providers\UsersPermissionsServiceProvider::class,
         App\Modules\Workers\Providers\WorkersServiceProvider::class,
         App\Modules\Tasks\Providers\TasksServiceProvider::class,
+        App\Modules\Inventory\Providers\InventoryServiceProvider::class,
     ])
     ->create();
