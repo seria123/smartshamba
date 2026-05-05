@@ -80,12 +80,16 @@
         </div>
     </div>
 
-    @if(!$alert->is_read)
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <a href="{{ route('alerts.markAsRead', $alert->id) }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition inline-block">
+@if(!$alert->is_read)
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form action="{{ route('alerts.markAsRead', $alert) }}" method="POST">
+            @csrf
+            <button type="submit"
+                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">
                 <i class="fas fa-check mr-2"></i>Mark as Read
-            </a>
-        </div>
-    @endif
+            </button>
+        </form>
+    </div>
+@endif
 </div>
 @endsection

@@ -35,15 +35,15 @@
                         <td class="px-6 py-4">
                             @if($alert->type === 'critical')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-300">
-                                    <i class=\"fas fa-exclamation-circle mr-1.5\"></i>Critical
+                                    <i class="fas fa-exclamation-circle mr-1.5"></i>Critical
                                 </span>
                             @elseif($alert->type === 'warning')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-300">
-                                    <i class=\"fas fa-warning mr-1.5\"></i>Warning
+                                    <i class="fas fa-warning mr-1.5"></i>Warning
                                 </span>
                             @else
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
-                                    <i class=\"fas fa-info-circle mr-1.5\"></i>Info
+                                    <i class="fas fa-info-circle mr-1.5"></i>Info
                                 </span>
                             @endif
                         </td>
@@ -72,32 +72,35 @@
                         <td class="px-6 py-4 text-sm">
                             @if($alert->is_read)
                                 <span class="inline-flex items-center text-green-700 font-medium">
-                                    <i class=\"fas fa-check-circle mr-1.5\"></i>Read
+                                    <i class="fas fa-check-circle mr-1.5"></i>Read
                                 </span>
                             @else
-                                <span class="inline-flex items-center text-red-700 font-medium\">
-                                    <i class=\"fas fa-envelope mr-1.5\"></i>Unread
+                                <span class="inline-flex items-center text-red-700 font-medium">
+                                    <i class="fas fa-envelope mr-1.5"></i>Unread
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-sm font-medium\">
-                            <div class="flex items-center space-x-2\">
-                                <a href="{{ route('alerts.show', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-200" title="View\">
-                                    <i class=\"fas fa-eye\"></i>
+                        <td class="px-6 py-4 text-sm font-medium">
+                            <div class="flex items-center space-x-2">
+                                <a href="{{ route('alerts.show', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-200" title="View">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('alerts.edit', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-400 transition-all duration-200" title="Edit\">
-                                    <i class=\"fas fa-edit\"></i>
+                                <a href="{{ route('alerts.edit', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-400 transition-all duration-200" title="Edit">
+                                    <i class="fas fa-edit"></i>
                                 </a>
-                                @if(!$alert->is_read)
-                                    <a href="{{ route('alerts.markAsRead', $alert->id) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-green-200 text-green-600 hover:bg-green-50 hover:border-green-400 transition-all duration-200" title="Mark as read\">
-                                        <i class=\"fas fa-check\"></i>
-                                    </a>
-                                @endif
-                                <form action="{{ route('alerts.destroy', $alert->id) }}" method="POST" class="inline\">
+                                <form action="{{ route('alerts.markAsRead', $alert) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit"
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-green-200 text-green-600 hover:bg-green-50 hover:border-green-400 transition-all duration-200"
+                                        title="Mark as read">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <form action="{{ route('alerts.destroy', $alert->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200" title="Delete\" onclick="return confirm('Are you sure you want to delete this alert?')\">
-                                        <i class=\"fas fa-trash\"></i>
+                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200" title="Delete" onclick="return confirm('Are you sure you want to delete this alert?')">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                             </div>
@@ -105,10 +108,10 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center\">
-                            <div class="flex flex-col items-center justify-center\">
-                                <i class=\"fas fa-bell text-4xl text-gray-300 mb-3\"></i>
-                                <p class=\"text-gray-500 font-medium mb-4\">No alerts found. Your system is running smoothly!</p>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <i class="fas fa-bell text-4xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500 font-medium mb-4">No alerts found. Your system is running smoothly!</p>
                             </div>
                         </td>
                     </tr>

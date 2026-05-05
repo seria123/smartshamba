@@ -17,6 +17,8 @@ use App\Http\Controllers\PlantingScheduleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\HarvestController;
+
 use App\Http\Controllers\YieldEstimationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -167,12 +169,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('staff/{staff}/tasks', [StaffController::class, 'tasks'])->name('staff.tasks');
     Route::post('staff/{staff}/terminate', [StaffController::class, 'terminate'])->name('staff.terminate');
 });
-
+Route::resource('harvests', HarvestController::class);
+Route::post('/alerts/{alert}/read', [AlertController::class, 'markAsRead'])
+    ->name('alerts.markAsRead');
+Route::get('/alerts/{alert}/read', function (\App\Models\Alert $alert) {
+    return redirect()->route('alerts.show', $alert)
+        ->with('error', 'Please use the button to mark alerts as read.');
+})->name('alerts.markAsRead.get');
 // Yield Analysis Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('yield_estimations/dashboard', [YieldEstimationController::class, 'dashboard'])->name('yield_estimations.dashboard');
     Route::get('yield_estimations/statistics', [YieldEstimationController::class, 'statistics'])->name('yield_estimations.statistics');
     Route::resource('yield_estimations', YieldEstimationController::class);
 });
+
 
 require __DIR__.'/auth.php';
