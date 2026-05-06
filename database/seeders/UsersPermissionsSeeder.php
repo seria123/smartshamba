@@ -98,6 +98,35 @@ class UsersPermissionsSeeder extends Seeder
             ['crop-harvests.create', 'Create Crop Harvests', 'Crops'],
             ['crop-losses.view', 'View Crop Losses', 'Crops'],
             ['crop-losses.create', 'Create Crop Losses', 'Crops'],
+            ['livestock.view', 'View Livestock', 'Livestock'],
+            ['livestock.manage', 'Manage Livestock', 'Livestock'],
+            ['livestock-species.view', 'View Livestock Species', 'Livestock'],
+            ['livestock-species.create', 'Create Livestock Species', 'Livestock'],
+            ['livestock-species.update', 'Update Livestock Species', 'Livestock'],
+            ['livestock-species.deactivate', 'Deactivate Livestock Species', 'Livestock'],
+            ['livestock-animals.view', 'View Livestock Animals', 'Livestock'],
+            ['livestock-animals.create', 'Create Livestock Animals', 'Livestock'],
+            ['livestock-animals.update', 'Update Livestock Animals', 'Livestock'],
+            ['livestock-animals.deactivate', 'Deactivate Livestock Animals', 'Livestock'],
+            ['livestock-groups.view', 'View Livestock Groups', 'Livestock'],
+            ['livestock-groups.create', 'Create Livestock Groups', 'Livestock'],
+            ['livestock-groups.update', 'Update Livestock Groups', 'Livestock'],
+            ['livestock-groups.deactivate', 'Deactivate Livestock Groups', 'Livestock'],
+            ['livestock-health.view', 'View Livestock Health', 'Livestock'],
+            ['livestock-health.create', 'Create Livestock Health Records', 'Livestock'],
+            ['livestock-breeding.view', 'View Livestock Breeding', 'Livestock'],
+            ['livestock-breeding.create', 'Create Livestock Breeding Records', 'Livestock'],
+            ['livestock-births.view', 'View Livestock Births', 'Livestock'],
+            ['livestock-births.create', 'Create Livestock Birth Records', 'Livestock'],
+            ['livestock-feed.view', 'View Livestock Feed', 'Livestock'],
+            ['livestock-feed.create', 'Create Livestock Feed Records', 'Livestock'],
+            ['livestock-movements.view', 'View Livestock Movements', 'Livestock'],
+            ['livestock-movements.create', 'Create Livestock Movement Records', 'Livestock'],
+            ['livestock-mortality.view', 'View Livestock Mortality', 'Livestock'],
+            ['livestock-mortality.create', 'Create Livestock Mortality Records', 'Livestock'],
+            ['livestock-yields.view', 'View Livestock Yields', 'Livestock'],
+            ['livestock-yields.create', 'Create Livestock Yield Records', 'Livestock'],
+            ['livestock-withdrawals.view', 'View Livestock Withdrawals', 'Livestock'],
         ];
 
         $permissions = [];
@@ -151,7 +180,9 @@ class UsersPermissionsSeeder extends Seeder
         $cropView = ['crops.view', 'crop-master.view', 'crop-seasons.view', 'crop-cycles.view', 'crop-activities.view', 'crop-scouting.view', 'crop-treatments.view', 'crop-harvests.view', 'crop-losses.view'];
         $cropOps = ['crops.view', 'crops.manage', 'crop-master.view', 'crop-master.create', 'crop-master.update', 'crop-master.deactivate', 'crop-seasons.view', 'crop-seasons.create', 'crop-seasons.update', 'crop-seasons.close', 'crop-cycles.view', 'crop-cycles.create', 'crop-cycles.update', 'crop-cycles.close', 'crop-activities.view', 'crop-activities.create', 'crop-activities.update', 'crop-activities.approve', 'crop-scouting.view', 'crop-scouting.create', 'crop-treatments.view', 'crop-treatments.create', 'crop-harvests.view', 'crop-harvests.create', 'crop-losses.view', 'crop-losses.create'];
         $agronomistCropOps = ['crops.view', 'crop-master.view', 'crop-seasons.view', 'crop-cycles.view', 'crop-cycles.create', 'crop-cycles.update', 'crop-activities.view', 'crop-activities.create', 'crop-scouting.view', 'crop-scouting.create', 'crop-treatments.view', 'crop-treatments.create', 'crop-harvests.view', 'crop-harvests.create', 'crop-losses.view', 'crop-losses.create'];
-        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView))->pluck('id')->all();
+        $livestockView = ['livestock.view', 'livestock-species.view', 'livestock-animals.view', 'livestock-groups.view', 'livestock-health.view', 'livestock-breeding.view', 'livestock-births.view', 'livestock-feed.view', 'livestock-movements.view', 'livestock-mortality.view', 'livestock-yields.view', 'livestock-withdrawals.view'];
+        $livestockOps = ['livestock.view', 'livestock.manage', 'livestock-species.view', 'livestock-species.create', 'livestock-species.update', 'livestock-species.deactivate', 'livestock-animals.view', 'livestock-animals.create', 'livestock-animals.update', 'livestock-animals.deactivate', 'livestock-groups.view', 'livestock-groups.create', 'livestock-groups.update', 'livestock-groups.deactivate', 'livestock-health.view', 'livestock-health.create', 'livestock-breeding.view', 'livestock-breeding.create', 'livestock-births.view', 'livestock-births.create', 'livestock-feed.view', 'livestock-feed.create', 'livestock-movements.view', 'livestock-movements.create', 'livestock-mortality.view', 'livestock-mortality.create', 'livestock-yields.view', 'livestock-yields.create', 'livestock-withdrawals.view'];
+        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView))->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
@@ -240,9 +271,9 @@ class UsersPermissionsSeeder extends Seeder
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->unique()->all(),
+            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->unique()->all(),
             'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->unique()->all(),
-            'livestock-officer' => $taskOperators,
+            'livestock-officer' => collect($taskOperators)->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->unique()->all(),
             'storekeeper' => $inventoryOperators,
             'finance-officer' => collect($permissions)->only(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'])->pluck('id')->all(),
             'farm-hand' => $taskSubmitters,
