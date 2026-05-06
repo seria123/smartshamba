@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Modules\Irrigation\Http\Controllers\Concerns;
+
+use App\Modules\UsersPermissions\Models\OrganizationMembership;
+use Illuminate\Validation\Validator;
+
+trait ValidatesIrrigationScope
+{
+    protected function addFarmScopedValidation(Validator $validator, array $fields): void
+    {
+        $validator->after(function (Validator $validator) use ($fields): void {
+            $data = $validator->getData();
+            $farmId = (int) ($data['farm_id'] ?? 0);
+
+            foreach ($fields as $field => $table) {
+                if (! empty($data[$field]) && ! $this->idBelongsToFarm($table, (int) $data[$field], $farmId)) {
+                    $validator->errors()->add($field, 'The selected record must belong to the selected farm.');
+                }
+            }
+        });
+    }
+
+    protected function addUserScopeValidation(Validator $validator, string $field): void
+    {
+        $validator->after(function (Validator $validator) use ($field): void {
+            $data = $validator->getData();
+            $userId = $data[$field] ?? null;
+            if (! $userId) {
+                return;
+            }
+
+            $matches = OrganizationMembership::query()
+                ->where('organization_id', $data['organization_id'] ?? 0)
+                ->where('user_id', $userId)
+                ->where('status', 'active')
+                ->where(function ($query) use ($data): void {
+                    $query->whereNull('farm_id')->orWhere('farm_id', $data['farm_id'] ?? 0);
+                })
+                ->exists();
+
+            if (! $matches) {
+                $validator->errors()->add($field, 'The selected user must have active access to the selected organization and farm.');
+            }
+        });
+    }
+
+    protected function addReadingTargetValidation(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $data = $validator->getData();
+            if (empty($data['water_source_id']) && empty($data['irrigation_zone_id'])) {
+                $validator->errors()->add('water_source_id', 'A water source or irrigation zone is required.');
+            }
+        });
+    }
+
+    protected function idBelongsToFarm(string $table, int $id, int $farmId): bool
+    {
+        return \DB::table($table)->where('id', $id)->where('farm_id', $farmId)->exists();
+    }
+
+    protected function nextNumber(string $prefix): string
+    {
+        return $prefix.'-'.now()->format('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
+    }
+}

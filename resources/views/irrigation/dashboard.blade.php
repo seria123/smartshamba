@@ -1,0 +1,8 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">Irrigation / Water</p><h1>Irrigation dashboard</h1></div><div class="actions"><a class="button" href="{{ route('irrigation.schedules.create') }}">New schedule</a><a class="button secondary" href="{{ route('irrigation.events.create') }}">Record event</a></div></header>
+    <section class="summary-grid">
+        <article class="summary-card"><span>Active sources</span><strong>{{ $activeSources }}</strong></article><article class="summary-card"><span>Active zones</span><strong>{{ $activeZones }}</strong></article><article class="summary-card"><span>Schedules today</span><strong>{{ $schedulesToday }}</strong></article><article class="summary-card"><span>Missed schedules</span><strong>{{ $missedSchedules }}</strong></article><article class="summary-card"><span>Events</span><strong>{{ $recentEvents }}</strong></article><article class="summary-card"><span>Readings</span><strong>{{ $readings }}</strong></article><article class="summary-card"><span>Open issues</span><strong>{{ $openIssues }}</strong></article>
+    </section>
+    <div class="actions"><a class="button secondary" href="{{ route('irrigation.water-sources.index') }}">Water Sources</a><a class="button secondary" href="{{ route('irrigation.zones.index') }}">Zones</a><a class="button secondary" href="{{ route('irrigation.schedules.index') }}">Schedules</a><a class="button secondary" href="{{ route('irrigation.events.index') }}">Events</a><a class="button secondary" href="{{ route('irrigation.readings.index') }}">Readings</a><a class="button secondary" href="{{ route('irrigation.issues.index') }}">Issues</a></div>
+@endsection

@@ -127,6 +127,30 @@ class UsersPermissionsSeeder extends Seeder
             ['livestock-yields.view', 'View Livestock Yields', 'Livestock'],
             ['livestock-yields.create', 'Create Livestock Yield Records', 'Livestock'],
             ['livestock-withdrawals.view', 'View Livestock Withdrawals', 'Livestock'],
+            ['irrigation.view', 'View Irrigation', 'Irrigation'],
+            ['irrigation.manage', 'Manage Irrigation', 'Irrigation'],
+            ['water-sources.view', 'View Water Sources', 'Irrigation'],
+            ['water-sources.create', 'Create Water Sources', 'Irrigation'],
+            ['water-sources.update', 'Update Water Sources', 'Irrigation'],
+            ['water-sources.deactivate', 'Deactivate Water Sources', 'Irrigation'],
+            ['irrigation-zones.view', 'View Irrigation Zones', 'Irrigation'],
+            ['irrigation-zones.create', 'Create Irrigation Zones', 'Irrigation'],
+            ['irrigation-zones.update', 'Update Irrigation Zones', 'Irrigation'],
+            ['irrigation-zones.deactivate', 'Deactivate Irrigation Zones', 'Irrigation'],
+            ['irrigation-schedules.view', 'View Irrigation Schedules', 'Irrigation'],
+            ['irrigation-schedules.create', 'Create Irrigation Schedules', 'Irrigation'],
+            ['irrigation-schedules.update', 'Update Irrigation Schedules', 'Irrigation'],
+            ['irrigation-schedules.cancel', 'Cancel Irrigation Schedules', 'Irrigation'],
+            ['irrigation-events.view', 'View Irrigation Events', 'Irrigation'],
+            ['irrigation-events.create', 'Create Irrigation Events', 'Irrigation'],
+            ['irrigation-events.update', 'Update Irrigation Events', 'Irrigation'],
+            ['irrigation-events.cancel', 'Cancel Irrigation Events', 'Irrigation'],
+            ['water-readings.view', 'View Water Readings', 'Irrigation'],
+            ['water-readings.create', 'Create Water Readings', 'Irrigation'],
+            ['irrigation-issues.view', 'View Irrigation Issues', 'Irrigation'],
+            ['irrigation-issues.create', 'Create Irrigation Issues', 'Irrigation'],
+            ['irrigation-issues.update', 'Update Irrigation Issues', 'Irrigation'],
+            ['irrigation-issues.resolve', 'Resolve Irrigation Issues', 'Irrigation'],
         ];
 
         $permissions = [];
@@ -182,7 +206,9 @@ class UsersPermissionsSeeder extends Seeder
         $agronomistCropOps = ['crops.view', 'crop-master.view', 'crop-seasons.view', 'crop-cycles.view', 'crop-cycles.create', 'crop-cycles.update', 'crop-activities.view', 'crop-activities.create', 'crop-scouting.view', 'crop-scouting.create', 'crop-treatments.view', 'crop-treatments.create', 'crop-harvests.view', 'crop-harvests.create', 'crop-losses.view', 'crop-losses.create'];
         $livestockView = ['livestock.view', 'livestock-species.view', 'livestock-animals.view', 'livestock-groups.view', 'livestock-health.view', 'livestock-breeding.view', 'livestock-births.view', 'livestock-feed.view', 'livestock-movements.view', 'livestock-mortality.view', 'livestock-yields.view', 'livestock-withdrawals.view'];
         $livestockOps = ['livestock.view', 'livestock.manage', 'livestock-species.view', 'livestock-species.create', 'livestock-species.update', 'livestock-species.deactivate', 'livestock-animals.view', 'livestock-animals.create', 'livestock-animals.update', 'livestock-animals.deactivate', 'livestock-groups.view', 'livestock-groups.create', 'livestock-groups.update', 'livestock-groups.deactivate', 'livestock-health.view', 'livestock-health.create', 'livestock-breeding.view', 'livestock-breeding.create', 'livestock-births.view', 'livestock-births.create', 'livestock-feed.view', 'livestock-feed.create', 'livestock-movements.view', 'livestock-movements.create', 'livestock-mortality.view', 'livestock-mortality.create', 'livestock-yields.view', 'livestock-yields.create', 'livestock-withdrawals.view'];
-        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView))->pluck('id')->all();
+        $irrigationView = ['irrigation.view', 'water-sources.view', 'irrigation-zones.view', 'irrigation-schedules.view', 'irrigation-events.view', 'water-readings.view', 'irrigation-issues.view'];
+        $irrigationOps = ['irrigation.view', 'irrigation.manage', 'water-sources.view', 'water-sources.create', 'water-sources.update', 'water-sources.deactivate', 'irrigation-zones.view', 'irrigation-zones.create', 'irrigation-zones.update', 'irrigation-zones.deactivate', 'irrigation-schedules.view', 'irrigation-schedules.create', 'irrigation-schedules.update', 'irrigation-schedules.cancel', 'irrigation-events.view', 'irrigation-events.create', 'irrigation-events.update', 'irrigation-events.cancel', 'water-readings.view', 'water-readings.create', 'irrigation-issues.view', 'irrigation-issues.create', 'irrigation-issues.update', 'irrigation-issues.resolve'];
+        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView, $irrigationView))->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
@@ -271,11 +297,11 @@ class UsersPermissionsSeeder extends Seeder
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->unique()->all(),
-            'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->unique()->all(),
+            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->unique()->all(),
+            'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->unique()->all(),
             'livestock-officer' => collect($taskOperators)->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->unique()->all(),
-            'storekeeper' => $inventoryOperators,
-            'finance-officer' => collect($permissions)->only(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'])->pluck('id')->all(),
+            'storekeeper' => collect($inventoryOperators)->merge(collect($permissions)->only($irrigationView)->pluck('id')->all())->unique()->all(),
+            'finance-officer' => collect($permissions)->only(array_merge(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $irrigationView))->pluck('id')->all(),
             'farm-hand' => $taskSubmitters,
             'contractor' => $taskSubmitters,
             'auditor' => $readOnly,

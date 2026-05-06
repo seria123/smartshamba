@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">{{ $zone->code }}</p><h1>{{ $zone->name }}</h1></div><div class="actions"><a class="button secondary" href="{{ route('irrigation.zones.index') }}">Back</a><a class="button" href="{{ route('irrigation.zones.edit',$zone) }}">Edit</a><form method="POST" action="{{ route('irrigation.zones.deactivate',$zone) }}">@csrf<button>Deactivate</button></form></div></header>
+    <dl class="detail-list"><div><dt>Farm</dt><dd>{{ $zone->farm?->name }}</dd></div><div><dt>Field</dt><dd>{{ $zone->field?->name ?? '-' }}</dd></div><div><dt>Source</dt><dd>{{ $zone->waterSource?->name ?? '-' }}</dd></div><div><dt>Method</dt><dd>{{ ucfirst(str_replace('_',' ',$zone->irrigation_method)) }}</dd></div><div><dt>Status</dt><dd>{{ ucfirst(str_replace('_',' ',$zone->status)) }}</dd></div><div><dt>Schedules</dt><dd>{{ $zone->schedules->count() }}</dd></div><div><dt>Events</dt><dd>{{ $zone->events->count() }}</dd></div><div><dt>Issues</dt><dd>{{ $zone->issues->count() }}</dd></div></dl>
+@endsection

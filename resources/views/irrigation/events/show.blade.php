@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">{{ $event->event_number }}</p><h1>{{ $event->zone?->name }} event</h1></div><div class="actions"><a class="button secondary" href="{{ route('irrigation.events.index') }}">Back</a><a class="button" href="{{ route('irrigation.events.edit',$event) }}">Edit</a><form method="POST" action="{{ route('irrigation.events.cancel',$event) }}">@csrf<button>Cancel</button></form></div></header>
+    <dl class="detail-list"><div><dt>Date</dt><dd>{{ $event->irrigation_date?->format('Y-m-d') }}</dd></div><div><dt>Zone</dt><dd>{{ $event->zone?->name }}</dd></div><div><dt>Source</dt><dd>{{ $event->waterSource?->name ?? '-' }}</dd></div><div><dt>Field</dt><dd>{{ $event->field?->name ?? '-' }}</dd></div><div><dt>Duration</dt><dd>{{ $event->duration_minutes ? $event->duration_minutes.' min' : '-' }}</dd></div><div><dt>Water volume</dt><dd>{{ $event->water_volume ? $event->water_volume.' '.$event->water_volume_unit : '-' }}</dd></div><div><dt>Status</dt><dd>{{ ucfirst($event->status) }}</dd></div><div><dt>Notes</dt><dd>{{ $event->notes ?? '-' }}</dd></div></dl>
+@endsection

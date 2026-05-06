@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">Irrigation</p><h1>Issues</h1></div><a class="button" href="{{ route('irrigation.issues.create') }}">New issue</a></header>
+    <div class="table-wrap"><table><thead><tr><th>Number</th><th>Date</th><th>Type</th><th>Severity</th><th>Status</th><th>Zone / source</th><th></th></tr></thead><tbody>@forelse($issues as $issue)<tr><td><a href="{{ route('irrigation.issues.show',$issue) }}">{{ $issue->issue_number }}</a></td><td>{{ $issue->issue_date?->format('Y-m-d') }}</td><td>{{ ucfirst(str_replace('_',' ',$issue->issue_type)) }}</td><td>{{ ucfirst($issue->severity) }}</td><td>{{ ucfirst(str_replace('_',' ',$issue->status)) }}</td><td>{{ $issue->zone?->name ?? $issue->waterSource?->name ?? '-' }}</td><td><a href="{{ route('irrigation.issues.edit',$issue) }}">Edit</a></td></tr>@empty<tr><td colspan="7">No issues found.</td></tr>@endforelse</tbody></table></div>{{ $issues->links() }}
+@endsection

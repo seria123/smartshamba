@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">{{ $issue->issue_number }}</p><h1>{{ ucfirst(str_replace('_',' ',$issue->issue_type)) }}</h1></div><div class="actions"><a class="button secondary" href="{{ route('irrigation.issues.index') }}">Back</a><a class="button" href="{{ route('irrigation.issues.edit',$issue) }}">Edit</a><form method="POST" action="{{ route('irrigation.issues.resolve',$issue) }}">@csrf<button>Resolve</button></form></div></header>
+    <dl class="detail-list"><div><dt>Date</dt><dd>{{ $issue->issue_date?->format('Y-m-d') }}</dd></div><div><dt>Severity</dt><dd>{{ ucfirst($issue->severity) }}</dd></div><div><dt>Status</dt><dd>{{ ucfirst(str_replace('_',' ',$issue->status)) }}</dd></div><div><dt>Zone</dt><dd>{{ $issue->zone?->name ?? '-' }}</dd></div><div><dt>Source</dt><dd>{{ $issue->waterSource?->name ?? '-' }}</dd></div><div><dt>Field</dt><dd>{{ $issue->field?->name ?? '-' }}</dd></div><div><dt>Description</dt><dd>{{ $issue->description }}</dd></div><div><dt>Resolution</dt><dd>{{ $issue->resolution_notes ?? '-' }}</dd></div></dl>
+@endsection

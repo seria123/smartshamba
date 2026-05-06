@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">{{ $source->code }}</p><h1>{{ $source->name }}</h1></div><div class="actions"><a class="button secondary" href="{{ route('irrigation.water-sources.index') }}">Back</a><a class="button" href="{{ route('irrigation.water-sources.edit',$source) }}">Edit</a><form method="POST" action="{{ route('irrigation.water-sources.deactivate',$source) }}">@csrf<button>Deactivate</button></form></div></header>
+    <dl class="detail-list"><div><dt>Farm</dt><dd>{{ $source->farm?->name }}</dd></div><div><dt>Type</dt><dd>{{ ucfirst($source->source_type) }}</dd></div><div><dt>Capacity</dt><dd>{{ $source->capacity ? $source->capacity.' '.$source->capacity_unit : '-' }}</dd></div><div><dt>Status</dt><dd>{{ ucfirst(str_replace('_',' ',$source->status)) }}</dd></div><div><dt>Zones</dt><dd>{{ $source->zones->count() }}</dd></div><div><dt>Readings</dt><dd>{{ $source->readings->count() }}</dd></div><div><dt>Issues</dt><dd>{{ $source->issues->count() }}</dd></div><div><dt>Notes</dt><dd>{{ $source->notes ?? '-' }}</dd></div></dl>
+@endsection

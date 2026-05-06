@@ -44,6 +44,9 @@
                         @if (auth()->user()->canAccessAdmin('livestock.view'))
                             <a class="nav-item {{ request()->routeIs('livestock.*') ? 'is-active' : '' }}" href="{{ route('livestock.dashboard') }}">Livestock</a>
                         @endif
+                        @if (auth()->user()->canAccessAdmin('irrigation.view'))
+                            <a class="nav-item {{ request()->routeIs('irrigation.*') ? 'is-active' : '' }}" href="{{ route('irrigation.dashboard') }}">Irrigation / Water</a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="nav-item logout-button" type="submit">Log out</button>
