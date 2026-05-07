@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CropsModuleSeeder::class);
         $this->call(LivestockModuleSeeder::class);
         $this->call(IrrigationModuleSeeder::class);
+        $this->call(AssetsMaintenanceSeeder::class);
     }
 }

@@ -1,0 +1,8 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">Assets / Maintenance</p><h1>Assets dashboard</h1></div><div class="actions"><a class="button" href="{{ route('assets.items.create') }}">New asset</a><a class="button secondary" href="{{ route('assets.maintenance-records.create') }}">Record service</a></div></header>
+    <section class="summary-grid">
+        <article class="summary-card"><span>Active assets</span><strong>{{ $activeAssets }}</strong></article><article class="summary-card"><span>Under maintenance</span><strong>{{ $underMaintenance }}</strong></article><article class="summary-card"><span>Broken down</span><strong>{{ $brokenDown }}</strong></article><article class="summary-card"><span>Service due soon</span><strong>{{ $dueSoon }}</strong></article><article class="summary-card"><span>Open breakdowns</span><strong>{{ $openBreakdowns }}</strong></article><article class="summary-card"><span>Recent usage</span><strong>{{ $recentUsage }}</strong></article><article class="summary-card"><span>Planned schedules</span><strong>{{ $plannedSchedules }}</strong></article>
+    </section>
+    <div class="actions"><a class="button secondary" href="{{ route('assets.categories.index') }}">Asset Categories</a><a class="button secondary" href="{{ route('assets.items.index') }}">Assets</a><a class="button secondary" href="{{ route('assets.maintenance-schedules.index') }}">Maintenance Schedules</a><a class="button secondary" href="{{ route('assets.maintenance-records.index') }}">Maintenance Records</a><a class="button secondary" href="{{ route('assets.breakdowns.index') }}">Breakdowns</a><a class="button secondary" href="{{ route('assets.usage.index') }}">Asset Usage</a></div>
+@endsection

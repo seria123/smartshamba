@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">Assets / Maintenance</p><h1>Assets</h1></div><a class="button" href="{{ route('assets.items.create') }}">New asset</a></header>
+    <table><thead><tr><th>Code</th><th>Name</th><th>Category</th><th>Type</th><th>Farm</th><th>Location</th><th>Status</th><th>Condition</th><th>Next service</th><th>Actions</th></tr></thead><tbody>@foreach($assets as $asset)<tr><td>{{ $asset->asset_code }}</td><td>{{ $asset->name }}</td><td>{{ $asset->category?->name }}</td><td>{{ str_replace('_',' ',$asset->asset_type) }}</td><td>{{ $asset->farm?->name }}</td><td>{{ $asset->field?->name ?? $asset->paddock?->name ?? $asset->warehouse?->name ?? $asset->site?->name ?? 'Unassigned' }}</td><td>{{ $asset->status }}</td><td>{{ $asset->condition_status }}</td><td>{{ $asset->next_service_date?->toDateString() ?? 'None' }}</td><td><a href="{{ route('assets.items.show',$asset) }}">View</a></td></tr>@endforeach</tbody></table>{{ $assets->links() }}
+@endsection

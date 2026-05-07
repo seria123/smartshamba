@@ -47,6 +47,9 @@
                         @if (auth()->user()->canAccessAdmin('irrigation.view'))
                             <a class="nav-item {{ request()->routeIs('irrigation.*') ? 'is-active' : '' }}" href="{{ route('irrigation.dashboard') }}">Irrigation / Water</a>
                         @endif
+                        @if (auth()->user()->canAccessAdmin('assets.view'))
+                            <a class="nav-item {{ request()->routeIs('assets.*') ? 'is-active' : '' }}" href="{{ route('assets.dashboard') }}">Assets / Maintenance</a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="nav-item logout-button" type="submit">Log out</button>

@@ -151,6 +151,28 @@ class UsersPermissionsSeeder extends Seeder
             ['irrigation-issues.create', 'Create Irrigation Issues', 'Irrigation'],
             ['irrigation-issues.update', 'Update Irrigation Issues', 'Irrigation'],
             ['irrigation-issues.resolve', 'Resolve Irrigation Issues', 'Irrigation'],
+            ['assets.view', 'View Assets and Maintenance', 'Assets / Maintenance'],
+            ['assets.manage', 'Manage Assets and Maintenance', 'Assets / Maintenance'],
+            ['asset-categories.view', 'View Asset Categories', 'Assets / Maintenance'],
+            ['asset-categories.create', 'Create Asset Categories', 'Assets / Maintenance'],
+            ['asset-categories.update', 'Update Asset Categories', 'Assets / Maintenance'],
+            ['asset-categories.deactivate', 'Deactivate Asset Categories', 'Assets / Maintenance'],
+            ['assets.create', 'Create Assets', 'Assets / Maintenance'],
+            ['assets.update', 'Update Assets', 'Assets / Maintenance'],
+            ['assets.deactivate', 'Deactivate Assets', 'Assets / Maintenance'],
+            ['maintenance-schedules.view', 'View Maintenance Schedules', 'Assets / Maintenance'],
+            ['maintenance-schedules.create', 'Create Maintenance Schedules', 'Assets / Maintenance'],
+            ['maintenance-schedules.update', 'Update Maintenance Schedules', 'Assets / Maintenance'],
+            ['maintenance-schedules.cancel', 'Cancel Maintenance Schedules', 'Assets / Maintenance'],
+            ['maintenance-records.view', 'View Maintenance Records', 'Assets / Maintenance'],
+            ['maintenance-records.create', 'Create Maintenance Records', 'Assets / Maintenance'],
+            ['maintenance-records.update', 'Update Maintenance Records', 'Assets / Maintenance'],
+            ['breakdowns.view', 'View Breakdowns', 'Assets / Maintenance'],
+            ['breakdowns.create', 'Create Breakdowns', 'Assets / Maintenance'],
+            ['breakdowns.update', 'Update Breakdowns', 'Assets / Maintenance'],
+            ['breakdowns.resolve', 'Resolve Breakdowns', 'Assets / Maintenance'],
+            ['asset-usage.view', 'View Asset Usage', 'Assets / Maintenance'],
+            ['asset-usage.create', 'Create Asset Usage', 'Assets / Maintenance'],
         ];
 
         $permissions = [];
@@ -208,7 +230,10 @@ class UsersPermissionsSeeder extends Seeder
         $livestockOps = ['livestock.view', 'livestock.manage', 'livestock-species.view', 'livestock-species.create', 'livestock-species.update', 'livestock-species.deactivate', 'livestock-animals.view', 'livestock-animals.create', 'livestock-animals.update', 'livestock-animals.deactivate', 'livestock-groups.view', 'livestock-groups.create', 'livestock-groups.update', 'livestock-groups.deactivate', 'livestock-health.view', 'livestock-health.create', 'livestock-breeding.view', 'livestock-breeding.create', 'livestock-births.view', 'livestock-births.create', 'livestock-feed.view', 'livestock-feed.create', 'livestock-movements.view', 'livestock-movements.create', 'livestock-mortality.view', 'livestock-mortality.create', 'livestock-yields.view', 'livestock-yields.create', 'livestock-withdrawals.view'];
         $irrigationView = ['irrigation.view', 'water-sources.view', 'irrigation-zones.view', 'irrigation-schedules.view', 'irrigation-events.view', 'water-readings.view', 'irrigation-issues.view'];
         $irrigationOps = ['irrigation.view', 'irrigation.manage', 'water-sources.view', 'water-sources.create', 'water-sources.update', 'water-sources.deactivate', 'irrigation-zones.view', 'irrigation-zones.create', 'irrigation-zones.update', 'irrigation-zones.deactivate', 'irrigation-schedules.view', 'irrigation-schedules.create', 'irrigation-schedules.update', 'irrigation-schedules.cancel', 'irrigation-events.view', 'irrigation-events.create', 'irrigation-events.update', 'irrigation-events.cancel', 'water-readings.view', 'water-readings.create', 'irrigation-issues.view', 'irrigation-issues.create', 'irrigation-issues.update', 'irrigation-issues.resolve'];
-        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView, $irrigationView))->pluck('id')->all();
+        $assetView = ['assets.view', 'asset-categories.view', 'maintenance-schedules.view', 'maintenance-records.view', 'breakdowns.view', 'asset-usage.view'];
+        $assetOps = ['assets.view', 'assets.manage', 'asset-categories.view', 'asset-categories.create', 'asset-categories.update', 'asset-categories.deactivate', 'assets.create', 'assets.update', 'assets.deactivate', 'maintenance-schedules.view', 'maintenance-schedules.create', 'maintenance-schedules.update', 'maintenance-schedules.cancel', 'maintenance-records.view', 'maintenance-records.create', 'maintenance-records.update', 'breakdowns.view', 'breakdowns.create', 'breakdowns.update', 'breakdowns.resolve', 'asset-usage.view', 'asset-usage.create'];
+        $assetLimitedView = ['assets.view', 'maintenance-records.view', 'breakdowns.view', 'asset-usage.view'];
+        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView, $irrigationView, $assetView))->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
@@ -297,10 +322,10 @@ class UsersPermissionsSeeder extends Seeder
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->unique()->all(),
-            'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->unique()->all(),
-            'livestock-officer' => collect($taskOperators)->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->unique()->all(),
-            'storekeeper' => collect($inventoryOperators)->merge(collect($permissions)->only($irrigationView)->pluck('id')->all())->unique()->all(),
+            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->merge(collect($permissions)->only($assetOps)->pluck('id')->all())->unique()->all(),
+            'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->merge(collect($permissions)->only(['assets.view', 'asset-usage.view'])->pluck('id')->all())->unique()->all(),
+            'livestock-officer' => collect($taskOperators)->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only(['assets.view', 'asset-usage.view'])->pluck('id')->all())->unique()->all(),
+            'storekeeper' => collect($inventoryOperators)->merge(collect($permissions)->only($irrigationView)->pluck('id')->all())->merge(collect($permissions)->only($assetLimitedView)->pluck('id')->all())->unique()->all(),
             'finance-officer' => collect($permissions)->only(array_merge(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $irrigationView))->pluck('id')->all(),
             'farm-hand' => $taskSubmitters,
             'contractor' => $taskSubmitters,

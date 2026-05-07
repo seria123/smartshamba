@@ -1,0 +1,5 @@
+@extends('layouts.app')
+@section('content')
+    <header class="content-header"><div><p class="eyebrow">Breakdown</p><h1>{{ $breakdown->breakdown_number }}</h1></div><div class="actions"><a class="button secondary" href="{{ route('assets.breakdowns.edit',$breakdown) }}">Edit</a><form method="POST" action="{{ route('assets.breakdowns.resolve',$breakdown) }}">@csrf<input name="resolution_notes" placeholder="Resolution notes"><button>Resolve</button></form></div></header>
+    <section class="detail-grid"><article><strong>Asset</strong><p>{{ $breakdown->asset?->name }}</p></article><article><strong>Date</strong><p>{{ $breakdown->breakdown_date?->toDateString() }}</p></article><article><strong>Issue</strong><p>{{ str_replace('_',' ',$breakdown->issue_type) }}</p></article><article><strong>Severity</strong><p>{{ $breakdown->severity }}</p></article><article><strong>Status</strong><p>{{ $breakdown->status }}</p></article><article><strong>Resolved</strong><p>{{ $breakdown->resolved_at?->toDateTimeString() ?? 'No' }}</p></article></section><p>{{ $breakdown->description }}</p><p>{{ $breakdown->resolution_notes }}</p>
+@endsection
