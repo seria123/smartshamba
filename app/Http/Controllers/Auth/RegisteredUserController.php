@@ -30,32 +30,40 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
+        // 🧪 Validate input
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
+        // 👤 Create user WITH role (this fixes your error)
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'farmer', // ✅ REQUIRED FIX
         ]);
 
-        // 👉 assign role
-        $user->assignRole('farmer');
+        // 🎭 Assign role (if using Spatie)
+        if (method_exists($user, 'assignRole')) {
+            $user->assignRole('farmer');
+        }
 
-        // 👉 create farmer profile (minimal for now)
+        // 🌱 Create farmer profile
         Farmer::create([
             'user_id' => $user->id,
             'first_name' => $request->name,
             'last_name' => '',
         ]);
 
+        // 🔔 Fire registered event
         event(new Registered($user));
 
+        // 🔐 Log user in
         Auth::login($user);
 
+        // 🚀 Redirect to farm creation
         return redirect()->route('farms.create');
     }
 }
