@@ -145,9 +145,19 @@
             </a>
         </div>
 
+        <!-- Settings Section -->
+        <div>
+            <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Settings</h3>
+            <a href="{{ route('settings.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('settings.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                 <i class="fas fa-cog w-5"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+
     </nav>
 
-     <!-- User Info -->
+    <!-- User Info -->
      <div class="p-4 border-t border-green-700">
          <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 hover:bg-green-700 p-2 rounded transition">
              <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">

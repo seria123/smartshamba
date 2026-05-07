@@ -205,7 +205,7 @@ class PlantingScheduleResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'planned' => 'gray',
                         'planted' => 'blue',
                         'growing' => 'green',
@@ -223,7 +223,7 @@ class PlantingScheduleResource extends Resource
                 Tables\Columns\TextColumn::make('completion_percentage')
                     ->label('Progress')
                     ->badge()
-                    ->color(fn (int $state): string => match(true) {
+                    ->color(fn (int $state): string => match (true) {
                         $state >= 100 => 'success',
                         $state >= 75 => 'warning',
                         $state >= 50 => 'primary',
@@ -234,7 +234,7 @@ class PlantingScheduleResource extends Resource
                 Tables\Columns\TextColumn::make('days_until_planting')
                     ->label('In')
                     ->badge()
-                    ->color(fn (int $state): string => match(true) {
+                    ->color(fn (int $state): string => match (true) {
                         $state < 0 => 'danger',
                         $state === 0 => 'warning',
                         $state <= 7 => 'success',

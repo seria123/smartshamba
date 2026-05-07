@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('status')->default('running'); // running, completed, failed, cancelled
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->index(['irrigation_zone_id', 'started_at']);
         });
     }

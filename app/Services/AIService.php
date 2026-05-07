@@ -13,7 +13,7 @@ class AIService
         $prompt = "
         A livestock animal shows these symptoms: $symptomText.
 
-        " . ($diseaseName ? "The suspected disease is $diseaseName." : "") . "
+        ".($diseaseName ? "The suspected disease is $diseaseName." : '').'
 
         Give:
         1. Likely disease
@@ -21,14 +21,14 @@ class AIService
         3. Prevention
 
         Keep it simple for a farmer in Kenya.
-        ";
+        ';
 
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.openai.key'),
+            'Authorization' => 'Bearer '.config('services.openai.key'),
             'Content-Type' => 'application/json',
         ])->post('https://api.openai.com/v1/responses', [
-            "model" => "gpt-4.1-mini",
-            "input" => $prompt
+            'model' => 'gpt-4.1-mini',
+            'input' => $prompt,
         ]);
 
         return $response->json();

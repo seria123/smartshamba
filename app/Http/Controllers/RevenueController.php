@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Revenue;
-use App\Models\Farm;
-use App\Models\Crop;
 use App\Models\Buyer;
+use App\Models\Farm;
 use App\Models\Livestock;
+use App\Models\Revenue;
 use Illuminate\Http\Request;
 
 class RevenueController extends Controller
@@ -70,13 +69,13 @@ class RevenueController extends Controller
             'crop_id' => 'nullable|exists:crops,id',
             'livestock_id' => 'nullable|exists:livestock,id',
             'buyer_id' => 'nullable|exists:buyers,id',
-            'amount' => "required|numeric|min:0",
-            'sale_date' => "required|date",
-            'quantity_sold' => "nullable|numeric|min:0",
-            'unit' => "nullable|string",
-            'price_per_unit' => "nullable|numeric|min:0",
+            'amount' => 'required|numeric|min:0',
+            'sale_date' => 'required|date',
+            'quantity_sold' => 'nullable|numeric|min:0',
+            'unit' => 'nullable|string',
+            'price_per_unit' => 'nullable|numeric|min:0',
             'payment_status' => 'nullable|in:pending,partial,paid',
-            'payment_date' => "nullable|date",
+            'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',
             'invoice_number' => 'nullable|string',
             'notes' => 'nullable|string',
@@ -100,17 +99,17 @@ class RevenueController extends Controller
     public function update(Request $request, Revenue $revenue)
     {
         $validated = $request->validate([
-            'farm_id' => "required|exists:farms,id",
-            'crop_id' => "nullable|exists:crops,id",
-            'livestock_id' => "nullable|exists:livestock,id",
-            'buyer_id' => "nullable|exists:buyers,id",
-            'amount' => "required|numeric|min:0",
-            'sale_date' => "required|date",
-            'quantity_sold' => "nullable|numeric|min:0",
-            'unit' => "nullable|string",
-            'price_per_unit' => "nullable|numeric|min:0",
+            'farm_id' => 'required|exists:farms,id',
+            'crop_id' => 'nullable|exists:crops,id',
+            'livestock_id' => 'nullable|exists:livestock,id',
+            'buyer_id' => 'nullable|exists:buyers,id',
+            'amount' => 'required|numeric|min:0',
+            'sale_date' => 'required|date',
+            'quantity_sold' => 'nullable|numeric|min:0',
+            'unit' => 'nullable|string',
+            'price_per_unit' => 'nullable|numeric|min:0',
             'payment_status' => 'nullable|in:pending,partial,paid',
-            'payment_date' => "nullable|date",
+            'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',
             'invoice_number' => 'nullable|string',
             'notes' => 'nullable|string',

@@ -14,6 +14,7 @@ class CropCycleController extends Controller
     public function index()
     {
         $cropCycles = CropCycle::with(['farm', 'field', 'crop'])->get();
+
         return view('crop_cycles.index', compact('cropCycles'));
     }
 
@@ -27,6 +28,7 @@ class CropCycleController extends Controller
         $crops = \App\Models\Crop::all();
         // Get crop cycles that have at least one harvest
         $cropCycles = \App\Models\CropCycle::whereHas('harvests')->get();
+
         return view('crop_cycles.create', compact('farms', 'fields', 'crops', 'cropCycles'));
     }
 
@@ -62,7 +64,7 @@ class CropCycleController extends Controller
         // Handle Inputs if provided
         if ($request->has('input_type')) {
             foreach ($request->input('input_type') as $index => $type) {
-                if (!empty($type)) {
+                if (! empty($type)) {
                     $cropCycle->inputs()->create([
                         'input_type' => $type,
                         'name' => $request->input('input_name')[$index] ?? null,
@@ -84,18 +86,18 @@ class CropCycleController extends Controller
     public function show(CropCycle $cropCycle)
     {
         $cropCycle->load([
-            'farm', 
-            'field', 
-            'crop', 
-            'previousCycle', 
-            'stages', 
-            'inputs', 
-            'activities', 
-            'harvests', 
+            'farm',
+            'field',
+            'crop',
+            'previousCycle',
+            'stages',
+            'inputs',
+            'activities',
+            'harvests',
             'revenues',
-            'analyses' // Load disease analyses
+            'analyses', // Load disease analyses
         ]);
-        $analysisService = new CropCycleAnalysisService();
+        $analysisService = new CropCycleAnalysisService;
         $analysis = $analysisService->analyze($cropCycle);
 
         return view('crop_cycles.show', compact('cropCycle', 'analysis'));
@@ -110,10 +112,10 @@ class CropCycleController extends Controller
         $fields = \App\Models\Field::all();
         $crops = \App\Models\Crop::all();
         $cropCycles = \App\Models\CropCycle::where('id', '!=', $cropCycle->id)->whereHas('harvests')->get();
-$staff = \App\Models\Staff::all();
-         $cropCycle->load(['stages', 'inputs', 'activities']);
+        $staff = \App\Models\Staff::all();
+        $cropCycle->load(['stages', 'inputs', 'activities']);
 
-         return view('crop_cycles.edit', compact('cropCycle', 'farms', 'fields', 'crops', 'cropCycles', 'staff'));
+        return view('crop_cycles.edit', compact('cropCycle', 'farms', 'fields', 'crops', 'cropCycles', 'staff'));
     }
 
     /**
@@ -164,7 +166,7 @@ $staff = \App\Models\Staff::all();
      */
     public function analyze(CropCycle $cropCycle)
     {
-        $analysisService = new CropCycleAnalysisService();
+        $analysisService = new CropCycleAnalysisService;
         $analysis = $analysisService->analyze($cropCycle);
 
         return response()->json($analysis);

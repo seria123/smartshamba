@@ -31,20 +31,32 @@ class Report extends Model
 
     // Report Types
     const TYPE_DAILY_SUMMARY = 'daily_summary';
+
     const TYPE_WEEKLY_SUMMARY = 'weekly_summary';
+
     const TYPE_MONTHLY_SUMMARY = 'monthly_summary';
+
     const TYPE_CROP_ANALYSIS = 'crop_analysis';
+
     const TYPE_IRRIGATION_REPORT = 'irrigation_report';
+
     const TYPE_SENSOR_ANALYSIS = 'sensor_analysis';
+
     const TYPE_FINANCIAL = 'financial';
+
     const TYPE_YIELD_PREDICTION = 'yield_prediction';
+
     const TYPE_WEATHER_IMPACT = 'weather_impact';
+
     const TYPE_AUTOMATION_PERFORMANCE = 'automation_performance';
 
     // Status
     const STATUS_PENDING = 'pending';
+
     const STATUS_GENERATING = 'generating';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_FAILED = 'failed';
 
     public function farm(): BelongsTo
@@ -59,7 +71,7 @@ class Report extends Model
 
     public function getReportTypeNameAttribute(): string
     {
-        return match($this->report_type) {
+        return match ($this->report_type) {
             self::TYPE_DAILY_SUMMARY => 'Daily Summary',
             self::TYPE_WEEKLY_SUMMARY => 'Weekly Summary',
             self::TYPE_MONTHLY_SUMMARY => 'Monthly Summary',
@@ -76,7 +88,7 @@ class Report extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_PENDING => 'warning',
             self::STATUS_GENERATING => 'info',
             self::STATUS_COMPLETED => 'success',

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('fertilizer_type')->nullable()->after('seed_quantity_estimate');
             $table->string('fertilizer_amount')->nullable()->after('fertilizer_type');
             $table->text('pest_control_recommendations')->nullable()->after('fertilizer_amount');
-            
+
             // Livestock management details
             $table->text('feed_requirements')->nullable()->after('pest_control_recommendations');
             $table->text('vaccination_schedule')->nullable()->after('feed_requirements');
@@ -38,7 +38,7 @@ return new class extends Migration
                 'pest_control_recommendations',
                 'feed_requirements',
                 'vaccination_schedule',
-                'housing_requirements'
+                'housing_requirements',
             ]);
         });
     }

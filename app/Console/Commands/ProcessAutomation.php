@@ -33,9 +33,10 @@ class ProcessAutomation extends Command
         if ($fieldId) {
             $this->info("Processing automation for field ID: {$fieldId}");
             $field = \App\Models\Field::find($fieldId);
-            
-            if (!$field) {
+
+            if (! $field) {
                 $this->error("Field with ID {$fieldId} not found.");
+
                 return Command::FAILURE;
             }
 
@@ -47,7 +48,7 @@ class ProcessAutomation extends Command
         $this->info("Processed: {$results['processed']} fields");
         $this->info("Triggered: {$results['triggered']} actions");
 
-        if (!empty($results['errors'])) {
+        if (! empty($results['errors'])) {
             $this->warn('Errors encountered:');
             foreach ($results['errors'] as $error) {
                 $this->warn("  - {$error}");

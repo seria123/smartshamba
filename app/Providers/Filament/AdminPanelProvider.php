@@ -84,6 +84,13 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsible(false),
             ])
             ->navigationItems([
+                NavigationItem::make('Users')
+                    ->label('Users')
+                    ->icon('heroicon-o-users')
+                    ->url(fn (): string => route('filament.admin.resources.users.index'))
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.users.*'))
+                    ->sort(1),
+
                 NavigationItem::make('Dashboard')
                     ->label('Dashboard')
                     ->icon('heroicon-o-home')

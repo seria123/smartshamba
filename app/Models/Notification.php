@@ -29,18 +29,28 @@ class Notification extends Model
 
     // Types
     const TYPE_ALERT = 'alert';
+
     const TYPE_TASK = 'task';
+
     const TYPE_IRRIGATION = 'irrigation';
+
     const TYPE_SENSOR = 'sensor';
+
     const TYPE_SYSTEM = 'system';
+
     const TYPE_WEATHER = 'weather';
+
     const TYPE_CROP = 'crop';
+
     const TYPE_AUTOMATION = 'automation';
 
     // Priority
     const PRIORITY_LOW = 'low';
+
     const PRIORITY_NORMAL = 'normal';
+
     const PRIORITY_HIGH = 'high';
+
     const PRIORITY_CRITICAL = 'critical';
 
     public function user(): BelongsTo
@@ -58,7 +68,7 @@ class Notification extends Model
 
     public function getPriorityColorAttribute(): string
     {
-        return match($this->priority) {
+        return match ($this->priority) {
             self::PRIORITY_LOW => 'secondary',
             self::PRIORITY_NORMAL => 'info',
             self::PRIORITY_HIGH => 'warning',
@@ -69,7 +79,7 @@ class Notification extends Model
 
     public function getIconAttribute(): string
     {
-        return match($this->type) {
+        return match ($this->type) {
             self::TYPE_ALERT => 'exclamation-triangle',
             self::TYPE_TASK => 'clipboard-list',
             self::TYPE_IRRIGATION => 'tint',

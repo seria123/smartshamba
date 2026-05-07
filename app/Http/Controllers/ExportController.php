@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ExportService;
 use App\Models\Farm;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
+use App\Services\ExportService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ExportController extends Controller
 {
@@ -23,7 +22,7 @@ class ExportController extends Controller
     public function index(): \Illuminate\View\View
     {
         $farms = Farm::all();
-        
+
         return view('exports.index', compact('farms'));
     }
 

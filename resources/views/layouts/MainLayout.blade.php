@@ -184,9 +184,11 @@
             </div>
         </div>
     </nav>
-    <!-- Page Content -->
-    <main class="flex-1 p-4 sm:p-6 lg:p-8">
-        @yield('content')
-    </main>
-</body>
-</html>
+     <!-- Page Content -->
+     <main class="flex-1 p-4 sm:p-6 lg:p-8">
+         @yield('content')
+     </main>
+
+     @yield('scripts')
+ </body>
+ </html>

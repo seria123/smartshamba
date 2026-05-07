@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PlantingSchedule extends Model
 {
@@ -91,8 +90,8 @@ class PlantingSchedule extends Model
     public function scopeUpcoming($query)
     {
         return $query->where('status', 'planned')
-                     ->where('planting_date', '>=', now())
-                     ->orderBy('planting_date', 'asc');
+            ->where('planting_date', '>=', now())
+            ->orderBy('planting_date', 'asc');
     }
 
     /**
@@ -127,6 +126,7 @@ class PlantingSchedule extends Model
         if ($this->status === 'harvested' || $this->status === 'cancelled') {
             return -1;
         }
+
         return now()->startOfDay()->diffInDays($this->planting_date, false);
     }
 
@@ -135,12 +135,13 @@ class PlantingSchedule extends Model
      */
     public function getDaysUntilHarvestAttribute(): ?int
     {
-        if (!$this->expected_harvest_date) {
+        if (! $this->expected_harvest_date) {
             return null;
         }
         if ($this->status === 'harvested') {
             return -1;
         }
+
         return now()->startOfDay()->diffInDays($this->expected_harvest_date, false);
     }
 
@@ -157,10 +158,11 @@ class PlantingSchedule extends Model
      */
     public function getIsInPlantingWindowAttribute(): bool
     {
-        if (!$this->planting_window_start || !$this->planting_window_end) {
+        if (! $this->planting_window_start || ! $this->planting_window_end) {
             return false;
         }
         $today = now()->startOfDay();
+
         return $today->between($this->planting_window_start, $this->planting_window_end);
     }
 
@@ -169,7 +171,7 @@ class PlantingSchedule extends Model
      */
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'planned' => 'gray',
             'planted' => 'blue',
             'growing' => 'green',
@@ -191,6 +193,7 @@ class PlantingSchedule extends Model
         if ($this->status === 'cancelled') {
             return 0;
         }
+
         return $this->completion_percentage;
     }
 
@@ -200,8 +203,9 @@ class PlantingSchedule extends Model
     public function getFormattedPlantingWindowAttribute(): string
     {
         if ($this->planting_window_start && $this->planting_window_end) {
-            return $this->planting_window_start->format('M j') . ' - ' . $this->planting_window_end->format('M j, Y');
+            return $this->planting_window_start->format('M j').' - '.$this->planting_window_end->format('M j, Y');
         }
+
         return $this->planting_date->format('F j, Y');
     }
 }

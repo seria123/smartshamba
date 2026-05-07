@@ -14,6 +14,7 @@ class AlertController extends Controller
     public function index()
     {
         $alerts = Alert::with('sensorReading.sensor.field')->orderBy('created_at', 'desc')->get();
+
         return view('alerts.index', compact('alerts'));
     }
 
@@ -23,6 +24,7 @@ class AlertController extends Controller
     public function create()
     {
         $sensorReadings = SensorReading::with('sensor')->get();
+
         return view('alerts.create', compact('sensorReadings'));
     }
 
@@ -53,6 +55,7 @@ class AlertController extends Controller
     public function show(Alert $alert)
     {
         $alert->load('sensorReading.sensor.field');
+
         return view('alerts.show', compact('alert'));
     }
 
@@ -62,6 +65,7 @@ class AlertController extends Controller
     public function edit(Alert $alert)
     {
         $sensorReadings = SensorReading::with('sensor')->get();
+
         return view('alerts.edit', compact('alert', 'sensorReadings'));
     }
 

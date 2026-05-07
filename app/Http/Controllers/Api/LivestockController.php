@@ -23,6 +23,7 @@ class LivestockController extends Controller
     {
         $this->trackingService = $trackingService;
     }
+
     public function index(Request $request)
     {
         $query = Livestock::with('type')->where('user_id', Auth::id());
@@ -70,7 +71,7 @@ class LivestockController extends Controller
         $validated['user_id'] = Auth::id();
 
         $livestock = Livestock::create($validated);
-        
+
         // Assign tracking ID in format KE-{farm_code}-{year}-{serial}
         $this->trackingService->assignTrackingId($livestock);
 

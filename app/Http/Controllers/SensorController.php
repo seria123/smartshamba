@@ -14,6 +14,7 @@ class SensorController extends Controller
     public function index()
     {
         $sensors = Sensor::with('field')->get();
+
         return view('sensors.index', compact('sensors'));
     }
 
@@ -23,6 +24,7 @@ class SensorController extends Controller
     public function create()
     {
         $fields = Field::all();
+
         return view('sensors.create', compact('fields'));
     }
 
@@ -52,6 +54,7 @@ class SensorController extends Controller
     public function show(Sensor $sensor)
     {
         $sensor->load(['field', 'sensorReadings']);
+
         return view('sensors.show', compact('sensor'));
     }
 
@@ -61,6 +64,7 @@ class SensorController extends Controller
     public function edit(Sensor $sensor)
     {
         $fields = Field::all();
+
         return view('sensors.edit', compact('sensor', 'fields'));
     }
 
@@ -73,7 +77,7 @@ class SensorController extends Controller
             'field_id' => 'required|exists:fields,id',
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
-            'serial_number' => 'required|string|unique:sensors,serial_number,' . $sensor->id,
+            'serial_number' => 'required|string|unique:sensors,serial_number,'.$sensor->id,
             'status' => 'required|string|in:active,inactive,maintenance',
             'description' => 'nullable|string',
         ]);

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Models\Field;
 use App\Models\Crop;
+use App\Models\Field;
+use App\Models\Task;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class TaskController extends Controller
 {
@@ -44,7 +44,7 @@ class TaskController extends Controller
         }
 
         $tasks = $query->orderBy('scheduled_date', 'asc')->paginate(15);
-        
+
         $fields = Field::all();
         $crops = Crop::all();
         $users = User::all();
@@ -60,7 +60,7 @@ class TaskController extends Controller
         $fields = Field::all();
         $crops = Crop::all();
         $users = User::all();
-        
+
         $taskTypes = [
             Task::TYPE_PLANTING => 'Planting',
             Task::TYPE_HARVESTING => 'Harvesting',
@@ -123,7 +123,7 @@ class TaskController extends Controller
     public function show(Task $task): View
     {
         $task->load(['field', 'crop', 'assignedUser']);
-        
+
         return view('tasks.show', compact('task'));
     }
 
@@ -135,7 +135,7 @@ class TaskController extends Controller
         $fields = Field::all();
         $crops = Crop::all();
         $users = User::all();
-        
+
         $taskTypes = [
             Task::TYPE_PLANTING => 'Planting',
             Task::TYPE_HARVESTING => 'Harvesting',
@@ -191,7 +191,7 @@ class TaskController extends Controller
         ]);
 
         // Auto-set completed date if status is completed
-        if ($validated['status'] === Task::STATUS_COMPLETED && !$validated['completed_date']) {
+        if ($validated['status'] === Task::STATUS_COMPLETED && ! $validated['completed_date']) {
             $validated['completed_date'] = now();
         }
 

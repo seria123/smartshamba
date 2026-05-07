@@ -41,11 +41,15 @@ class Livestock extends Model
     ];
 
     const STATUS_HEALTHY = 'healthy';
+
     const STATUS_SICK = 'sick';
+
     const STATUS_SOLD = 'sold';
+
     const STATUS_DEAD = 'dead';
 
     const GENDER_MALE = 'male';
+
     const GENDER_FEMALE = 'female';
 
     public function type(): BelongsTo

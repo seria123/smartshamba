@@ -35,14 +35,20 @@ class IrrigationLog extends Model
 
     // Event Types
     const EVENT_SCHEDULED = 'scheduled';
+
     const EVENT_MANUAL = 'manual';
+
     const EVENT_TRIGGERED = 'triggered';
+
     const EVENT_STOPPED = 'stopped';
 
     // Status
     const STATUS_RUNNING = 'running';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_FAILED = 'failed';
+
     const STATUS_CANCELLED = 'cancelled';
 
     public function irrigationZone(): BelongsTo
@@ -57,13 +63,13 @@ class IrrigationLog extends Model
 
     public function getWaterEfficiencyScore(): ?float
     {
-        if (!$this->soil_moisture_before || !$this->soil_moisture_after) {
+        if (! $this->soil_moisture_before || ! $this->soil_moisture_after) {
             return null;
         }
-        
+
         $moistureIncrease = $this->soil_moisture_after - $this->soil_moisture_before;
         $waterPerLiter = $this->water_used_liters > 0 ? $moistureIncrease / $this->water_used_liters : 0;
-        
+
         return $waterPerLiter * 100;
     }
 }

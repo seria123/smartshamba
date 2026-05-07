@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\WeatherData;
 use App\Models\Farm;
+use App\Models\WeatherData;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class WeatherController extends Controller
 {
@@ -57,7 +57,7 @@ class WeatherController extends Controller
             ->where('recorded_at', '>=', now()->subDays(7))
             ->orderBy('recorded_at', 'desc')
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 return $item->recorded_at->format('Y-m-d');
             });
 
@@ -75,7 +75,7 @@ class WeatherController extends Controller
             ->where('recorded_at', '>=', now()->subDays(14))
             ->orderBy('recorded_at', 'desc')
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 return $item->recorded_at->format('Y-m-d');
             });
 
@@ -154,8 +154,8 @@ class WeatherController extends Controller
     public function getAlerts($farmId)
     {
         $latestWeather = $this->getLatestWeather($farmId);
-        
-        if (!$latestWeather) {
+
+        if (! $latestWeather) {
             return [];
         }
 

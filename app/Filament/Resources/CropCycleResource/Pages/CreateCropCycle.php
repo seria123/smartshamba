@@ -3,16 +3,15 @@
 namespace App\Filament\Resources\CropCycleResource\Pages;
 
 use App\Filament\Resources\CropCycleResource;
+use App\Models\Activity;
+use App\Models\CropStage;
+use App\Models\GrowthMeasurement;
+use App\Models\Harvest;
 use App\Models\Input;
 use App\Models\PestDiseaseTreatment;
-use App\Models\GrowthMeasurement;
-use App\Models\CropStage;
-use App\Models\Activity;
-use App\Models\WeatherData;
-use App\Models\Harvest;
 use App\Models\Revenue;
+use App\Models\WeatherData;
 use DB;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCropCycle extends CreateRecord
@@ -43,7 +42,7 @@ class CreateCropCycle extends CreateRecord
             );
 
             // Derive farm_id from field if not provided
-            if (isset($data['field_id']) && !isset($data['farm_id'])) {
+            if (isset($data['field_id']) && ! isset($data['farm_id'])) {
                 $field = \App\Models\Field::find($data['field_id']);
                 if ($field) {
                     $data['farm_id'] = $field->farm_id;
@@ -125,7 +124,7 @@ class CreateCropCycle extends CreateRecord
             if (count($revenues) > 0) {
                 foreach ($revenues as $revenueData) {
                     // Calculate amount if not provided
-                    if (!isset($revenueData['amount']) && isset($revenueData['quantity_sold'], $revenueData['price_per_unit'])) {
+                    if (! isset($revenueData['amount']) && isset($revenueData['quantity_sold'], $revenueData['price_per_unit'])) {
                         $revenueData['amount'] = $revenueData['quantity_sold'] * $revenueData['price_per_unit'];
                     }
                     $revenue = new Revenue($revenueData);

@@ -37,8 +37,11 @@ class Revenue extends Model
     ];
 
     const STATUS_PENDING = 'pending';
+
     const STATUS_PARTIAL = 'partial';
+
     const STATUS_PAID = 'paid';
+
     const STATUS_OVERDUE = 'overdue';
 
     /**

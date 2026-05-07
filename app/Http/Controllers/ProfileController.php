@@ -46,7 +46,7 @@ class ProfileController extends Controller
         // Ensure all possible keys have boolean values
         $allKeys = ['email', 'weather', 'crop', 'livestock', 'finance', 'marketing'];
         foreach ($allKeys as $key) {
-            if (!array_key_exists($key, $preferences)) {
+            if (! array_key_exists($key, $preferences)) {
                 $preferences[$key] = false;
             } else {
                 $preferences[$key] = (bool) $preferences[$key];

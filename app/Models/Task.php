@@ -39,27 +39,43 @@ class Task extends Model
 
     // Task Types
     const TYPE_PLANTING = 'planting';
+
     const TYPE_HARVESTING = 'harvesting';
+
     const TYPE_IRRIGATION = 'irrigation';
+
     const TYPE_FERTILIZING = 'fertilizing';
+
     const TYPE_PEST_CONTROL = 'pest_control';
+
     const TYPE_WEEDING = 'weeding';
+
     const TYPE_SOIL_PREPARATION = 'soil_preparation';
+
     const TYPE_MAINTENANCE = 'maintenance';
+
     const TYPE_INSPECTION = 'inspection';
+
     const TYPE_OTHER = 'other';
 
     // Status
     const STATUS_PENDING = 'pending';
+
     const STATUS_IN_PROGRESS = 'in_progress';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_CANCELLED = 'cancelled';
+
     const STATUS_ON_HOLD = 'on_hold';
 
     // Priority
     const PRIORITY_LOW = 'low';
+
     const PRIORITY_NORMAL = 'normal';
+
     const PRIORITY_HIGH = 'high';
+
     const PRIORITY_URGENT = 'urgent';
 
     public function field(): BelongsTo
@@ -79,14 +95,14 @@ class Task extends Model
 
     public function isOverdue(): bool
     {
-        return $this->scheduled_date->isPast() && 
-               $this->status !== self::STATUS_COMPLETED && 
+        return $this->scheduled_date->isPast() &&
+               $this->status !== self::STATUS_COMPLETED &&
                $this->status !== self::STATUS_CANCELLED;
     }
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_PENDING => 'warning',
             self::STATUS_IN_PROGRESS => 'info',
             self::STATUS_COMPLETED => 'success',
@@ -98,7 +114,7 @@ class Task extends Model
 
     public function getPriorityColorAttribute(): string
     {
-        return match($this->priority) {
+        return match ($this->priority) {
             self::PRIORITY_LOW => 'secondary',
             self::PRIORITY_NORMAL => 'primary',
             self::PRIORITY_HIGH => 'warning',

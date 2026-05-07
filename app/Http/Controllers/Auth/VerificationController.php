@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 
 class VerificationController extends Controller
 {
@@ -27,7 +26,7 @@ class VerificationController extends Controller
         $request->fulfill();
 
         return redirect()->intended(route('dashboard'))
-                        ->with('success', 'Your email has been verified.');
+            ->with('success', 'Your email has been verified.');
     }
 
     /**

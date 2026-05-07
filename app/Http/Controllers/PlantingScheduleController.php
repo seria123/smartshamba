@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PlantingSchedule;
 use App\Models\Crop;
-use App\Models\Field;
 use App\Models\Farm;
+use App\Models\Field;
+use App\Models\PlantingSchedule;
 use Illuminate\Http\Request;
 
 class PlantingScheduleController extends Controller
@@ -41,6 +41,7 @@ class PlantingScheduleController extends Controller
         if ($request->has('view') && $request->view === 'calendar') {
             // For calendar view, load all needed data
             $schedules = $query->get();
+
             return view('planting_schedules.calendar', compact('schedules'));
         }
 
@@ -51,12 +52,12 @@ class PlantingScheduleController extends Controller
         $farms = Farm::orderBy('name')->get();
 
         $upcoming = PlantingSchedule::upcoming()
-            ->when(auth()->check() && auth()->user()->role !== 'admin', fn($q) => $q->where('user_id', auth()->id()))
+            ->when(auth()->check() && auth()->user()->role !== 'admin', fn ($q) => $q->where('user_id', auth()->id()))
             ->limit(10)
             ->get();
 
         $active = PlantingSchedule::active()
-            ->when(auth()->check() && auth()->user()->role !== 'admin', fn($q) => $q->where('user_id', auth()->id()))
+            ->when(auth()->check() && auth()->user()->role !== 'admin', fn ($q) => $q->where('user_id', auth()->id()))
             ->get();
 
         return view('planting_schedules.index', compact(
@@ -75,7 +76,7 @@ class PlantingScheduleController extends Controller
     public function calendar(Request $request)
     {
         $query = PlantingSchedule::with(['crop', 'field']);
-        
+
         if (auth()->check() && auth()->user()->role !== 'admin') {
             $query->where('user_id', auth()->id());
         }
@@ -84,8 +85,8 @@ class PlantingScheduleController extends Controller
 
         // Group by month for summary
         $monthlyStats = $schedules
-            ->groupBy(fn($s) => $s->planting_date->format('Y-m'))
-            ->map(fn($group) => [
+            ->groupBy(fn ($s) => $s->planting_date->format('Y-m'))
+            ->map(fn ($group) => [
                 'count' => $group->count(),
                 'crops' => $group->pluck('crop.name')->unique()->count(),
             ]);
@@ -137,7 +138,7 @@ class PlantingScheduleController extends Controller
         ]);
 
         // Auto-assign farm if field is selected but farm isn't
-        if (!$validated['farm_id'] && !empty($validated['field_id'])) {
+        if (! $validated['farm_id'] && ! empty($validated['field_id'])) {
             $field = Field::find($validated['field_id']);
             if ($field) {
                 $validated['farm_id'] = $field->farm_id;
@@ -232,7 +233,7 @@ class PlantingScheduleController extends Controller
     public function upcoming()
     {
         $schedules = PlantingSchedule::upcoming()
-            ->when(auth()->check() && auth()->user()->role !== 'admin', fn($q) => $q->where('user_id', auth()->id()))
+            ->when(auth()->check() && auth()->user()->role !== 'admin', fn ($q) => $q->where('user_id', auth()->id()))
             ->with(['crop', 'field'])
             ->get();
 

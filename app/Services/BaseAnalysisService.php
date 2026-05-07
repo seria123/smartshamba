@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 abstract class BaseAnalysisService
 {
@@ -41,7 +41,7 @@ abstract class BaseAnalysisService
      */
     protected function storeImage(UploadedFile $image, string $folder): string
     {
-        $filename = Str::uuid() . '.' . $image->getClientOriginalExtension();
+        $filename = Str::uuid().'.'.$image->getClientOriginalExtension();
 
         return $image->storeAs($folder, $filename, 'public');
     }
@@ -75,7 +75,7 @@ abstract class BaseAnalysisService
     protected function handleFailure(string $error = ''): array
     {
         if ($error) {
-            Log::error('Analysis failed: ' . $error);
+            Log::error('Analysis failed: '.$error);
         }
 
         return [

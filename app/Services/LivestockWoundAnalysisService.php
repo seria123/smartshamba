@@ -145,6 +145,7 @@ PROMPT;
             if ($response->successful()) {
                 $data = $response->json();
                 $content = $data['choices'][0]['message']['content'] ?? '';
+
                 return $this->parseWoundVisionResponse($content);
             }
 
@@ -200,19 +201,19 @@ PROMPT;
                 $result['confidence'] = min(100, max(0, $c));
             } elseif (stripos($line, '---') !== false || stripos($line, '```') !== false) {
                 continue;
-            } elseif (!empty($line) && !stripos($line, 'WOUND_TYPE:') && !stripos($line, 'SEVERITY:')
-                && !stripos($line, 'SYMPTOMS:') && !stripos($line, 'URGENCY:')
-                && !stripos($line, 'HEALING_TIME:') && !stripos($line, 'CONFIDENCE:')) {
+            } elseif (! empty($line) && ! stripos($line, 'WOUND_TYPE:') && ! stripos($line, 'SEVERITY:')
+                && ! stripos($line, 'SYMPTOMS:') && ! stripos($line, 'URGENCY:')
+                && ! stripos($line, 'HEALING_TIME:') && ! stripos($line, 'CONFIDENCE:')) {
                 // This is likely description or treatment text
                 if (stripos($line, 'treatment') !== false || stripos($line, 'plan') !== false
                     || stripos($line, 'recommend') !== false || stripos($line, 'apply') !== false
                     || stripos($line, 'clean') !== false || $parsingTreatment) {
                     $parsingTreatment = true;
-                    if (!empty($line)) {
+                    if (! empty($line)) {
                         $treatmentParts[] = $line;
                     }
                 } else {
-                    if (!$parsingTreatment) {
+                    if (! $parsingTreatment) {
                         $descriptionParts[] = $line;
                     }
                 }
@@ -224,7 +225,7 @@ PROMPT;
 
         // Build detected issues array
         $issues = [];
-        if (!empty($result['symptoms'])) {
+        if (! empty($result['symptoms'])) {
             $symptomList = array_filter(explode(',', $result['symptoms']));
             foreach (array_slice($symptomList, 0, 5) as $idx => $symptom) {
                 $issues[] = [
@@ -354,7 +355,7 @@ PROMPT;
         return [
             'wound_type' => $selected['type'],
             'severity' => $selected['severity'],
-            'symptoms' => 'Swelling, redness, ' . ($selected['severity'] === 'severe' ? 'discharge, ' : '') . 'tenderness',
+            'symptoms' => 'Swelling, redness, '.($selected['severity'] === 'severe' ? 'discharge, ' : '').'tenderness',
             'urgency' => $selected['urgency'],
             'estimated_healing_time' => $this->estimateHealingTime($selected['severity']),
             'confidence' => rand(65, 85) + (rand(0, 99) / 100),

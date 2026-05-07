@@ -28,11 +28,8 @@ class OpenAIService
     /**
      * Generate recommendation for crop health issues
      *
-     * @param string $diseaseName
-     * @param string $type (crop/livestock)
-     * @param string $severity
-     * @param string $description
-     * @param array|null $weather Optional weather data: [temperature, humidity, rain_probability, cloud_cover, wind_speed]
+     * @param  string  $type  (crop/livestock)
+     * @param  array|null  $weather  Optional weather data: [temperature, humidity, rain_probability, cloud_cover, wind_speed]
      */
     public function generateRecommendation(
         string $diseaseName,
@@ -43,6 +40,7 @@ class OpenAIService
     ): string {
         if (empty($this->apiKey)) {
             Log::warning('OpenAI: No API key configured');
+
             return '';
         }
 
@@ -77,6 +75,7 @@ class OpenAIService
                 $data = $response->json();
                 $content = $data['choices'][0]['message']['content'] ?? '';
                 Log::info('OpenAI response received', ['length' => strlen($content)]);
+
                 return $content;
             }
 

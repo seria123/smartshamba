@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('confidence_score', 5, 2)->nullable(); // AI confidence 0-100
             $table->enum('status', ['pending', 'analyzed', 'reviewed'])->default('pending');
             $table->timestamps();
-        } );
+        });
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Models\Livestock;
 use App\Models\Farm;
-use App\Models\User;
+use App\Models\Livestock;
 use App\Models\LivestockType;
+use App\Models\User;
 use App\Services\LivestockTrackingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -30,7 +30,7 @@ class LivestockTrackingServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->trackingService = new LivestockTrackingService();
+        $this->trackingService = new LivestockTrackingService;
 
         // Create test user
         $this->user = User::factory()->create();
@@ -181,8 +181,8 @@ class LivestockTrackingServiceTest extends TestCase
         preg_match('/-(\d{4})$/', $livestock1->tracking_id, $matches1);
         preg_match('/-(\d{4})$/', $livestock2->tracking_id, $matches2);
 
-        $serial1 = (int)$matches1[1];
-        $serial2 = (int)$matches2[1];
+        $serial1 = (int) $matches1[1];
+        $serial2 = (int) $matches2[1];
 
         // Second serial should be first serial + 1
         $this->assertEquals($serial1 + 1, $serial2);

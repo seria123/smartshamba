@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('crop_analysis_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('crop_analysis_id')
-                  ->constrained('crop_analyses')
-                  ->onDelete('cascade');
+                ->constrained('crop_analyses')
+                ->onDelete('cascade');
             $table->string('image_path');
             $table->integer('order')->default(0);
             $table->string('label')->nullable();

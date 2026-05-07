@@ -86,7 +86,7 @@ class FarmController extends Controller
         $farm = Farm::create([
             ...$validated,
             'user_id' => auth()->id(),
-            'farm_operation_details' => !empty($operationDetails) ? $operationDetails : null,
+            'farm_operation_details' => ! empty($operationDetails) ? $operationDetails : null,
         ]);
 
         return redirect()->route('farms.index')
@@ -178,7 +178,7 @@ class FarmController extends Controller
         $operationDetails['staff_casual'] = $staffCasual;
 
         $farm->update(array_merge($validated, [
-            'farm_operation_details' => !empty($operationDetails) ? $operationDetails : null,
+            'farm_operation_details' => ! empty($operationDetails) ? $operationDetails : null,
         ]));
 
         return redirect()->route('farms.index')

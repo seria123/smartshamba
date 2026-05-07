@@ -13,6 +13,7 @@ class FertilizerTypeController extends Controller
     public function index()
     {
         $fertilizerTypes = FertilizerType::all();
+
         return view('fertilizer_types.index', compact('fertilizerTypes'));
     }
 
@@ -66,7 +67,7 @@ class FertilizerTypeController extends Controller
     public function update(Request $request, FertilizerType $fertilizerType)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:fertilizer_types,name,' . $fertilizerType->id,
+            'name' => 'required|string|max:255|unique:fertilizer_types,name,'.$fertilizerType->id,
             'description' => 'nullable|string',
             'type' => 'required|string|in:nitrogen,phosphorus,potassium,compound,organic',
             'default_unit' => 'required|string|max:50',

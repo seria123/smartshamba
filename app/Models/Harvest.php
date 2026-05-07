@@ -40,14 +40,21 @@ class Harvest extends Model
     ];
 
     const GRADE_A = 'grade_a';
+
     const GRADE_B = 'grade_b';
+
     const GRADE_C = 'grade_c';
+
     const GRADE_REJECT = 'reject';
 
     const STORAGE_FIELD = 'field';
+
     const STORAGE_BARN = 'barn';
+
     const STORAGE_WAREHOUSE = 'warehouse';
+
     const STORAGE_COLD_STORAGE = 'cold_storage';
+
     const STORAGE_SOLD_IMMEDIATELY = 'sold_immediately';
 
     public function crop(): BelongsTo

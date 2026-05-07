@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Dashboard as BaseDashboard;
-use Illuminate\Support\Facades\Route;
 
 class CustomDashboard extends BaseDashboard
 {

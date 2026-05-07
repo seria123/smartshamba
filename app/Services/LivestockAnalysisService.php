@@ -39,7 +39,7 @@ class LivestockAnalysisService extends BaseAnalysisService
 
             return $analysis->fresh();
         } catch (\Exception $e) {
-            Log::error('Livestock analysis failed: ' . $e->getMessage());
+            Log::error('Livestock analysis failed: '.$e->getMessage());
             $fallback = $this->handleFailure($e->getMessage());
 
             $analysis = $this->createRecord([
@@ -77,7 +77,7 @@ class LivestockAnalysisService extends BaseAnalysisService
      */
     protected function performAnalysis(UploadedFile $image): array
     {
-        if (!empty($this->apiKey) && $this->apiKey !== 'your_openai_api_key_here') {
+        if (! empty($this->apiKey) && $this->apiKey !== 'your_openai_api_key_here') {
             return $this->runOpenAIVisionAnalysis($image);
         }
 
@@ -114,7 +114,7 @@ PROMPT;
 
             $response = Http::timeout(60)
                 ->withHeaders([
-                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Authorization' => 'Bearer '.$this->apiKey,
                     'Content-Type' => 'application/json',
                 ])
                 ->post('https://api.openai.com/v1/chat/completions', [
@@ -130,7 +130,7 @@ PROMPT;
                                 [
                                     'type' => 'image_url',
                                     'image_url' => [
-                                        'url' => 'data:image/jpeg;base64,' . $imageData,
+                                        'url' => 'data:image/jpeg;base64,'.$imageData,
                                         'detail' => 'high',
                                     ],
                                 ],
@@ -148,9 +148,9 @@ PROMPT;
                 return $this->parseOpenAIVisionResponse($content);
             }
 
-            Log::error('OpenAI Vision API error: ' . $response->body());
+            Log::error('OpenAI Vision API error: '.$response->body());
         } catch (\Exception $e) {
-            Log::error('OpenAI Vision exception: ' . $e->getMessage());
+            Log::error('OpenAI Vision exception: '.$e->getMessage());
         }
 
         return $this->runSimulationAnalysis($image);
@@ -217,7 +217,7 @@ PROMPT;
 
         return [
             'diagnosis' => $result['diagnosis'],
-            'description' => $result['symptoms'] ?: $result['diagnosis'] . ' detected in ' . $result['species'],
+            'description' => $result['symptoms'] ?: $result['diagnosis'].' detected in '.$result['species'],
             'severity' => $result['severity'],
             'recommendation' => $recommendation,
             'detected_issues' => $issues,

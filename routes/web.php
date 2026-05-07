@@ -12,6 +12,7 @@ use App\Http\Controllers\FarmImageController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\LivestockAnalysisController;
 use App\Http\Controllers\LivestockController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\LivestockTypeController;
 use App\Http\Controllers\PlantingScheduleController;
 use App\Http\Controllers\ProfileController;
@@ -100,6 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+Route::resource('fields', FieldController::class);
 
 // Farm CRUD routes
 Route::middleware(['auth'])->group(function () {
@@ -116,9 +118,17 @@ Route::middleware(['auth'])->post('/farms/onboarding', [FarmerController::class,
 
 // Field CRUD routes
 Route::middleware(['auth'])->group(function () {
-    Route::resource('fields', FieldController::class);
-    Route::resource('crops', CropController::class);
-    Route::resource('sensors', SensorController::class);
+    Route::resource('yield_estimations', YieldEstimationController::class);
+});
+
+// Settings routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings/profile', [App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('settings.profile.update');
+    Route::put('/settings/farm', [App\Http\Controllers\SettingsController::class, 'updateFarm'])->name('settings.farm.update');
+    Route::put('/settings/notifications', [App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('settings.notifications.update');
+    Route::put('/settings/system', [App\Http\Controllers\SettingsController::class, 'updateSystem'])->name('settings.system.update');
+    Route::put('/settings/password', [App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('settings.password.update');
 });
 
 // Crop Cycle CRUD routes
@@ -182,6 +192,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('yield_estimations/statistics', [YieldEstimationController::class, 'statistics'])->name('yield_estimations.statistics');
     Route::resource('yield_estimations', YieldEstimationController::class);
 });
+Route::get('/settings', [SettingsController::class, 'index'])
+    ->name('settings.index');
 
+Route::post('/settings', [SettingsController::class, 'update'])
+    ->name('settings.update');
 
 require __DIR__.'/auth.php';

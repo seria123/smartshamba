@@ -4,14 +4,13 @@ namespace App\Services;
 
 use App\Models\CropAnalysis;
 use App\Models\Field;
-use App\Models\CropCycle;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CropAnalysisService extends BaseAnalysisService
 {
     protected PlantIdService $plantIdService;
+
     protected WeatherService $weatherService;
 
     public function __construct(
@@ -57,7 +56,7 @@ class CropAnalysisService extends BaseAnalysisService
 
             return $analysis;
         } catch (\Exception $e) {
-            Log::error('Crop analysis failed: ' . $e->getMessage());
+            Log::error('Crop analysis failed: '.$e->getMessage());
             $fallback = $this->handleFailure($e->getMessage());
 
             $analysis = $this->createRecord(
@@ -108,7 +107,7 @@ class CropAnalysisService extends BaseAnalysisService
 
             return $this->normalizeAndEnrich($result);
         } catch (\Throwable $e) {
-            Log::error('Analysis failed: ' . $e->getMessage());
+            Log::error('Analysis failed: '.$e->getMessage());
 
             return $this->fallback();
         }
@@ -118,16 +117,17 @@ class CropAnalysisService extends BaseAnalysisService
      * Normalize Plant.id response structure and enrich with AI recommendation.
      */
     protected function normalizeAndEnrich(array $data): array
-{
-    // ✅ Trust the already formatted PlantIdService response
-    $data['disease_name'] = $data['disease_name'] ?? 'Unknown disease';
-    $data['severity'] = $data['severity'] ?? 'medium';
-    $data['confidence'] = $data['confidence'] ?? 0;
-    $data['description'] = $data['description'] ?? '';
+    {
+        // ✅ Trust the already formatted PlantIdService response
+        $data['disease_name'] = $data['disease_name'] ?? 'Unknown disease';
+        $data['severity'] = $data['severity'] ?? 'medium';
+        $data['confidence'] = $data['confidence'] ?? 0;
+        $data['description'] = $data['description'] ?? '';
 
-    // 🚀 Add recommendation
-    return $this->enrich($data);
-}
+        // 🚀 Add recommendation
+        return $this->enrich($data);
+    }
+
     /**
      * Enrich result with AI-generated recommendation.
      */
@@ -159,19 +159,19 @@ class CropAnalysisService extends BaseAnalysisService
      */
     protected function getWeatherForField(?int $fieldId): ?array
     {
-        if (!$fieldId) {
+        if (! $fieldId) {
             return null;
         }
 
         $field = Field::find($fieldId);
 
-        if (!$field || !$field->location) {
+        if (! $field || ! $field->location) {
             return null;
         }
 
         $weather = $this->weatherService->getWeather($field->location);
 
-        if (!$weather || !isset($weather['data']['values'])) {
+        if (! $weather || ! isset($weather['data']['values'])) {
             return null;
         }
 
@@ -220,7 +220,7 @@ class CropAnalysisService extends BaseAnalysisService
         foreach ($recommendations as $key => $levels) {
             if (str_contains($disease, $key)) {
                 return ($levels[$severity] ?? $levels['medium'])
-                    . ' Practice good crop rotation and field hygiene.';
+                    .' Practice good crop rotation and field hygiene.';
             }
         }
 

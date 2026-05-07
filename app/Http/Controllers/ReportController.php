@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Report;
-use App\Models\Farm;
-use App\Models\SensorReading;
-use App\Models\IrrigationLog;
-use App\Models\Task;
 use App\Models\CropAnalysis;
+use App\Models\Farm;
+use App\Models\IrrigationLog;
+use App\Models\Report;
+use App\Models\SensorReading;
+use App\Models\Task;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Carbon\Carbon;
 use PDF;
 
 class ReportController extends Controller
@@ -96,7 +95,7 @@ class ReportController extends Controller
     private function generateReportData(Report $report): void
     {
         try {
-            $data = match($report->report_type) {
+            $data = match ($report->report_type) {
                 Report::TYPE_DAILY_SUMMARY => $this->generateDailySummary($report),
                 Report::TYPE_WEEKLY_SUMMARY => $this->generateWeeklySummary($report),
                 Report::TYPE_MONTHLY_SUMMARY => $this->generateMonthlySummary($report),
@@ -169,8 +168,8 @@ class ReportController extends Controller
                 'total' => $tasks->count(),
                 'completed' => $tasks->where('status', Task::STATUS_COMPLETED)->count(),
                 'pending' => $tasks->where('status', Task::STATUS_PENDING)->count(),
-                'completion_rate' => $tasks->count() > 0 
-                    ? round(($tasks->where('status', Task::STATUS_COMPLETED)->count() / $tasks->count()) * 100, 2) 
+                'completion_rate' => $tasks->count() > 0
+                    ? round(($tasks->where('status', Task::STATUS_COMPLETED)->count() / $tasks->count()) * 100, 2)
                     : 0,
             ],
             'irrigation_summary' => [
@@ -204,8 +203,8 @@ class ReportController extends Controller
                 'total' => $tasks->count(),
                 'completed' => $tasks->where('status', Task::STATUS_COMPLETED)->count(),
                 'pending' => $tasks->where('status', Task::STATUS_PENDING)->count(),
-                'completion_rate' => $tasks->count() > 0 
-                    ? round(($tasks->where('status', Task::STATUS_COMPLETED)->count() / $tasks->count()) * 100, 2) 
+                'completion_rate' => $tasks->count() > 0
+                    ? round(($tasks->where('status', Task::STATUS_COMPLETED)->count() / $tasks->count()) * 100, 2)
                     : 0,
                 'estimated_cost' => $tasks->sum('estimated_cost'),
                 'actual_cost' => $tasks->sum('actual_cost'),
@@ -239,7 +238,7 @@ class ReportController extends Controller
             'total_sessions' => $logs->count(),
             'total_water_liters' => $logs->sum('water_used_liters'),
             'total_duration_minutes' => $logs->sum('duration_minutes'),
-            'by_zone' => $logs->groupBy('irrigation_zone_id')->map(function($zoneLogs) {
+            'by_zone' => $logs->groupBy('irrigation_zone_id')->map(function ($zoneLogs) {
                 return [
                     'sessions' => $zoneLogs->count(),
                     'water_liters' => $zoneLogs->sum('water_used_liters'),
@@ -294,7 +293,7 @@ class ReportController extends Controller
         return [
             'total_analyses' => $analyses->count(),
             'avg_health_score' => $analyses->avg('health_score'),
-            'by_disease' => $analyses->groupBy('detected_disease')->map(function($group) {
+            'by_disease' => $analyses->groupBy('detected_disease')->map(function ($group) {
                 return $group->count();
             }),
         ];
@@ -315,11 +314,11 @@ class ReportController extends Controller
      */
     public function download(Report $report): RedirectResponse
     {
-        if (!$report->file_path || !file_exists(storage_path('app/' . $report->file_path))) {
+        if (! $report->file_path || ! file_exists(storage_path('app/'.$report->file_path))) {
             return redirect()->back()->with('error', 'Report file not found.');
         }
 
-        return response()->download(storage_path('app/' . $report->file_path));
+        return response()->download(storage_path('app/'.$report->file_path));
     }
 
     /**
@@ -327,8 +326,8 @@ class ReportController extends Controller
      */
     public function destroy(Report $report): RedirectResponse
     {
-        if ($report->file_path && file_exists(storage_path('app/' . $report->file_path))) {
-            unlink(storage_path('app/' . $report->file_path));
+        if ($report->file_path && file_exists(storage_path('app/'.$report->file_path))) {
+            unlink(storage_path('app/'.$report->file_path));
         }
 
         $report->delete();

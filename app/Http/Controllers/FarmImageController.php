@@ -29,7 +29,7 @@ class FarmImageController extends Controller
         ]);
 
         // If farm has no main image set, make this the main image
-        if (!$farm->main_image_id) {
+        if (! $farm->main_image_id) {
             $farm->update(['main_image_id' => $image->id]);
         }
 

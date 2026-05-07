@@ -28,7 +28,7 @@ return new class extends Migration
             $table->decimal('feels_like', 5, 2)->nullable();
             $table->decimal('visibility', 6, 2)->nullable(); // km
             $table->timestamps();
-            
+
             $table->index(['farm_id', 'recorded_at']);
         });
     }

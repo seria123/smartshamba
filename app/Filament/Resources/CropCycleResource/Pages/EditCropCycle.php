@@ -3,18 +3,17 @@
 namespace App\Filament\Resources\CropCycleResource\Pages;
 
 use App\Filament\Resources\CropCycleResource;
+use App\Models\Activity;
+use App\Models\CropStage;
+use App\Models\GrowthMeasurement;
+use App\Models\Harvest;
 use App\Models\Input;
 use App\Models\PestDiseaseTreatment;
-use App\Models\GrowthMeasurement;
-use App\Models\CropStage;
-use App\Models\Activity;
-use App\Models\WeatherData;
-use App\Models\Harvest;
 use App\Models\Revenue;
+use App\Models\WeatherData;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
 
 class EditCropCycle extends EditRecord
 {
@@ -134,7 +133,7 @@ class EditCropCycle extends EditRecord
             // Create new Revenues
             if (count($revenues) > 0) {
                 foreach ($revenues as $revenueData) {
-                    if (!isset($revenueData['amount']) && isset($revenueData['quantity_sold'], $revenueData['price_per_unit'])) {
+                    if (! isset($revenueData['amount']) && isset($revenueData['quantity_sold'], $revenueData['price_per_unit'])) {
                         $revenueData['amount'] = $revenueData['quantity_sold'] * $revenueData['price_per_unit'];
                     }
                     $revenue = new Revenue($revenueData);

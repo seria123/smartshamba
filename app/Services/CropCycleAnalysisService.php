@@ -4,20 +4,16 @@ namespace App\Services;
 
 use App\Models\CropCycle;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class CropCycleAnalysisService
 {
     /**
      * Analyze a crop cycle and return current stage and recommended activities.
-     *
-     * @param CropCycle $cropCycle
-     * @return array
      */
     public function analyze(CropCycle $cropCycle): array
     {
         $crop = $cropCycle->crop;
-        if (!$crop) {
+        if (! $crop) {
             return [
                 'current_stage' => 'unknown',
                 'recommended_activities' => [],
@@ -59,9 +55,7 @@ class CropCycleAnalysisService
     /**
      * Determine current growth stage based on days since planting.
      *
-     * @param int $daysSincePlanting
-     * @param array $growthStages
-     * @return string
+     * @param  int  $daysSincePlanting
      */
     private function determineCurrentStage(float $daysSincePlanting, array $growthStages): string
     {
@@ -95,10 +89,7 @@ class CropCycleAnalysisService
     /**
      * Get recommended activities for a crop at a specific stage.
      *
-     * @param string $cropName
-     * @param string $stage
-     * @param int $daysSincePlanting
-     * @return array
+     * @param  int  $daysSincePlanting
      */
     private function getRecommendedActivities(string $cropName, string $stage, float $daysSincePlanting): array
     {
@@ -151,10 +142,7 @@ class CropCycleAnalysisService
     /**
      * Calculate progress percentage through the crop cycle.
      *
-     * @param int $daysSincePlanting
-     * @param array $growthStages
-     * @param int|null $daysToMaturity
-     * @return float
+     * @param  int  $daysSincePlanting
      */
     private function calculateProgressPercentage(float $daysSincePlanting, array $growthStages, ?int $daysToMaturity): float
     {
@@ -163,7 +151,7 @@ class CropCycleAnalysisService
         }
 
         // If we have growth stages with durations, calculate total duration
-        if (!empty($growthStages)) {
+        if (! empty($growthStages)) {
             $totalDuration = 0;
             foreach ($growthStages as $stage) {
                 $duration = $stage['duration'] ?? 0;
@@ -189,9 +177,6 @@ class CropCycleAnalysisService
 
     /**
      * Get default growth stages based on days to maturity.
-     *
-     * @param int $daysToMaturity
-     * @return array
      */
     private function getDefaultGrowthStages(int $daysToMaturity): array
     {
@@ -217,7 +202,7 @@ class CropCycleAnalysisService
         }
 
         // Adjust last stage to use remaining days
-        if (!empty($growthStages)) {
+        if (! empty($growthStages)) {
             $growthStages[count($growthStages) - 1]['duration'] += $daysToMaturity - $elapsedDays;
         }
 

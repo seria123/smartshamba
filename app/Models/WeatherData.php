@@ -44,13 +44,21 @@ class WeatherData extends Model
     ];
 
     const CONDITION_CLEAR = 'clear';
+
     const CONDITION_CLOUDY = 'cloudy';
+
     const CONDITION_PARTLY_CLOUDY = 'partly_cloudy';
+
     const CONDITION_RAINY = 'rainy';
+
     const CONDITION_STORMY = 'stormy';
+
     const CONDITION_SNOWY = 'snowy';
+
     const CONDITION_FOGGY = 'foggy';
+
     const CONDITION_WINDY = 'windy';
+
     const CONDITION_UNKNOWN = 'unknown';
 
     public function farm(): BelongsTo
@@ -65,7 +73,7 @@ class WeatherData extends Model
 
     public function getTemperatureFAttribute(): float
     {
-        return ($this->temperature * 9/5) + 32;
+        return ($this->temperature * 9 / 5) + 32;
     }
 
     public function getWindSpeedKphAttribute(): float
@@ -77,14 +85,17 @@ class WeatherData extends Model
     {
         $directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
         $index = round($this->wind_direction / 22.5) % 16;
+
         return $directions[$index];
     }
 
     public function getUvIndexLevelAttribute(): string
     {
-        if (!$this->uv_index) return 'Unknown';
-        
-        return match(true) {
+        if (! $this->uv_index) {
+            return 'Unknown';
+        }
+
+        return match (true) {
             $this->uv_index <= 2 => 'Low',
             $this->uv_index <= 5 => 'Moderate',
             $this->uv_index <= 7 => 'High',
@@ -95,7 +106,7 @@ class WeatherData extends Model
 
     public function isGoodForIrrigation(): bool
     {
-        return !in_array($this->weather_condition, [
+        return ! in_array($this->weather_condition, [
             self::CONDITION_RAINY,
             self::CONDITION_STORMY,
         ]) && $this->precipitation < 2;
@@ -103,8 +114,8 @@ class WeatherData extends Model
 
     public function isGoodForSpraying(): bool
     {
-        return $this->wind_speed < 5 && 
-               $this->humidity > 40 && 
-               !in_array($this->weather_condition, [self::CONDITION_RAINY, self::CONDITION_STORMY]);
+        return $this->wind_speed < 5 &&
+               $this->humidity > 40 &&
+               ! in_array($this->weather_condition, [self::CONDITION_RAINY, self::CONDITION_STORMY]);
     }
 }

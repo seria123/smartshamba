@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Farm;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class FarmerController extends Controller
 {
@@ -77,7 +76,7 @@ class FarmerController extends Controller
         $farm = Farm::updateOrCreate(
             ['user_id' => auth()->id()],
             array_merge($validated, [
-                'farm_operation_details' => !empty($operationDetails) ? $operationDetails : null,
+                'farm_operation_details' => ! empty($operationDetails) ? $operationDetails : null,
             ])
         );
 

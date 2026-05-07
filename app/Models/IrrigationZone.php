@@ -41,14 +41,20 @@ class IrrigationZone extends Model
 
     // Status
     const STATUS_ACTIVE = 'active';
+
     const STATUS_INACTIVE = 'inactive';
+
     const STATUS_MAINTENANCE = 'maintenance';
+
     const STATUS_ERROR = 'error';
 
     // Schedule Type
     const SCHEDULE_DAILY = 'daily';
+
     const SCHEDULE_WEEKDAYS = 'weekdays';
+
     const SCHEDULE_CUSTOM = 'custom';
+
     const SCHEDULE_MANUAL = 'manual';
 
     public function field(): BelongsTo

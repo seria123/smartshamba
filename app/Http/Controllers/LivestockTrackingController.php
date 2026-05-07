@@ -25,7 +25,7 @@ class LivestockTrackingController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('tag_number', 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%");
+                    ->orWhere('name', 'like', "%{$search}%");
             });
         }
 

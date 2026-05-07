@@ -2,18 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\Farm;
-use App\Models\Field;
 use App\Models\Crop;
+use App\Models\CropAnalysis;
+use App\Models\Farm;
+use App\Models\IrrigationLog;
 use App\Models\Sensor;
 use App\Models\SensorReading;
 use App\Models\Task;
-use App\Models\IrrigationLog;
 use App\Models\WeatherData;
-use App\Models\CropAnalysis;
-use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExportService
 {
@@ -25,12 +24,11 @@ class ExportService
         ?Carbon $fromDate = null,
         ?Carbon $toDate = null,
         string $format = 'csv'
-    ): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
+    ): \Symfony\Component\HttpFoundation\BinaryFileResponse {
         $query = SensorReading::with(['sensor', 'sensor.field']);
 
         if ($farm) {
-            $query->whereHas('sensor.field.farm', function($q) use ($farm) {
+            $query->whereHas('sensor.field.farm', function ($q) use ($farm) {
                 $q->where('id', $farm->id);
             });
         }
@@ -45,7 +43,7 @@ class ExportService
 
         $data = $query->orderBy('recorded_at', 'desc')->get();
 
-        $filename = 'sensor_readings_' . now()->format('Y_m_d_His');
+        $filename = 'sensor_readings_'.now()->format('Y_m_d_His');
 
         return $this->exportToFormat($data, $filename, $format, [
             'Recorded At',
@@ -56,7 +54,7 @@ class ExportService
             'Soil Moisture',
             'Light',
             'Rain',
-        ], function($reading) {
+        ], function ($reading) {
             return [
                 $reading->recorded_at->format('Y-m-d H:i:s'),
                 $reading->sensor->field->name ?? 'N/A',
@@ -79,12 +77,11 @@ class ExportService
         ?Carbon $fromDate = null,
         ?Carbon $toDate = null,
         string $format = 'csv'
-    ): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
+    ): \Symfony\Component\HttpFoundation\BinaryFileResponse {
         $query = Task::with(['field', 'crop', 'assignedUser']);
 
         if ($farm) {
-            $query->whereHas('field.farm', function($q) use ($farm) {
+            $query->whereHas('field.farm', function ($q) use ($farm) {
                 $q->where('id', $farm->id);
             });
         }
@@ -103,7 +100,7 @@ class ExportService
 
         $data = $query->orderBy('scheduled_date', 'desc')->get();
 
-        $filename = 'tasks_' . now()->format('Y_m_d_His');
+        $filename = 'tasks_'.now()->format('Y_m_d_His');
 
         return $this->exportToFormat($data, $filename, $format, [
             'ID',
@@ -121,7 +118,7 @@ class ExportService
             'Actual Hours',
             'Estimated Cost',
             'Actual Cost',
-        ], function($task) {
+        ], function ($task) {
             return [
                 $task->id,
                 $task->title,
@@ -150,12 +147,11 @@ class ExportService
         ?Carbon $fromDate = null,
         ?Carbon $toDate = null,
         string $format = 'csv'
-    ): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
+    ): \Symfony\Component\HttpFoundation\BinaryFileResponse {
         $query = IrrigationLog::with(['irrigationZone.field']);
 
         if ($farm) {
-            $query->whereHas('irrigationZone.field.farm', function($q) use ($farm) {
+            $query->whereHas('irrigationZone.field.farm', function ($q) use ($farm) {
                 $q->where('id', $farm->id);
             });
         }
@@ -170,7 +166,7 @@ class ExportService
 
         $data = $query->orderBy('started_at', 'desc')->get();
 
-        $filename = 'irrigation_logs_' . now()->format('Y_m_d_His');
+        $filename = 'irrigation_logs_'.now()->format('Y_m_d_His');
 
         return $this->exportToFormat($data, $filename, $format, [
             'Zone',
@@ -184,7 +180,7 @@ class ExportService
             'Soil Moisture After',
             'Status',
             'Triggered By',
-        ], function($log) {
+        ], function ($log) {
             return [
                 $log->irrigationZone->name ?? 'N/A',
                 $log->irrigationZone->field->name ?? 'N/A',
@@ -209,8 +205,7 @@ class ExportService
         ?Carbon $fromDate = null,
         ?Carbon $toDate = null,
         string $format = 'csv'
-    ): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
+    ): \Symfony\Component\HttpFoundation\BinaryFileResponse {
         $query = WeatherData::where('farm_id', $farm->id);
 
         if ($fromDate) {
@@ -223,7 +218,7 @@ class ExportService
 
         $data = $query->orderBy('recorded_at', 'desc')->get();
 
-        $filename = 'weather_data_' . now()->format('Y_m_d_His');
+        $filename = 'weather_data_'.now()->format('Y_m_d_His');
 
         return $this->exportToFormat($data, $filename, $format, [
             'Recorded At',
@@ -238,7 +233,7 @@ class ExportService
             'UV Index',
             'Visibility',
             'Weather Condition',
-        ], function($weather) {
+        ], function ($weather) {
             return [
                 $weather->recorded_at->format('Y-m-d H:i:s'),
                 $weather->temperature,
@@ -264,14 +259,14 @@ class ExportService
         $query = Crop::with(['field', 'field.farm']);
 
         if ($farm) {
-            $query->whereHas('field.farm', function($q) use ($farm) {
+            $query->whereHas('field.farm', function ($q) use ($farm) {
                 $q->where('id', $farm->id);
             });
         }
 
         $data = $query->orderBy('planted_at', 'desc')->get();
 
-        $filename = 'crops_' . now()->format('Y_m_d_His');
+        $filename = 'crops_'.now()->format('Y_m_d_His');
 
         return $this->exportToFormat($data, $filename, $format, [
             'Name',
@@ -283,7 +278,7 @@ class ExportService
             'Status',
             'Yield Estimate (kg)',
             'Notes',
-        ], function($crop) {
+        ], function ($crop) {
             return [
                 $crop->name,
                 $crop->variety,
@@ -306,12 +301,11 @@ class ExportService
         ?Carbon $fromDate = null,
         ?Carbon $toDate = null,
         string $format = 'csv'
-    ): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
+    ): \Symfony\Component\HttpFoundation\BinaryFileResponse {
         $query = CropAnalysis::with(['crop.field', 'crop.field.farm']);
 
         if ($farm) {
-            $query->whereHas('crop.field.farm', function($q) use ($farm) {
+            $query->whereHas('crop.field.farm', function ($q) use ($farm) {
                 $q->where('id', $farm->id);
             });
         }
@@ -326,7 +320,7 @@ class ExportService
 
         $data = $query->orderBy('analyzed_at', 'desc')->get();
 
-        $filename = 'crop_analyses_' . now()->format('Y_m_d_His');
+        $filename = 'crop_analyses_'.now()->format('Y_m_d_His');
 
         return $this->exportToFormat($data, $filename, $format, [
             'Crop',
@@ -338,7 +332,7 @@ class ExportService
             'Disease Confidence',
             'Recommendations',
             'Image',
-        ], function($analysis) {
+        ], function ($analysis) {
             return [
                 $analysis->crop->name ?? 'N/A',
                 $analysis->crop->field->name ?? 'N/A',
@@ -362,25 +356,24 @@ class ExportService
         string $format,
         array $headers,
         callable $rowMapper
-    ): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
+    ): \Symfony\Component\HttpFoundation\BinaryFileResponse {
         $rows = $data->map($rowMapper)->toArray();
         array_unshift($rows, $headers);
 
         if ($format === 'xlsx') {
-            return Excel::download(new \App\Exports\GenericExport($rows), $filename . '.xlsx');
+            return Excel::download(new \App\Exports\GenericExport($rows), $filename.'.xlsx');
         }
 
         // CSV format
-        $csvContent = implode("\n", array_map(function($row) {
-            return implode(',', array_map(function($cell) {
-                return '"' . str_replace('"', '""', $cell) . '"';
+        $csvContent = implode("\n", array_map(function ($row) {
+            return implode(',', array_map(function ($cell) {
+                return '"'.str_replace('"', '""', $cell).'"';
             }, $row));
         }, $rows));
 
-        return response()->streamDownload(function() use ($csvContent) {
+        return response()->streamDownload(function () use ($csvContent) {
             echo $csvContent;
-        }, $filename . '.csv', [
+        }, $filename.'.csv', [
             'Content-Type' => 'text/csv',
         ]);
     }

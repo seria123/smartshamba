@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamp('read_at')->nullable();
             $table->json('data')->nullable(); // Additional data
             $table->timestamps();
-            
+
             $table->index(['user_id', 'is_read']);
         });
     }

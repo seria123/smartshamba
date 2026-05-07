@@ -24,7 +24,7 @@ return new class extends Migration
             $table->json('data')->nullable();
             $table->string('status')->default('pending'); // pending, generating, completed, failed
             $table->timestamps();
-            
+
             $table->index(['farm_id', 'report_type']);
         });
     }

@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\PlantingSchedule;
 use App\Models\Crop;
-use App\Models\Field;
 use App\Models\Farm;
-use Illuminate\Database\Seeder;
+use App\Models\Field;
+use App\Models\PlantingSchedule;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class PlantingScheduleSeeder extends Seeder
 {
@@ -23,6 +23,7 @@ class PlantingScheduleSeeder extends Seeder
 
         if ($crops->isEmpty() || $fields->isEmpty()) {
             $this->command->warn('No crops or fields found. Please seed crops and fields first.');
+
             return;
         }
 
@@ -37,22 +38,22 @@ class PlantingScheduleSeeder extends Seeder
             $crop = $crops->random();
             $field = $fields->random();
             $farm = $farms->isNotEmpty() ? $farms->random() : null;
-            
+
             // Random date within next 6 months
             $plantingDate = $today->copy()->addDays(rand(-30, 180));
             $expectedHarvest = $plantingDate->copy()->addDays(rand(60, 180));
-            
+
             $status = $statuses[array_rand($statuses)];
-            
+
             // Adjust harvest date if harvested
             if ($status === 'harvested') {
                 $actualHarvest = $expectedHarvest->copy()->addDays(rand(-7, 14));
             } else {
                 $actualHarvest = null;
             }
-            
+
             // Determine completion percentage based on status
-            $completion = match($status) {
+            $completion = match ($status) {
                 'planned' => 0,
                 'planted' => rand(5, 15),
                 'growing' => rand(20, 70),
@@ -60,10 +61,10 @@ class PlantingScheduleSeeder extends Seeder
                 'harvested' => 100,
                 'cancelled' => 0,
             };
-            
+
             // Determine season based on month
             $month = $plantingDate->month;
-            $season = match($month) {
+            $season = match ($month) {
                 3, 4, 5 => 'spring',
                 6, 7, 8 => 'summer',
                 9, 10, 11 => 'fall',

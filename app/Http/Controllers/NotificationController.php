@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class NotificationController extends Controller
 {
@@ -160,10 +160,10 @@ class NotificationController extends Controller
     public static function createSensorAlert(int $userId, string $sensorName, string $message): Notification
     {
         return self::createNotification(
-            $userId, 
-            Notification::TYPE_SENSOR, 
-            "Sensor Alert: {$sensorName}", 
-            $message, 
+            $userId,
+            Notification::TYPE_SENSOR,
+            "Sensor Alert: {$sensorName}",
+            $message,
             Notification::PRIORITY_HIGH
         );
     }

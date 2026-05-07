@@ -42,11 +42,11 @@ class AutomationRule extends Model
      */
     public function canTrigger(): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
-        if (!$this->last_triggered) {
+        if (! $this->last_triggered) {
             return true;
         }
 

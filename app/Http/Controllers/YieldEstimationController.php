@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\YieldEstimation;
 use App\Models\Crop;
 use App\Models\Farmer;
 use App\Models\Field;
+use App\Models\YieldEstimation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,12 +16,12 @@ class YieldEstimationController extends Controller
         $query = YieldEstimation::with(['crop', 'farmer', 'field'])
             ->orderBy('created_at', 'desc');
 
-        if (!Auth::user()->isAdmin()) {
-            $query->whereHas('farmer', fn($q) => $q->where('user_id', Auth::id()));
+        if (! Auth::user()->isAdmin()) {
+            $query->whereHas('farmer', fn ($q) => $q->where('user_id', Auth::id()));
         }
 
         if (request('search')) {
-            $query->whereHas('crop', fn($q) => $q->where('name', 'like', '%' . request('search') . '%'));
+            $query->whereHas('crop', fn ($q) => $q->where('name', 'like', '%'.request('search').'%'));
         }
 
         if (request('crop_id')) {
@@ -67,7 +67,7 @@ class YieldEstimationController extends Controller
             'field_id' => 'nullable|exists:fields,id',
             'hectares' => 'nullable|numeric|min:0.01',
             'season' => 'required|string|max:50',
-            'year' => 'required|integer|min:2000|max:' . (date('Y') + 10),
+            'year' => 'required|integer|min:2000|max:'.(date('Y') + 10),
             'estimated_yield' => 'nullable|numeric|min:0',
             'actual_yield' => 'nullable|numeric|min:0',
             'yield_unit' => 'nullable|string|max:20',
@@ -97,7 +97,7 @@ class YieldEstimationController extends Controller
         } catch (\Exception $e) {
             return back()
                 ->withInput()
-                ->with('error', 'Failed to create estimation: ' . $e->getMessage());
+                ->with('error', 'Failed to create estimation: '.$e->getMessage());
         }
 
         return redirect()
@@ -134,7 +134,7 @@ class YieldEstimationController extends Controller
             'field_id' => 'nullable|exists:fields,id',
             'hectares' => 'nullable|numeric|min:0.01',
             'season' => 'required|string|max:50',
-            'year' => 'required|integer|min:2000|max:' . (date('Y') + 10),
+            'year' => 'required|integer|min:2000|max:'.(date('Y') + 10),
             'estimated_yield' => 'nullable|numeric|min:0',
             'actual_yield' => 'nullable|numeric|min:0',
             'yield_unit' => 'nullable|string|max:20',
@@ -172,8 +172,8 @@ class YieldEstimationController extends Controller
 
         $query = YieldEstimation::with(['crop', 'farmer', 'field']);
 
-        if (!Auth::user()->isAdmin()) {
-            $query->whereHas('farmer', fn($q) => $q->where('user_id', Auth::id()));
+        if (! Auth::user()->isAdmin()) {
+            $query->whereHas('farmer', fn ($q) => $q->where('user_id', Auth::id()));
         }
 
         $query->where('year', $year);
@@ -181,7 +181,7 @@ class YieldEstimationController extends Controller
         $estimations = $query->latest()->get();
 
         $monthlyCounts = YieldEstimation::query()
-            ->when(!Auth::user()->isAdmin(), fn($q) => $q->whereHas('farmer', fn($q) => $q->where('user_id', Auth::id())))
+            ->when(! Auth::user()->isAdmin(), fn ($q) => $q->whereHas('farmer', fn ($q) => $q->where('user_id', Auth::id())))
             ->where('year', $year)
             ->selectRaw('MONTH(created_at) as month_num, count(*) as count')
             ->groupBy('month_num')
@@ -190,7 +190,7 @@ class YieldEstimationController extends Controller
         $monthNames = [
             1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
             5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
-            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
         ];
 
         $monthlyEstimations = collect();
@@ -222,7 +222,7 @@ class YieldEstimationController extends Controller
         $endDate = request('end_date', now()->format('Y-m-d'));
 
         $baseQuery = YieldEstimation::query()
-            ->when(!Auth::user()->isAdmin(), fn($q) => $q->whereHas('farmer', fn($q) => $q->where('user_id', Auth::id())));
+            ->when(! Auth::user()->isAdmin(), fn ($q) => $q->whereHas('farmer', fn ($q) => $q->where('user_id', Auth::id())));
 
         $stats = [
             'total_estimations' => (clone $baseQuery)->count(),
@@ -263,7 +263,7 @@ class YieldEstimationController extends Controller
 
     private function authorizeAccess(YieldEstimation $estimation): void
     {
-        if (!Auth::user()->isAdmin() && $estimation->farmer && $estimation->farmer->user_id !== Auth::id()) {
+        if (! Auth::user()->isAdmin() && $estimation->farmer && $estimation->farmer->user_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
     }

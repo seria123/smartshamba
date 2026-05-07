@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Field;
-use App\Models\AutomationRule;
-use Illuminate\Http\Request;
 use App\Enums\SensorType;
+use App\Models\AutomationRule;
+use App\Models\Field;
+use Illuminate\Http\Request;
 
 class AutomationRuleController extends Controller
 {
@@ -15,6 +15,7 @@ class AutomationRuleController extends Controller
     public function index()
     {
         $rules = AutomationRule::with('field')->get();
+
         return view('automation_rules.index', compact('rules'));
     }
 
@@ -47,7 +48,7 @@ class AutomationRuleController extends Controller
         $validated = $request->validate([
             'field_id' => 'required|exists:fields,id',
             'name' => 'required|string|max:255',
-            'sensor_type' => 'required|string|in:' . implode(',', SensorType::values()),
+            'sensor_type' => 'required|string|in:'.implode(',', SensorType::values()),
             'operator' => 'required|string|in:<,<=,>,>=,==,!=',
             'threshold' => 'required|numeric',
             'action' => 'required|string|in:irrigation_on,irrigation_off,cooling_on,cooling_off,shade_on,shade_off,alert',
@@ -67,6 +68,7 @@ class AutomationRuleController extends Controller
     public function show(AutomationRule $automationRule)
     {
         $automationRule->load('field');
+
         return view('automation_rules.show', compact('automationRule'));
     }
 
@@ -99,7 +101,7 @@ class AutomationRuleController extends Controller
         $validated = $request->validate([
             'field_id' => 'required|exists:fields,id',
             'name' => 'required|string|max:255',
-            'sensor_type' => 'required|string|in:' . implode(',', SensorType::values()),
+            'sensor_type' => 'required|string|in:'.implode(',', SensorType::values()),
             'operator' => 'required|string|in:<,<=,>,>=,==,!=',
             'threshold' => 'required|numeric',
             'action' => 'required|string|in:irrigation_on,irrigation_off,cooling_on,cooling_off,shade_on,shade_off,alert',
@@ -129,9 +131,10 @@ class AutomationRuleController extends Controller
      */
     public function toggle(AutomationRule $automationRule)
     {
-        $automationRule->update(['is_active' => !$automationRule->is_active]);
+        $automationRule->update(['is_active' => ! $automationRule->is_active]);
 
         $status = $automationRule->is_active ? 'enabled' : 'disabled';
+
         return redirect()->back()
             ->with('success', "Automation rule {$status}.");
     }
@@ -149,6 +152,6 @@ class AutomationRuleController extends Controller
         $result = $automationRule->evaluate($value);
 
         return redirect()->back()
-            ->with('info', "Rule evaluation result for value {$value}: " . ($result ? 'TRIGGERED' : 'NOT TRIGGERED'));
+            ->with('info', "Rule evaluation result for value {$value}: ".($result ? 'TRIGGERED' : 'NOT TRIGGERED'));
     }
 }

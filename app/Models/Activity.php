@@ -40,9 +40,9 @@ class Activity extends Model
         return $this->belongsTo(CropCycle::class);
     }
 
-/**
-      * Get the staff member that performed the activity.
-      */
+    /**
+     * Get the staff member that performed the activity.
+     */
     public function staff(): BelongsTo
     {
         return $this->belongsTo(Staff::class);

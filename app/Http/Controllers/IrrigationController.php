@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IrrigationZone;
-use App\Models\IrrigationLog;
 use App\Models\Field;
+use App\Models\IrrigationLog;
+use App\Models\IrrigationZone;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class IrrigationController extends Controller
 {
@@ -184,7 +184,7 @@ class IrrigationController extends Controller
     public function stop(IrrigationZone $irrigation): RedirectResponse
     {
         $activeLog = $irrigation->getActiveLog();
-        
+
         if ($activeLog) {
             $activeLog->update([
                 'ended_at' => now(),

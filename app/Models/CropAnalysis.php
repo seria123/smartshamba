@@ -6,9 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Field;
-use App\Models\User;
-use App\Models\CropCycle;
 
 class CropAnalysis extends Model
 {
@@ -61,6 +58,7 @@ class CropAnalysis extends Model
         foreach ($this->images as $img) {
             $images[] = $img->image_path;
         }
+
         return $images;
     }
 

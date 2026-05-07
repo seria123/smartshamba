@@ -30,14 +30,14 @@ return new class extends Migration
         Schema::table('activities', function (Blueprint $table) {
             $table->foreignId('staff_id')->nullable()->constrained('staff')->onDelete('set null');
             $table->string('labor_type')->nullable()->after('cost');
-           $table->unsignedBigInteger('crop_stage_id')->nullable()->change();
+            $table->unsignedBigInteger('crop_stage_id')->nullable()->change();
 
-// Then separately manage foreign key
-$table->dropForeign(['crop_stage_id']);
-$table->foreign('crop_stage_id')
-      ->references('id')
-      ->on('crop_stages')
-      ->cascadeOnDelete();
+            // Then separately manage foreign key
+            $table->dropForeign(['crop_stage_id']);
+            $table->foreign('crop_stage_id')
+                ->references('id')
+                ->on('crop_stages')
+                ->cascadeOnDelete();
             $table->foreignId('crop_cycle_id')->nullable()->constrained('crop_cycles')->onDelete('cascade');
         });
 
@@ -59,16 +59,16 @@ $table->foreign('crop_stage_id')
         });
 
         Schema::table('inputs', function (Blueprint $table) {
-          // Modify column only
-$table->unsignedBigInteger('activity_id')->nullable()->change();
+            // Modify column only
+            $table->unsignedBigInteger('activity_id')->nullable()->change();
 
-// Then handle foreign key separately
-$table->dropForeign(['activity_id']); // optional (if exists)
+            // Then handle foreign key separately
+            $table->dropForeign(['activity_id']); // optional (if exists)
 
-$table->foreign('activity_id')
-      ->references('id')
-      ->on('activities')
-      ->cascadeOnDelete();
+            $table->foreign('activity_id')
+                ->references('id')
+                ->on('activities')
+                ->cascadeOnDelete();
             $table->string('unit')->nullable()->after('quantity');
             $table->decimal('cost', 10, 2)->nullable()->after('unit');
             $table->date('application_date')->nullable()->after('cost');
@@ -118,7 +118,7 @@ $table->foreign('activity_id')
             $table->dropColumn([
                 'crop_name', 'category', 'variety', 'season', 'farm_id',
                 'irrigation_type', 'irrigation_schedule', 'drainage', 'ph_level', 'previous_crop_cycle_id',
-                'soil_type_override', 'water_source_override'
+                'soil_type_override', 'water_source_override',
             ]);
             $table->dropForeign(['farm_id']);
             $table->dropForeign(['previous_crop_cycle_id']);
@@ -151,7 +151,7 @@ $table->foreign('activity_id')
         });
 
         Schema::table('inputs', function (Blueprint $table) {
-           $table->dropForeign(['activity_id']);
+            $table->dropForeign(['activity_id']);
             $table->dropColumn(['unit', 'cost', 'application_date', 'application_method', 'crop_cycle_id']);
         });
 

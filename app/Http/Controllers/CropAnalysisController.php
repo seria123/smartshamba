@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CropAnalysis;
 use App\Models\CropAnalysisImage;
-use App\Models\Field;
 use App\Models\CropCycle;
+use App\Models\Field;
 use App\Services\CropAnalysisService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +27,7 @@ class CropAnalysisController extends Controller
         $query = CropAnalysis::with(['field', 'user', 'cropCycle', 'cropCycle.crop'])
             ->orderBy('created_at', 'desc');
 
-        if (!Auth::user()->isAdmin()) {
+        if (! Auth::user()->isAdmin()) {
             $query->where('user_id', Auth::id());
         }
 
@@ -41,7 +41,7 @@ class CropAnalysisController extends Controller
         // Get crop cycles for filter dropdown
         $cropCycles = Auth::user()->isAdmin()
             ? CropCycle::all()
-            : CropCycle::whereHas('field', fn($q) => $q->where('user_id', Auth::id()))->get();
+            : CropCycle::whereHas('field', fn ($q) => $q->where('user_id', Auth::id()))->get();
 
         return view('crop_analysis.index', compact('analyses', 'cropCycles'));
     }
@@ -50,8 +50,8 @@ class CropAnalysisController extends Controller
     public function create()
     {
         $fields = Field::where('user_id', Auth::id())->get();
-        $cropCycles = CropCycle::whereHas('field', fn($q) => $q->where('user_id', Auth::id()))
-            ->orWhereHas('farm', fn($q) => $q->where('user_id', Auth::id()))
+        $cropCycles = CropCycle::whereHas('field', fn ($q) => $q->where('user_id', Auth::id()))
+            ->orWhereHas('farm', fn ($q) => $q->where('user_id', Auth::id()))
             ->with(['crop', 'field'])
             ->orderBy('start_date', 'desc')
             ->get();
@@ -71,14 +71,14 @@ class CropAnalysisController extends Controller
 
         try {
             $imageFiles = $request->file('images');
-            if (!$imageFiles || count($imageFiles) === 0) {
+            if (! $imageFiles || count($imageFiles) === 0) {
                 throw new \Exception('At least one image is required');
             }
 
             // Derive field_id from crop_cycle if not provided (for weather context)
             $fieldId = $request->field_id;
             $cropCycleId = $request->crop_cycle_id;
-            if (!$fieldId && $cropCycleId) {
+            if (! $fieldId && $cropCycleId) {
                 $cropCycle = CropCycle::find($cropCycleId);
                 if ($cropCycle) {
                     $fieldId = $cropCycle->field_id;
@@ -93,7 +93,7 @@ class CropAnalysisController extends Controller
                 $cropCycleId
             );
 
-            if (!$analysis || !$analysis->id) {
+            if (! $analysis || ! $analysis->id) {
                 throw new \Exception('Analysis failed - no result returned');
             }
 
@@ -105,7 +105,7 @@ class CropAnalysisController extends Controller
                         'crop_analysis_id' => $analysis->id,
                         'image_path' => $path,
                         'order' => $index + 1,
-                        'label' => 'Additional Image ' . ($index + 2),
+                        'label' => 'Additional Image '.($index + 2),
                     ]);
                 }
             }
@@ -115,14 +115,14 @@ class CropAnalysisController extends Controller
                 ->with('success', 'Analysis completed successfully');
 
         } catch (\Exception $e) {
-            Log::error('Crop analysis error: ' . $e->getMessage(), [
+            Log::error('Crop analysis error: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'user_id' => Auth::id(),
             ]);
 
             return back()
                 ->withInput()
-                ->with('error', 'Analysis failed: ' . $e->getMessage())
+                ->with('error', 'Analysis failed: '.$e->getMessage())
                 ->with('error_details', 'Please try again with a clearer image. If the problem persists, check that API keys are configured.');
         }
     }
@@ -134,7 +134,7 @@ class CropAnalysisController extends Controller
             ->findOrFail($id);
 
         // Authorization check
-        if ($cropAnalysis->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        if ($cropAnalysis->user_id !== Auth::id() && ! Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
 
@@ -199,7 +199,7 @@ class CropAnalysisController extends Controller
     // Helper: Authorize access to analysis
     private function authorizeAccess(CropAnalysis $analysis): void
     {
-        if ($analysis->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        if ($analysis->user_id !== Auth::id() && ! Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
     }

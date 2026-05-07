@@ -50,15 +50,37 @@
                             <span>{{ $staff->termination_date->format('M d, Y') }}</span>
                         </div>
                         @endif
+                        @if($staff->available_equipment && count($staff->available_equipment) > 0)
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">
+                                <i class="fas fa-tools me-2"></i>Available Equipment
+                            </span>
+                            <div>
+                                @foreach($staff->available_equipment as $item)
+                                @php
+                                    $icons = [
+                                        'tractor' => ['fas fa-tractor', 'warning'],
+                                        'irrigation_system' => ['fas fa-tint', 'primary'],
+                                        'storage_facilities' => ['fas fa-warehouse', 'success']
+                                    ];
+                                    $badge_class = $icons[$item][1] ?? 'secondary';
+                                @endphp
+                                <span class="badge bg-{{ $badge_class }} bg-opacity-10 text-{{ $badge_class }} border border-{{ $badge_class }} border-opacity-50 ms-1">
+                                    <i class="{{ $icons[$item][0] ?? 'fas fa-toolbox' }} me-1"></i>
+                                    {{ str_replace(['_', '-'], ' ', ucwords($item)) }}
+                                </span>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
                         @if($staff->emergency_contact)
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Emergency Contact</span>
                             <span>{{ $staff->emergency_contact }} ({{ $staff->emergency_phone ?? 'N/A' }})</span>
                         </div>
                         @endif
-                    </div>
 
-                    <div class="d-grid gap-2 mt-4">
                         <a href="{{ route('staff.edit', $staff) }}" class="btn btn-primary">
                             <i class="fas fa-edit me-2"></i> Edit Staff
                         </a>
