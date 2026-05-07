@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(LivestockModuleSeeder::class);
         $this->call(IrrigationModuleSeeder::class);
         $this->call(AssetsMaintenanceSeeder::class);
+        $this->call(FinanceCostingSeeder::class);
     }
 }

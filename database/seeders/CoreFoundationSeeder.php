@@ -30,7 +30,7 @@ class CoreFoundationSeeder extends Seeder
             ['crops', 'Crops', 'Crop production workflows.', 'planned'],
             ['livestock', 'Livestock', 'Livestock workflows.', 'planned'],
             ['irrigation', 'Irrigation', 'Water sources, zones, schedules, and logs.', 'planned'],
-            ['finance', 'Finance', 'Expenses, payroll, budgets, and accounting summaries.', 'planned'],
+            ['finance-costing', 'Finance / Costing', 'Management costing, cost allocation, and farm cost summaries.', 'active'],
             ['sales-traceability', 'Sales and Traceability', 'Sales, batches, customers, and traceability.', 'planned'],
             ['reports', 'Reports', 'Reporting, dashboards, and exports.', 'planned'],
             ['settings', 'Settings', 'Platform and organization configuration.', 'planned'],
