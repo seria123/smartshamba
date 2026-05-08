@@ -1,0 +1,2 @@
+@extends('layouts.app')
+@section('content')<header class="content-header"><div><p class="eyebrow">Sales / Revenue</p><h1>Revenue by customer</h1></div></header>@include('sales::reports.partials-filters')<table><thead><tr><th>Customer</th><th>Total</th><th>Balance</th></tr></thead><tbody>@foreach($rows as $row)<tr><td>{{ $row->label }}</td><td>{{ number_format($row->total,2) }}</td><td>{{ number_format($row->balance,2) }}</td></tr>@endforeach</tbody></table>@endsection

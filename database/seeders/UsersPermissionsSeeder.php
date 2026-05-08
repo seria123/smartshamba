@@ -176,6 +176,9 @@ class UsersPermissionsSeeder extends Seeder
             ['finance.view', 'View Finance Costing', 'Finance / Costing'],
             ['finance.manage', 'Manage Finance Costing', 'Finance / Costing'],
             ['finance.reports', 'View Finance Cost Reports', 'Finance / Costing'],
+            ['sales.view', 'View Sales Revenue', 'Sales / Revenue'],
+            ['sales.manage', 'Manage Sales Revenue', 'Sales / Revenue'],
+            ['sales.reports', 'View Sales Revenue Reports', 'Sales / Revenue'],
         ];
 
         $permissions = [];
@@ -238,7 +241,9 @@ class UsersPermissionsSeeder extends Seeder
         $assetLimitedView = ['assets.view', 'maintenance-records.view', 'breakdowns.view', 'asset-usage.view'];
         $financeView = ['finance.view', 'finance.reports'];
         $financeOps = ['finance.view', 'finance.manage', 'finance.reports'];
-        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView, $irrigationView, $assetView, $financeView))->pluck('id')->all();
+        $salesView = ['sales.view', 'sales.reports'];
+        $salesOps = ['sales.view', 'sales.manage', 'sales.reports'];
+        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView, $irrigationView, $assetView, $financeView, $salesView))->pluck('id')->all();
         $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
@@ -327,11 +332,11 @@ class UsersPermissionsSeeder extends Seeder
         $map = [
             'owner' => $all,
             'system-admin' => $all,
-            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->merge(collect($permissions)->only($assetOps)->pluck('id')->all())->merge(collect($permissions)->only($financeOps)->pluck('id')->all())->unique()->all(),
+            'farm-manager' => collect($taskManagers)->merge($inventoryManagers)->merge(collect($permissions)->only($cropOps)->pluck('id')->all())->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->merge(collect($permissions)->only($assetOps)->pluck('id')->all())->merge(collect($permissions)->only($financeOps)->pluck('id')->all())->merge(collect($permissions)->only($salesOps)->pluck('id')->all())->unique()->all(),
             'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->merge(collect($permissions)->only(['assets.view', 'asset-usage.view'])->pluck('id')->all())->unique()->all(),
             'livestock-officer' => collect($taskOperators)->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only(['assets.view', 'asset-usage.view'])->pluck('id')->all())->unique()->all(),
             'storekeeper' => collect($inventoryOperators)->merge(collect($permissions)->only($irrigationView)->pluck('id')->all())->merge(collect($permissions)->only($assetLimitedView)->pluck('id')->all())->unique()->all(),
-            'finance-officer' => collect($permissions)->only(array_merge(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $irrigationView, $financeOps))->pluck('id')->all(),
+            'finance-officer' => collect($permissions)->only(array_merge(['core.view', 'reports.view', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $irrigationView, $financeOps, $salesOps))->pluck('id')->all(),
             'farm-hand' => $taskSubmitters,
             'contractor' => $taskSubmitters,
             'auditor' => $readOnly,

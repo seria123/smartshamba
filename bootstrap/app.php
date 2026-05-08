@@ -30,5 +30,6 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Modules\Irrigation\Providers\IrrigationServiceProvider::class,
         App\Modules\Assets\Providers\AssetsServiceProvider::class,
         App\Modules\Finance\Providers\FinanceServiceProvider::class,
+        App\Modules\Sales\Providers\SalesServiceProvider::class,
     ])
     ->create();
