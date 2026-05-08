@@ -56,6 +56,9 @@
                         @if (auth()->user()->canAccessAdmin('sales.view'))
                             <a class="nav-item {{ request()->routeIs('sales.*') ? 'is-active' : '' }}" href="{{ route('sales.dashboard') }}">Sales / Revenue</a>
                         @endif
+                        @if (auth()->user()->canAccessAdmin('reports.view'))
+                            <a class="nav-item {{ request()->routeIs('reports.*') ? 'is-active' : '' }}" href="{{ route('reports.dashboard') }}">Reports</a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="nav-item logout-button" type="submit">Log out</button>

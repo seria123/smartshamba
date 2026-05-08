@@ -33,7 +33,7 @@ class CoreFoundationSeeder extends Seeder
             ['finance-costing', 'Finance / Costing', 'Management costing, cost allocation, and farm cost summaries.', 'active'],
             ['sales-produce-revenue', 'Sales / Revenue', 'Management revenue records for produce, livestock, and other farm sales.', 'active'],
             ['sales-traceability', 'Sales and Traceability', 'Sales, batches, customers, and traceability.', 'planned'],
-            ['reports', 'Reports', 'Reporting, dashboards, and exports.', 'planned'],
+            ['reports', 'Reports / Analytics', 'Read-only reporting, dashboards, and farm performance analytics.', 'active'],
             ['settings', 'Settings', 'Platform and organization configuration.', 'planned'],
         ];
 
