@@ -35,6 +35,7 @@ class CoreFoundationSeeder extends Seeder
             ['sales-traceability', 'Sales and Traceability', 'Sales, batches, customers, and traceability.', 'planned'],
             ['reports', 'Reports / Analytics', 'Read-only reporting, dashboards, and farm performance analytics.', 'active'],
             ['notifications-alerts', 'Notifications / Alerts', 'In-app notifications, alerts, and reminders for farm operations.', 'active'],
+            ['documents-attachments', 'Documents / Attachments', 'Private documents, attachments, and media evidence for farm records.', 'active'],
             ['settings', 'Settings', 'Platform and organization configuration.', 'planned'],
         ];
 

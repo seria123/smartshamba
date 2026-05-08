@@ -24,3 +24,5 @@ storage/*.key
 !/bootstrap/cache/.gitkeep
 /storage/framework/views/*.php
 !/storage/framework/views/.gitkeep
+/storage/app/private/attachments/
+/storage/framework/testing/disks/
