@@ -5,7 +5,9 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 
 class PlantIdService
 {
@@ -28,15 +30,13 @@ class PlantIdService
 
         try {
             // 🔥 Compress + resize image BEFORE encoding
-            $imageResized = Image::make($image->getRealPath())
-                ->resize(1024, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                })
-                ->encode('jpg', 70);
+            $manager = new ImageManager(new Driver());
+            $imageResized = $manager->decode($image->getRealPath())
+                ->scale(width: 1024)
+                ->encode(new JpegEncoder(quality: 70));
 
-            // Convert to base64 AFTER compression
-            $base64 = base64_encode($imageResized);
+            // Convert to base64 AFTER compression - get raw bytes first
+            $base64 = base64_encode((string) $imageResized);
 
             Log::info('Plant.id request prepared', [
                 'original_size' => $image->getSize(),
@@ -52,10 +52,10 @@ class PlantIdService
                 ])
                 ->post($this->apiUrl, [
                     'images' => [$base64],
-                    'similar_images' => true, // 🔥 IMPORTANT
-                    'health' => [
-                        'disease' => true,
-                    ],
+                    'organs' => ['leaf'],
+                    'modifiers' => ['health_all'],
+                    'plant_lang' => 'en',
+                    'disease_details' => ['description', 'treatment', 'common_names'],
                 ]);
 
             // ❌ Handle API failure clearly
@@ -68,11 +68,14 @@ class PlantIdService
                 return $this->fallback();
             }
 
+            $responseData = $response->json();
+            Log::info('Plant.id FULL response', $responseData);
+
             Log::info('Plant.id response received', [
                 'status' => $response->status(),
             ]);
 
-            return $this->format($response->json());
+            return $this->format($responseData);
 
         } catch (\Throwable $e) {
             Log::error('Plant.id exception: '.$e->getMessage(), [
@@ -85,12 +88,10 @@ class PlantIdService
 
     protected function format(array $data): array
     {
-        // 🔍 Try ALL known Plant.id response paths
+        // 🔍 Try ALL known Plant.id v3 response paths
         $disease = data_get($data, 'result.disease.suggestions.0')
-            ?? data_get($data, 'result.health_assessment.diseases.0')
-            ?? data_get($data, 'health_assessment.diseases.0')
-            ?? data_get($data, 'result.diseases.0')
-            ?? data_get($data, 'result.is_plant.health_assessment.diseases.0')
+            ?? data_get($data, 'disease.suggestions.0')
+            ?? data_get($data, 'result.disease.suggestions.0')
             ?? null;
 
         // 🧨 Debug safety (remove later)
@@ -105,7 +106,8 @@ class PlantIdService
             ?? $disease['disease']['name']
             ?? 'Unknown condition';
 
-        $description = $this->getDescriptionFromEntity($disease);
+        $description = data_get($disease, 'details.description')
+            ?? $this->getDescriptionFromEntity($disease);
 
         $severityRaw = $this->mapSeverityFromEntity($disease);
 

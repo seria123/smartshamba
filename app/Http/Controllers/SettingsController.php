@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Farm;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -89,6 +90,11 @@ class SettingsController extends Controller
             ->with('success', 'Farm settings updated successfully.');
     }
 
+  public function edit($id)
+{
+    $setting = Setting::findOrFail($id);
+    return view('settings.edit', compact('setting'));
+}
     /**
      * Update notification settings.
      */
@@ -120,34 +126,70 @@ class SettingsController extends Controller
             ->with('success', 'Notification settings updated successfully.');
     }
 
+    public function update(Request $request, $id)
+{
+    $setting = Setting::findOrFail($id);
+
+    $data = $request->validate([
+        'site_name' => 'required|string|max:255',
+        'email' => 'nullable|email',
+    ]);
+
+    $setting->update($data);
+
+    return redirect()->back()->with('success', 'Settings updated successfully.');
+}
+
     /**
      * Update system settings.
      */
     public function updateSystem(Request $request)
-    {
-        $request->validate([
-            'date_format' => 'required|in:YYYY-MM-DD,DD/MM/MM,MM/DD/YYYY',
-            'time_format' => 'required|in:24h,12h',
-            'measurement_system' => 'required|in:metric,imperial',
-            'currency' => 'required|string|max:10',
-            'language' => 'required|string|max:10',
-        ]);
+{
+    $request->validate([
+        'temperature_threshold' => 'nullable|numeric',
+        'moisture_minimum' => 'nullable|numeric',
+        'refresh_rate' => 'nullable|integer|min:5',
 
-        $user = Auth::user();
-        $preferences = $user->preferences ?? [];
-        $preferences['system'] = $request->only([
-            'date_format',
-            'time_format',
-            'measurement_system',
-            'currency',
-            'language',
-        ]);
+        'date_format' => 'nullable|string',
+        'time_format' => 'nullable|string',
+        'measurement_system' => 'nullable|string',
+        'currency' => 'nullable|string|max:10',
+        'language' => 'nullable|string|max:10',
+    ]);
 
-        $user->update(['preferences' => $preferences]);
+    $user = Auth::user();
+    $preferences = $user->preferences ?? [];
 
-        return redirect()->route('settings.index')
-            ->with('success', 'System settings updated successfully.');
+    $preferences['alerts'] = $request->only([
+        'temperature_threshold',
+        'moisture_minimum',
+    ]);
+
+    $preferences['system'] = $request->only([
+        'refresh_rate',
+        'date_format',
+        'time_format',
+        'measurement_system',
+        'currency',
+        'language',
+    ]);
+
+    $user->update(['preferences' => $preferences]);
+
+    return redirect()->back()->with('success', 'Settings updated successfully.');
+}
+
+    public function bulkUpdate(Request $request)
+{
+    foreach ($request->except('_token') as $key => $value) {
+        Setting::updateOrCreate(
+            ['key' => $key],
+            ['value' => $value]
+        );
     }
+
+    return redirect()->back()->with('success', 'Settings updated successfully.');
+}
 
     /**
      * Update password.
@@ -173,5 +215,29 @@ class SettingsController extends Controller
 
         return redirect()->route('settings.index')
             ->with('success', 'Password updated successfully.');
+    }
+
+    public function store(Request $request)
+{
+    // Validate input
+    $data = $request->validate([
+        'site_name' => 'required|string|max:255',
+        'email' => 'nullable|email',
+    ]);
+
+    // Save logic (example)
+    Setting::updateOrCreate(
+        ['key' => 'site_name'],
+        ['value' => $data['site_name']]
+    );
+
+    return redirect()->back()->with('success', 'Settings saved successfully.');
+}
+     public function destroy(Setting $setting)
+    {
+        $setting->delete();
+
+        return redirect()->route('settings.index')
+            ->with('success', 'Setting deleted successfully');
     }
 }

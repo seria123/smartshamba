@@ -158,6 +158,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('planting-schedules/{plantingSchedule}', [PlantingScheduleController::class, 'destroy'])->name('planting-schedules.destroy');
 });
 
+Route::post('/livestock-analysis/{id}/mark-reviewed', 
+    [LivestockAnalysisController::class, 'markReviewed']
+)->name('livestock-analysis.markReviewed');
+
 // Finance Routes (Income, Expenses, Reports)
 Route::middleware(['auth'])->group(function () {
     Route::resource('revenues', \App\Http\Controllers\RevenueController::class);
@@ -192,10 +196,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('yield_estimations/statistics', [YieldEstimationController::class, 'statistics'])->name('yield_estimations.statistics');
     Route::resource('yield_estimations', YieldEstimationController::class);
 });
-Route::get('/settings', [SettingsController::class, 'index'])
-    ->name('settings.index');
 
-Route::post('/settings', [SettingsController::class, 'update'])
-    ->name('settings.update');
-
+Route::middleware('auth')->group(function () {
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/bulk-update', [SettingsController::class, 'bulkUpdate'])->name('settings.bulkUpdate');
+    Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
+   Route::put('/settings/{id}', [SettingsController::class, 'update'])->name('settings.update');
+   Route::get('/settings/system', [SettingsController::class, 'editSystem'])
+    ->name('settings.edit');
+});
 require __DIR__.'/auth.php';

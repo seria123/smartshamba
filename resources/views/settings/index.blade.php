@@ -16,9 +16,9 @@
 
         <!-- Settings Form -->
         <div class="bg-white rounded-xl shadow-md p-6">
-            <form method="POST" action="{{ route('settings.update') }}" class="space-y-6">
-                @csrf
-                @method('PUT')
+          <form method="POST" action="{{ route('settings.bulkUpdate') }}" class="space-y-6">
+    @csrf
+ 
 
                 <!-- Alert Settings -->
                 <div>
