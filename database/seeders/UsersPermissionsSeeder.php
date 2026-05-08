@@ -32,6 +32,9 @@ class UsersPermissionsSeeder extends Seeder
             ['reports.view', 'View Reports', 'Reports'],
             ['reports.analytics', 'View Reports Analytics', 'Reports'],
             ['reports.manage', 'Manage Reports', 'Reports'],
+            ['notifications.view', 'View Notifications and Alerts', 'Notifications'],
+            ['notifications.manage', 'Manage Notifications and Alerts', 'Notifications'],
+            ['notifications.rules.manage', 'Manage Notification Rules', 'Notifications'],
             ['workers.view', 'View Workers', 'Workers/Labour'],
             ['workers.create', 'Create Workers', 'Workers/Labour'],
             ['workers.update', 'Update Workers', 'Workers/Labour'],
@@ -244,14 +247,16 @@ class UsersPermissionsSeeder extends Seeder
         $financeOps = ['finance.view', 'finance.manage', 'finance.reports'];
         $salesView = ['sales.view', 'sales.reports'];
         $salesOps = ['sales.view', 'sales.manage', 'sales.reports'];
-        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'reports.analytics', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView, $irrigationView, $assetView, $financeView, $salesView))->pluck('id')->all();
-        $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view', 'reports.analytics'])->pluck('id')->all();
+        $readOnly = collect($permissions)->only(array_merge(['core.view', 'access.view', 'modules.view', 'reports.view', 'reports.analytics', 'notifications.view', 'workers.view', 'teams.view', 'attendance.view', 'tasks.view', 'work-orders.view', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $cropView, $livestockView, $irrigationView, $assetView, $financeView, $salesView))->pluck('id')->all();
+        $coreOperators = collect($permissions)->only(['core.view', 'core.manage', 'modules.view', 'reports.view', 'reports.analytics', 'notifications.view', 'notifications.manage'])->pluck('id')->all();
         $labourOperators = collect($permissions)->only([
             'core.view',
             'core.manage',
             'modules.view',
             'reports.view',
             'reports.analytics',
+            'notifications.view',
+            'notifications.manage',
             'workers.view',
             'workers.create',
             'workers.update',
@@ -270,6 +275,7 @@ class UsersPermissionsSeeder extends Seeder
             'core.manage',
             'modules.view',
             'reports.view',
+            'notifications.view',
             'workers.view',
             'workers.create',
             'workers.update',
@@ -305,6 +311,7 @@ class UsersPermissionsSeeder extends Seeder
             'modules.view',
             'reports.view',
             'reports.analytics',
+            'notifications.view',
             'workers.view',
             'teams.view',
             'attendance.view',
@@ -319,7 +326,7 @@ class UsersPermissionsSeeder extends Seeder
             'tasks.submit',
         ])->pluck('id')->all();
         $inventoryManagers = collect($permissions)->only([
-            'core.view', 'modules.view', 'reports.view', 'reports.analytics',
+            'core.view', 'modules.view', 'reports.view', 'reports.analytics', 'notifications.view',
             'inventory.view', 'inventory.manage',
             'products.view', 'products.create', 'products.update', 'products.deactivate',
             'suppliers.view', 'suppliers.create', 'suppliers.update', 'suppliers.deactivate',
@@ -339,7 +346,7 @@ class UsersPermissionsSeeder extends Seeder
             'agronomist' => collect($taskOperators)->merge(collect($permissions)->only($agronomistCropOps)->pluck('id')->all())->merge(collect($permissions)->only($irrigationOps)->pluck('id')->all())->merge(collect($permissions)->only(['assets.view', 'asset-usage.view'])->pluck('id')->all())->unique()->all(),
             'livestock-officer' => collect($taskOperators)->merge(collect($permissions)->only($livestockOps)->pluck('id')->all())->merge(collect($permissions)->only(['assets.view', 'asset-usage.view'])->pluck('id')->all())->unique()->all(),
             'storekeeper' => collect($inventoryOperators)->merge(collect($permissions)->only($irrigationView)->pluck('id')->all())->merge(collect($permissions)->only($assetLimitedView)->pluck('id')->all())->unique()->all(),
-            'finance-officer' => collect($permissions)->only(array_merge(['core.view', 'reports.view', 'reports.analytics', 'reports.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $irrigationView, $financeOps, $salesOps))->pluck('id')->all(),
+            'finance-officer' => collect($permissions)->only(array_merge(['core.view', 'reports.view', 'reports.analytics', 'reports.manage', 'notifications.view', 'notifications.manage', 'inventory.view', 'products.view', 'suppliers.view', 'stock.view'], $irrigationView, $financeOps, $salesOps))->pluck('id')->all(),
             'farm-hand' => $taskSubmitters,
             'contractor' => $taskSubmitters,
             'auditor' => $readOnly,

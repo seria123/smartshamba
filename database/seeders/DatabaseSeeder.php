@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AssetsMaintenanceSeeder::class);
         $this->call(FinanceCostingSeeder::class);
         $this->call(SalesRevenueSeeder::class);
+        $this->call(NotificationsAlertsSeeder::class);
     }
 }

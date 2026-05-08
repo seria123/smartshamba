@@ -59,6 +59,9 @@
                         @if (auth()->user()->canAccessAdmin('reports.view'))
                             <a class="nav-item {{ request()->routeIs('reports.*') ? 'is-active' : '' }}" href="{{ route('reports.dashboard') }}">Reports</a>
                         @endif
+                        @if (auth()->user()->canAccessAdmin('notifications.view'))
+                            <a class="nav-item {{ request()->routeIs('notifications.*') ? 'is-active' : '' }}" href="{{ route('notifications.dashboard') }}">Notifications / Alerts</a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="nav-item logout-button" type="submit">Log out</button>
