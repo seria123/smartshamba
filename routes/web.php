@@ -146,6 +146,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('crop_analyses/{crop_analysis}/mark-reviewed', [CropAnalysisController::class, 'markReviewed'])->name('crop_analyses.markReviewed');
 });
 
+
 // Planting Schedule routes
 Route::middleware(['auth'])->group(function () {
     Route::get('planting-schedules', [PlantingScheduleController::class, 'index'])->name('planting-schedules.index');
@@ -158,9 +159,28 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('planting-schedules/{plantingSchedule}', [PlantingScheduleController::class, 'destroy'])->name('planting-schedules.destroy');
 });
 
-Route::post('/livestock-analysis/{id}/mark-reviewed', 
-    [LivestockAnalysisController::class, 'markReviewed']
-)->name('livestock-analysis.markReviewed');
+
+Route::get('/crops/create', [CropController::class, 'create'])->name('crops.create');
+Route::get('/sensors/create', [SensorController::class, 'create'])
+    ->name('sensors.create');
+    Route::get('/sensors/{sensor}/edit', [SensorController::class, 'edit'])
+    ->name('sensors.edit');
+    Route::get('/sensors', [SensorController::class, 'index'])
+    ->name('sensors.index');
+    Route::put('/sensors/{sensor}', [SensorController::class, 'update'])
+    ->name('sensors.update');
+Route::get('/sensors/{sensor}', [SensorController::class, 'show'])
+    ->name('sensors.show');
+Route::delete('/sensors/{sensor}', [SensorController::class, 'destroy'])
+    ->name('sensors.destroy');
+    Route::post('/sensors', [SensorController::class, 'store'])
+    ->name('sensors.store');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/livestock-analysis/{id}/mark-reviewed', 
+        [LivestockAnalysisController::class, 'markReviewed']
+    )->name('livestock-analysis.markReviewed');
+});
 
 // Finance Routes (Income, Expenses, Reports)
 Route::middleware(['auth'])->group(function () {

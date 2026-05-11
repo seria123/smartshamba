@@ -93,6 +93,10 @@ class LivestockAnalysisController extends Controller
      */
     public function markReviewed(LivestockAnalysis $livestockAnalysis)
     {
+        if ($livestockAnalysis->user_id !== Auth::id() && ! Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized');
+        }
+
         if ($livestockAnalysis->status !== 'reviewed') {
             $livestockAnalysis->status = 'reviewed';
             $livestockAnalysis->save();
