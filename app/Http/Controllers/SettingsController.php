@@ -18,8 +18,9 @@ class SettingsController extends Controller
     {
         $user = Auth::user();
         $farm = $user->farm ?? null;
+        $settings = Setting::pluck('value', 'key')->toArray();
 
-        return view('settings.index', compact('user', 'farm'));
+        return view('settings.index', compact('user', 'farm', 'settings'));
     }
 
     /**
