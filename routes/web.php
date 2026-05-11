@@ -177,9 +177,8 @@ Route::delete('/sensors/{sensor}', [SensorController::class, 'destroy'])
     ->name('sensors.store');
 
 Route::middleware(['auth'])->group(function () {
-    Route::post('/livestock-analysis/{id}/mark-reviewed', 
-        [LivestockAnalysisController::class, 'markReviewed']
-    )->name('livestock-analysis.markReviewed');
+   Route::post('/livestock-analysis/{livestockAnalysis}/mark-reviewed', [LivestockAnalysisController::class, 'markReviewed'])
+    ->name('livestock-analysis.markReviewed');
 });
 
 // Finance Routes (Income, Expenses, Reports)

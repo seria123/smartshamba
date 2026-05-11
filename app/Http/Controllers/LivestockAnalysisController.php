@@ -52,21 +52,21 @@ class LivestockAnalysisController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'image' => 'required|image|max:10240|mimes:jpeg,png,jpg,gif,webp|dimensions:min_width=100,min_height=100',
-            'livestock_id' => 'nullable|exists:livestock,id',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'livestock_id' => 'required|exists:livestocks,id',
+    ]);
 
-        $analysis = $this->analysisService->analyze(
-            $validated['image'],
-            $validated['livestock_id'] ?? null
-        );
+    LivestockAnalysis::create([
+        'user_id' => Auth::id(),
+        'livestock_id' => $request->livestock_id,
+        'status' => 'reviewed',
+    ]);
 
-        return redirect()->route('livestock-analysis.show', $analysis)
-            ->with('success', 'Livestock analysis completed successfully!');
-    }
+    return redirect()->route('livestock-analysis.index')
+        ->with('success', 'Analysis created successfully.');
+}
 
     /**
      * Display the specified resource.
@@ -116,7 +116,7 @@ class LivestockAnalysisController extends Controller
 
         // Delete the image file
         if ($livestockAnalysis->image_path) {
-            \Storage::disk('public')->delete($livestockAnalysis->image_path);
+            Storage::disk('public')->delete($livestockAnalysis->image_path);
         }
 
         $livestockAnalysis->delete();

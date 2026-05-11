@@ -94,4 +94,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(\App\Models\Farm::class);
     }
+
+    public function livestockAnalyses()
+{
+    return $this->hasMany(\App\Models\LivestockAnalysis::class);
+}
 }
