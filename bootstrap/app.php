@@ -34,5 +34,6 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Modules\Reports\Providers\ReportsServiceProvider::class,
         App\Modules\Notifications\Providers\NotificationsServiceProvider::class,
         App\Modules\Documents\Providers\DocumentsServiceProvider::class,
+        App\Modules\Audit\Providers\AuditServiceProvider::class,
     ])
     ->create();

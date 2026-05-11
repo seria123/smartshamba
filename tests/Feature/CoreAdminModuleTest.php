@@ -73,7 +73,7 @@ class CoreAdminModuleTest extends TestCase
         $this->seed(CoreFoundationSeeder::class);
         $this->seed(CoreFoundationSeeder::class);
 
-        $this->assertSame(15, ModuleRegistry::count());
+        $this->assertSame(16, ModuleRegistry::count());
         $this->assertDatabaseHas('module_registry', [
             'key' => 'core',
             'status' => 'active',

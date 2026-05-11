@@ -36,6 +36,7 @@ class CoreFoundationSeeder extends Seeder
             ['reports', 'Reports / Analytics', 'Read-only reporting, dashboards, and farm performance analytics.', 'active'],
             ['notifications-alerts', 'Notifications / Alerts', 'In-app notifications, alerts, and reminders for farm operations.', 'active'],
             ['documents-attachments', 'Documents / Attachments', 'Private documents, attachments, and media evidence for farm records.', 'active'],
+            ['audit', 'Audit Trail', 'Tracks user and system activity across the farm platform.', 'active'],
             ['settings', 'Settings', 'Platform and organization configuration.', 'planned'],
         ];
 

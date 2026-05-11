@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SalesRevenueSeeder::class);
         $this->call(NotificationsAlertsSeeder::class);
         $this->call(DocumentsAttachmentsSeeder::class);
+        $this->call(AuditActivityLogSeeder::class);
     }
 }
