@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Staff;
 
 class CropCycle extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'code',
         'crop_name',
         'start_date',
         'expected_harvest_date',
@@ -28,6 +30,42 @@ class CropCycle extends Model
         'previous_crop_cycle_id',
         'soil_type_override',
         'water_source_override',
+        'area_planted',
+        'planting_method',
+        'planned_start_date',
+        'staff_id',
+        'status',
+        'soil_test_ph',
+        'soil_test_nitrogen',
+        'soil_test_phosphorus',
+        'soil_test_potassium',
+        'soil_test_recommendations',
+        'manure_quantity',
+        'manure_cost',
+        'manure_source',
+        'basal_fertilizer_dap',
+        'basal_fertilizer_npk',
+        'basal_fertilizer_lime',
+        'irrigation_setup',
+        'prep_labor_workers',
+        'prep_labor_hours',
+        'prep_labor_cost',
+        'machinery_tractor',
+        'machinery_pump',
+        'machinery_sprayer',
+        'machinery_notes',
+        // Planting Details
+        'seed_batch_number',
+        'seed_quantity',
+        'seedling_quantity',
+        'spacing_row',
+        'spacing_plant',
+        'plant_population',
+        'germination_rate',
+        'survival_rate',
+        'planting_labor_workers',
+        'planting_labor_cost',
+        'planting_notes',
     ];
 
     protected $casts = [
@@ -133,10 +171,18 @@ class CropCycle extends Model
     }
 
     /**
-     * Get the next crop cycle.
-     */
+      * Get the next crop cycle.
+      */
     public function nextCycle(): HasOne
     {
         return $this->hasOne(CropCycle::class, 'previous_crop_cycle_id');
+    }
+
+    /**
+     * Get the staff member responsible for this cycle.
+     */
+    public function staff(): BelongsTo
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
     }
 }

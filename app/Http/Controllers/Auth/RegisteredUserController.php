@@ -37,18 +37,13 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        // 👤 Create user WITH role (this fixes your error)
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'farmer', // ✅ REQUIRED FIX
-        ]);
-
-        // 🎭 Assign role (if using Spatie)
-        if (method_exists($user, 'assignRole')) {
-            $user->assignRole('farmer');
-        }
+// 👤 Create user WITH role (this fixes your error)
+         $user = User::create([
+             'name' => $request->name,
+             'email' => $request->email,
+             'password' => Hash::make($request->password),
+             'role' => 'user', // Standard farmer role
+         ]);
 
         // 🌱 Create farmer profile
         Farmer::create([

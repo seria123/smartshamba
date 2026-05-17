@@ -100,7 +100,6 @@ class FertilizerApplicationController extends Controller
         return redirect()->route('fertilizer_applications.index')
             ->with('success', 'Fertilizer application deleted successfully.');
     }
-}
 
     /**
      * Show the form for creating a new resource.

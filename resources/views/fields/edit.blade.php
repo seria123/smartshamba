@@ -107,27 +107,51 @@
             </div>
 
             <!-- GPS Coordinates -->
-            <div class="mt-6">
-                <h3 class="text-lg font-medium text-gray-700 mb-3">GPS Coordinates</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="border-2 border-dashed border-gray-200 rounded-lg p-6 bg-gray-50">
+                <div class="flex items-center justify-between mb-4">
+                    <label class="block text-sm font-medium text-gray-700 flex items-center">
+                        <i class="fas fa-satellite-dish text-emerald-600 mr-2"></i>
+                        GPS Coordinates
+                    </label>
+                    <button type="button" id="getFieldLocationBtn" 
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                        <i class="fas fa-location-arrow mr-2"></i>
+                        Get My Location
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="gps_latitude" class="block text-sm font-medium text-gray-700 mb-2">Latitude</label>
-                        <input type="number" name="gps_latitude" id="gps_latitude" value="{{ old('gps_latitude', $field->gps_latitude) }}" step="0.00000001" min="-90" max="90"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="-90 to 90">
+                        <label for="gps_latitude" class="block text-sm font-medium text-gray-600 mb-1">
+                            Latitude
+                        </label>
+                        <input type="number" name="gps_latitude" id="gps_latitude" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-lg"
+                            step="any" placeholder="-90.00000000" min="-90" max="90"
+                            value="{{ old('gps_latitude', $field->gps_latitude) }}">
                         @error('gps_latitude')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="gps_longitude" class="block text-sm font-medium text-gray-700 mb-2">Longitude</label>
-                        <input type="number" name="gps_longitude" id="gps_longitude" value="{{ old('gps_longitude', $field->gps_longitude) }}" step="0.00000001" min="-180" max="180"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="-180 to 180">
+                        <label for="gps_longitude" class="block text-sm font-medium text-gray-600 mb-1">
+                            Longitude
+                        </label>
+                        <input type="number" name="gps_longitude" id="gps_longitude" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-lg"
+                            step="any" placeholder="-180.00000000" min="-180" max="180"
+                            value="{{ old('gps_longitude', $field->gps_longitude) }}">
                         @error('gps_longitude')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                </div>
+                
+                <div id="fieldLocationStatus" class="mt-3 text-sm">
+                    <span class="text-gray-500">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Click "Get My Location" to automatically capture GPS coordinates
+                    </span>
                 </div>
             </div>
 
@@ -150,4 +174,66 @@
         </form>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const getLocationBtn = document.getElementById('getFieldLocationBtn');
+    const latInput = document.getElementById('gps_latitude');
+    const lngInput = document.getElementById('gps_longitude');
+    const status = document.getElementById('fieldLocationStatus');
+
+    if (!getLocationBtn || !latInput || !lngInput || !status) return;
+
+    function setStatus(message, color = 'gray') {
+        status.innerHTML = `<span class="text-${color}-600 flex items-center">${message}</span>`;
+    }
+
+    getLocationBtn.addEventListener('click', function() {
+        const originalHTML = getLocationBtn.innerHTML;
+        getLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Getting...';
+        getLocationBtn.disabled = true;
+
+        if (!navigator.geolocation) {
+            setStatus('<i class="fas fa-exclamation-circle mr-1"></i>Geolocation not supported by this browser', 'red');
+            getLocationBtn.innerHTML = originalHTML;
+            getLocationBtn.disabled = false;
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                latInput.value = pos.coords.latitude.toFixed(8);
+                lngInput.value = pos.coords.longitude.toFixed(8);
+                setStatus(
+                    `<i class="fas fa-check-circle mr-1"></i>
+                    Location captured: ${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)} (±${Math.round(pos.coords.accuracy)}m)`,
+                    'green'
+                );
+                getLocationBtn.innerHTML = originalHTML;
+                getLocationBtn.disabled = false;
+            },
+            function(err) {
+                let message = 'GPS error';
+                if (err.code === 1) {
+                    message = 'Location permission denied. Please allow location access in your browser settings.';
+                } else if (err.code === 2) {
+                    message = 'Location unavailable. Ensure GPS/location services are enabled on your device.';
+                } else if (err.code === 3) {
+                    message = 'Location request timed out. Move to an open area with clear sky view.';
+                }
+                setStatus(`<i class="fas fa-exclamation-circle mr-1"></i>${message}`, 'red');
+                getLocationBtn.innerHTML = originalHTML;
+                getLocationBtn.disabled = false;
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 30000,
+                maximumAge: 300000
+            }
+        );
+    });
+});
+</script>
+@endpush
 @endsection

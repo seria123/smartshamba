@@ -85,17 +85,47 @@ class CropAnalysisController extends Controller
                 }
             }
 
-            // Process the first image for AI analysis
+             // Process the first image for AI analysis
             $primaryImage = $imageFiles[0];
-            $analysis = $this->analysisService->analyze(
-                $primaryImage,
-                $fieldId,
-                $cropCycleId
-            );
-
-            if (! $analysis || ! $analysis->id) {
-                throw new \Exception('Analysis failed - no result returned');
+            $path = $this->storeImage($primaryImage, 'temp-analyses');
+            $analysisResult = $this->analysisService->analyzeCrop($path);
+             
+            // Determine severity based on confidence and disease detection
+            $severity = 'low';
+            $diseaseDetected = isset($analysisResult['disease']) ? $analysisResult['disease'] : 'No disease detected';
+            if (str_contains(strtolower($diseaseDetected), 'blight') || 
+                str_contains(strtolower($diseaseDetected), 'rot') || 
+                str_contains(strtolower($diseaseDetected), 'wilt')) {
+                $severity = 'high';
+            } elseif (str_contains(strtolower($diseaseDetected), 'mildew') || 
+                     str_contains(strtolower($diseaseDetected), 'infestation') ||
+                     str_contains(strtolower($diseaseDetected), 'mites') ||
+                     str_contains(strtolower($diseaseDetected), 'aphid') ||
+                     str_contains(strtolower($diseaseDetected), 'whitefly')) {
+                $severity = 'medium';
             }
+             
+            // Create analysis record from the result
+            $analysis = CropAnalysis::create([
+                'field_id' => $fieldId,
+                'crop_cycle_id' => $cropCycleId,
+                'user_id' => Auth::id(),
+                'image_path' => $path,
+                'diagnosis' => isset($analysisResult['crop']) ? $analysisResult['crop'] : 'Unknown',
+                'description' => "AI analysis detected: {$diseaseDetected} with ".(isset($analysisResult['confidence']) ? $analysisResult['confidence'] : 0)."% confidence.",
+                'severity' => $severity,
+                'recommendation' => $this->getRecommendationForDisease($diseaseDetected),
+                'detected_issues' => [
+                    [
+                        'type' => strtolower(str_replace(' ', '_', $diseaseDetected)),
+                        'description' => $diseaseDetected,
+                        'confidence' => isset($analysisResult['confidence']) ? $analysisResult['confidence'] : 0
+                    ]
+                ],
+                'confidence_score' => isset($analysisResult['confidence']) ? $analysisResult['confidence'] : 0,
+                'status' => 'analyzed',
+                'raw_data' => json_encode(isset($analysisResult['raw']) ? $analysisResult['raw'] : null),
+            ]);
 
             // Store additional images
             if (count($imageFiles) > 1) {
@@ -194,6 +224,43 @@ class CropAnalysisController extends Controller
     private function storeImage($image, string $directory): string
     {
         return $image->store($directory, 'public');
+    }
+
+    /**
+     * Get recommendation based on detected disease/condition
+     */
+    private function getRecommendationForDisease(string $disease): string
+    {
+        $diseaseLower = strtolower($disease);
+
+        if (str_contains($diseaseLower, 'healthy') || str_contains($diseaseLower, 'no disease')) {
+            return 'Continue regular maintenance and monitoring.';
+        }
+
+        if (str_contains($diseaseLower, 'blight')) {
+            return 'Apply appropriate fungicide, improve air circulation, and remove affected plant parts.';
+        }
+
+        if (str_contains($diseaseLower, 'mildew')) {
+            return 'Improve airflow, reduce humidity, and apply fungicide if necessary.';
+        }
+
+        if (str_contains($diseaseLower, 'rot') || str_contains($diseaseLower, 'wilt')) {
+            return 'Improve drainage, avoid overwatering, and consider soil treatment.';
+        }
+
+        if (str_contains($diseaseLower, 'infestation') || 
+            str_contains($diseaseLower, 'aphid') || 
+            str_contains($diseaseLower, 'whitefly') ||
+            str_contains($diseaseLower, 'mite')) {
+            return 'Apply appropriate insecticide or biological control, and monitor regularly.';
+        }
+
+        if (str_contains($diseaseLower, 'deficiency')) {
+            return 'Apply appropriate fertilizer based on soil test results.';
+        }
+
+        return 'Consult with an agricultural extension officer for specific treatment recommendations.';
     }
 
     // Helper: Authorize access to analysis

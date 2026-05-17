@@ -97,7 +97,6 @@ class FertilizerController extends Controller
         return redirect()->route('fertilizers.index')
             ->with('success', 'Fertilizer deleted successfully.');
     }
-}
 
     /**
      * Show the form for creating a new resource.

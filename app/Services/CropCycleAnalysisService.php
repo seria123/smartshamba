@@ -76,7 +76,7 @@ class CropCycleAnalysisService
             }
 
             if ($daysSincePlanting < $elapsedDays + $stageDuration) {
-                return $stage['name'];
+               return $stage;
             }
 
             $elapsedDays += $stageDuration;

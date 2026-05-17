@@ -81,6 +81,14 @@ class RevenueController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        // Auto-calculate price_per_unit if not provided but amount and quantity are present
+        if (empty($validated['price_per_unit']) && 
+            isset($validated['amount']) && 
+            isset($validated['quantity_sold']) && 
+            $validated['quantity_sold'] > 0) {
+            $validated['price_per_unit'] = $validated['amount'] / $validated['quantity_sold'];
+        }
+
         Revenue::create($validated);
 
         return redirect()->route('revenues.index')
@@ -114,6 +122,14 @@ class RevenueController extends Controller
             'invoice_number' => 'nullable|string',
             'notes' => 'nullable|string',
         ]);
+
+        // Auto-calculate price_per_unit if not provided but amount and quantity are present
+        if (empty($validated['price_per_unit']) && 
+            isset($validated['amount']) && 
+            isset($validated['quantity_sold']) && 
+            $validated['quantity_sold'] > 0) {
+            $validated['price_per_unit'] = $validated['amount'] / $validated['quantity_sold'];
+        }
 
         $revenue->update($validated);
 

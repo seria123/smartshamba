@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\Revenue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class ExpenseController extends Controller
 {
@@ -17,7 +18,8 @@ class ExpenseController extends Controller
         }
 
         if ($request->filled('expense_type')) {
-            $query->where('expense_type', $request->expense_type);
+            $type = is_array($request->expense_type) ? $request->expense_type[0] : $request->expense_type;
+            $query->whereRaw("FIND_IN_SET(?, expense_type)", [$type]);
         }
 
         if ($request->filled('farm_id')) {
@@ -32,9 +34,7 @@ class ExpenseController extends Controller
 
         $stats = [
             'total_expenses' => $query->sum('amount'),
-            'by_type' => Expense::selectRaw('expense_type, SUM(amount) as total')
-                ->groupBy('expense_type')
-                ->pluck('total', 'expense_type'),
+            'by_type' => $this->getTypeExpensesSummary(now()->year),
         ];
 
         return view('expenses.index', compact('expenses', 'stats'));
@@ -57,7 +57,8 @@ class ExpenseController extends Controller
         $validated = $request->validate([
             'farm_id' => 'required|exists:farms,id',
             'crop_id' => 'nullable|exists:crops,id',
-            'expense_type' => 'required|string',
+            'expense_type' => 'required|array',
+            'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,fuel,maintenance,transport,other',
             'description' => 'required|string',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
@@ -67,6 +68,11 @@ class ExpenseController extends Controller
             'staff_id' => 'nullable|exists:staff,id',
             'notes' => 'nullable|string',
         ]);
+
+        // Convert expense_type array to CSV for storage
+        if (is_array($validated['expense_type'])) {
+            $validated['expense_type'] = implode(',', $validated['expense_type']);
+        }
 
         Expense::create($validated);
 
@@ -84,7 +90,8 @@ class ExpenseController extends Controller
         $validated = $request->validate([
             'farm_id' => 'required|exists:farms,id',
             'crop_id' => 'nullable|exists:crops,id',
-            'expense_type' => 'required|string',
+            'expense_type' => 'required|array',
+            'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,fuel,maintenance,transport,other',
             'description' => 'required|string',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
@@ -94,6 +101,11 @@ class ExpenseController extends Controller
             'staff_id' => 'nullable|exists:staff,id',
             'notes' => 'nullable|string',
         ]);
+
+        // Convert expense_type array to CSV for storage
+        if (is_array($validated['expense_type'])) {
+            $validated['expense_type'] = implode(',', $validated['expense_type']);
+        }
 
         $expense->update($validated);
 
@@ -118,10 +130,7 @@ class ExpenseController extends Controller
             ->groupBy('month')
             ->pluck('total', 'month');
 
-        $typeExpenses = Expense::selectRaw('expense_type, SUM(amount) as total')
-            ->whereYear('expense_date', $year)
-            ->groupBy('expense_type')
-            ->get();
+        $typeExpenses = $this->getTypeExpensesSummary($year);
 
         $monthlyRevenue = Revenue::selectRaw('MONTH(sale_date) as month, SUM(amount) as total')
             ->whereYear('sale_date', $year)
@@ -149,5 +158,27 @@ class ExpenseController extends Controller
             'totalExpenses',
             'netProfit'
         ));
+    }
+
+    /**
+     * Calculate expenses grouped by type (handles CSV/array expense_type)
+     */
+    private function getTypeExpensesSummary($year): Collection
+    {
+        $expenses = Expense::whereYear('expense_date', $year)->get(['amount', 'expense_type']);
+        
+        $totals = collect();
+        
+        foreach ($expenses as $expense) {
+            $types = $expense->expense_type; // This uses accessor which returns array
+            foreach ($types as $type) {
+                $totals->put($type, ($totals->get($type, 0) + $expense->amount));
+            }
+        }
+        
+        // Convert to collection of objects matching original structure: { expense_type: X, total: Y }
+        return $totals->map(function ($total, $type) {
+            return (object) ['expense_type' => $type, 'total' => $total];
+        })->values();
     }
 }

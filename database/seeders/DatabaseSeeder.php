@@ -20,6 +20,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed crops and livestock types first
+        $this->call([
+            CropSeeder::class,
+            LivestockFeedSeeder::class,
+            CropCycleSeeder::class,
+        ]);
+
         // Create users (update if already exists)
         // Create/update users
         User::updateOrCreate(

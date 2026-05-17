@@ -12,11 +12,17 @@ use Filament\Tables\Table;
 
 class CropStageResource extends Resource
 {
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?string $model = CropStage::class;
+    protected static ?string $navigationGroup = 'Crop Management';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-beaker';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $modelLabel = 'Crop Stage';
+
+    protected static ?string $pluralModelLabel = 'Crop Stages';
 
     public static function form(Form $form): Form
     {

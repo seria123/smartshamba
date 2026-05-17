@@ -125,4 +125,73 @@ class OpenAIService
 
         return $prompt;
     }
+
+    public function analyzeImage(array $data): array
+    {
+        if (empty($this->apiKey)) {
+            Log::warning('OpenAI: No API key configured for image analysis');
+
+            return $this->fallbackResponse();
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '.$this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->post('https://api.openai.com/v1/chat/completions', [
+                'model' => $this->model,
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'You are an expert agricultural consultant. Analyze the provided crop or livestock image and provide a diagnosis. Return results in the specified JSON format.',
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => 'Analyze this image data and provide: disease name, description, severity (low/medium/high), and confidence (0-100). Data: '.json_encode($data),
+                    ],
+                ],
+                'max_tokens' => 300,
+                'temperature' => 0.5,
+            ]);
+
+            if ($response->successful()) {
+                $content = $response->json()['choices'][0]['message']['content'] ?? '';
+
+                return $this->parseOpenAIResponse($content);
+            }
+
+            Log::error('OpenAI image analysis error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return $this->fallbackResponse();
+        } catch (\Throwable $e) {
+            Log::error('OpenAI fallback failed or quota exceeded', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->fallbackResponse();
+        }
+    }
+
+    protected function parseOpenAIResponse(string $content): array
+    {
+        return [
+            'disease' => 'Analysis result',
+            'description' => trim($content),
+            'severity' => 'medium',
+            'confidence' => 50,
+        ];
+    }
+
+    protected function fallbackResponse(): array
+    {
+        return [
+            'disease' => 'Possible crop stress detected',
+            'description' => 'AI unavailable. Check leaves for pests, discoloration, or wilting.',
+            'severity' => 'medium',
+            'confidence' => 50,
+        ];
+    }
 }

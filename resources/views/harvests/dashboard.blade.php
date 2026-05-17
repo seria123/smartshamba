@@ -10,11 +10,11 @@
                     <div class="btn-group">
                         <form method="GET" class="d-flex gap-2">
                             <select name="month" class="form-select">
-                                @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
-                                    {{ Carbon\Carbon::createFromDate($year, $m, 1)->format('F') }}
-                                </option>
-                                @endfor
+@for($m = 1; $m <= 12; $m++)
+                                 <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
+                                     {{ \Carbon\Carbon::createFromDate($year, $m, 1)->format('F') }}
+                                 </option>
+                                 @endfor
                             </select>
                             <select name="year" class="form-select">
                                 @for($y = now()->year; $y >= now()->year - 5; $y--)
@@ -99,7 +99,7 @@
                     </div>
                     @endif
 
-                    <h5 class="mb-3">Recent Harvests - {{ Carbon\Carbon::createFromDate($year, $month, 1)->format('F Y') }}</h5>
+                    <h5 class="mb-3">Recent Harvests - {{ \Carbon\Carbon::createFromDate($year, $month, 1)->format('F Y') }}</h5>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>

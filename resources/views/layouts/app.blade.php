@@ -1,42 +1,36 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>{{ $title ?? 'SmartShamba' }}</title>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+     <!-- Font Awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ </head>
+ <body class="bg-gray-100">
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="flex min-h-screen">
-            <!-- Sidebar -->
-            <x-layout.sidebar />
+     <div class="flex min-h-screen">
 
-            <!-- Main section -->
-            <div class="flex-1 flex flex-col">
-                @include('layouts.navigation')
+         <!-- Sidebar -->
+         <x-layout.sidebar />
 
-                <!-- Page Heading -->
-                @isset($header)
-                    <header class="bg-white shadow">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            {{ $header }}
-                        </div>
-                    </header>
-                @endisset
+         <!-- Main section -->
+         <div class="flex-1 flex flex-col min-w-0">
 
-                <!-- Page Content -->
-                <main class="p-6">
-                    {{ $slot }}
-                </main>
-            </div>
-        </div>
-    </body>
+             <!-- Navbar -->
+             <x-layout.nav-bar />
+
+             <!-- Page content -->
+             <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+     @yield('content')
+     {{ $slot ?? '' }}
+ </main>
+
+         </div>
+     </div>
+
+ </body>
 </html>

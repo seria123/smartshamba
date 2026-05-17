@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Crop;
+
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -46,4 +48,9 @@ class CropStage extends Model
     {
         return $this->hasMany(GrowthMeasurement::class);
     }
+    public function crop()
+{
+    return $this->belongsTo(Crop::class);
+}
+    
 }

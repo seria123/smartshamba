@@ -79,7 +79,7 @@
                 <a href="{{ route('crops.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
                     Cancel
                 </a>
-                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                <button type="submit" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
                     <i class="fas fa-save mr-2"></i>Create Crop
                 </button>
             </div>

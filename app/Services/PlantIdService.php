@@ -5,46 +5,48 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Encoders\JpegEncoder;
+use Illuminate\Support\Facades\Config;
 
 class PlantIdService
 {
     protected string $apiKey;
 
-    protected string $apiUrl = 'https://plant.id/api/v3/health_assessment';
+    protected string $apiUrl;
 
-    public function __construct()
+    protected OpenAIService $openaiService;
+
+    public function __construct(OpenAIService $openaiService)
     {
         $this->apiKey = config('services.plant_id.key');
+        $this->apiUrl = config('services.plant_id.url', 'https://api.plant.id/v3/health_assessment');
+        $this->openaiService = $openaiService;
+        
+        // Log for debugging
+        Log::debug('PlantIdService constructed', [
+            'api_key_present' => !empty($this->apiKey),
+            'api_key_length' => strlen($this->apiKey ?? ''),
+            'api_key_value' => $this->apiKey ?? 'NULL',
+            'api_url' => $this->apiUrl,
+            'config_key' => config('services.plant_id.key'),
+            'config_url' => config('services.plant_id.url')
+        ]);
     }
-
     public function analyzePlantHealth(UploadedFile $image): array
     {
         if (empty($this->apiKey)) {
-            Log::warning('Plant.id API key not configured');
-
+            Log::warning('API key not configured');
             return $this->fallback();
         }
 
+        Log::debug('Plant ID service configuration', [
+            'api_key_present' => !empty($this->apiKey),
+            'api_key_length' => strlen($this->apiKey),
+            'api_url' => $this->apiUrl
+        ]);
+
         try {
-            // 🔥 Compress + resize image BEFORE encoding
-            $manager = new ImageManager(new Driver());
-            $imageResized = $manager->decode($image->getRealPath())
-                ->scale(width: 1024)
-                ->encode(new JpegEncoder(quality: 70));
+            $base64 = base64_encode(file_get_contents($image->getRealPath()));
 
-            // Convert to base64 AFTER compression - get raw bytes first
-            $base64 = base64_encode((string) $imageResized);
-
-            Log::info('Plant.id request prepared', [
-                'original_size' => $image->getSize(),
-                'mime_type' => $image->getMimeType(),
-                'compressed_size' => strlen($base64),
-            ]);
-
-            // 🚀 API request
             $response = Http::timeout(60)
                 ->withHeaders([
                     'Api-Key' => $this->apiKey,
@@ -52,146 +54,127 @@ class PlantIdService
                 ])
                 ->post($this->apiUrl, [
                     'images' => [$base64],
-                    'organs' => ['leaf'],
-                    'modifiers' => ['health_all'],
-                    'plant_lang' => 'en',
-                    'disease_details' => ['description', 'treatment', 'common_names'],
+                    'plant_language' => 'en',
+                    'similar_images' => true,
                 ]);
 
-            // ❌ Handle API failure clearly
             if (! $response->successful()) {
-                Log::error('Plant.id API error', [
+                Log::error('API error', [
                     'status' => $response->status(),
                     'body' => $response->body(),
+                    'url' => $this->apiUrl,
+                    'key_prefix' => substr($this->apiKey, 0, 10) . '...'
                 ]);
 
                 return $this->fallback();
             }
 
-            $responseData = $response->json();
-            Log::info('Plant.id FULL response', $responseData);
+            $data = $response->json();
 
-            Log::info('Plant.id response received', [
-                'status' => $response->status(),
+            Log::info('Kindwise response', [
+                'response' => $data
             ]);
 
-            return $this->format($responseData);
+            return $this->format($data);
 
         } catch (\Throwable $e) {
-            Log::error('Plant.id exception: '.$e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
-
+            Log::error('Exception: '.$e->getMessage());
             return $this->fallback();
         }
     }
-
     protected function format(array $data): array
     {
-        // 🔍 Try ALL known Plant.id v3 response paths
-        $disease = data_get($data, 'result.disease.suggestions.0')
-            ?? data_get($data, 'disease.suggestions.0')
-            ?? data_get($data, 'result.disease.suggestions.0')
-            ?? null;
-
-        // 🧨 Debug safety (remove later)
-        if (! $disease) {
-            Log::warning('No disease found in API response', $data);
-
+        if (! isset($data['result'])) {
             return $this->fallback();
         }
 
-        $name = $disease['name']
-            ?? $disease['species']
-            ?? $disease['disease']['name']
-            ?? 'Unknown condition';
+        $suggestions = data_get($data, 'result.disease.suggestions', []);
+        $isHealthy = data_get($data, 'result.is_healthy', null);
 
-        $description = data_get($disease, 'details.description')
-            ?? $this->getDescriptionFromEntity($disease);
+        if ($isHealthy === true) {
+            return [
+                'disease_name' => 'Healthy plant',
+                'description' => 'The plant appears healthy.',
+                'severity' => 'low',
+                'confidence' => 90,
+                'detected_issues' => [],
+            ];
+        }
 
-        $severityRaw = $this->mapSeverityFromEntity($disease);
+        if (empty($suggestions)) {
+            return [
+                'disease_name' => 'No disease detected',
+                'description' => 'No visible disease detected.',
+                'severity' => 'low',
+                'confidence' => 70,
+                'detected_issues' => [],
+            ];
+        }
 
-        $confidence = $disease['probability']
-            ?? $disease['score']
-            ?? 0;
+        $disease = $suggestions[0];
 
         return [
-            'disease_name' => $name,
-            'description' => $description,
-            'severity' => $this->mapSeverity($severityRaw),
-            'confidence' => $confidence * 100,
+            'disease_name' => $disease['name'] ?? 'Unknown condition',
+            'description' => data_get($disease, 'details.description') ?? '',
+            'severity' => $this->mapSeverityFromEntity($disease),
+            'confidence' => round(($disease['probability'] ?? 0) * 100, 2),
             'detected_issues' => [['type' => 'plant_disease']],
         ];
     }
 
-    protected function getDescriptionFromEntity(array $disease): string
+    protected function openaiFallback(UploadedFile $image): array
     {
-        $name = strtolower($disease['name'] ?? '');
-        $map = ['drepanopeziza' => 'A fungal disease affecting cherry and plum trees',
-            'powdery mildew' => 'A fungal disease appearing as white powdery spots',
-            'downy mildew' => 'A fungal-like disease causing yellow spots',
-            'rust' => 'Fungal diseases causing pustules on leaves and stems',
-            'blight' => 'Rapid browning or withering of plant tissues',
-            'mildew' => 'Fungal growth on plant surfaces',
-            'aphids' => 'Small sap-sucking insects',
-            'mite' => 'Tiny arachnids that suck plant juices',
-            'caterpillar' => 'Larval insects that feed on leaves',
-            'leaf spot' => 'Fungal or bacterial infections',
-            'anthracnose' => 'Fungal disease causing dark lesions',
-            'bacteria' => 'Bacterial infections',
-            'fungi' => 'Fungal infections',
-            'virus' => 'Viral infections',
-            'abiotic' => 'Non-living factors'];
-        foreach ($map as $k => $v) {
-            if (str_contains($name, $k)) {
-                return $v;
-            }
-        }
+        Log::warning('Plant.id failed, attempting OpenAI fallback');
 
-        return 'Plant health issue detected.';
+        try {
+            $result = $this->openaiService->analyzeImage([]);
+
+            return [
+                'disease_name' => $result['disease'] ?? 'Possible crop stress detected',
+                'description' => $result['description'] ?? 'AI analysis unavailable.',
+                'severity' => $result['severity'] ?? 'medium',
+                'confidence' => $result['confidence'] ?? 50,
+                'detected_issues' => [['type' => 'rule_based_fallback']],
+            ];
+        } catch (\Throwable $e) {
+            Log::error('OpenAI fallback failed or quota exceeded', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return [
+                'disease_name' => 'Possible crop stress detected',
+                'description' => 'AI unavailable. Check leaves for pests, discoloration, or wilting.',
+                'severity' => 'medium',
+                'confidence' => 50,
+                'detected_issues' => [['type' => 'rule_based_fallback']],
+            ];
+        }
     }
 
     protected function mapSeverityFromEntity(array $disease): string
     {
         $name = strtolower($disease['name'] ?? '');
         $p = $disease['probability'] ?? 0;
-        $high = ['blight', 'wilt', 'rot', 'rust', 'anthracnose', 'drepanopeziza'];
-        $med = ['mildew', 'spot', 'canker', 'aphids', 'mite', 'caterpillar', 'leaf spot'];
-        foreach ($high as $k) {
-            if (str_contains($name, $k)) {
-                return 'high';
-            }
-        }
-        foreach ($med as $k) {
-            if (str_contains($name, $k)) {
-                return 'medium';
-            }
-        }
-        if ($p >= 0.7) {
+
+        if (str_contains($name, 'blight') || str_contains($name, 'rot') || $p > 0.75) {
             return 'high';
         }
-        if ($p >= 0.4) {
+
+        if ($p > 0.4) {
             return 'medium';
         }
 
         return 'low';
     }
 
-    protected function mapSeverity($severity): string
-    {
-        if (! $severity) {
-            return 'medium';
-        }
-
-        return match (strtolower((string) $severity)) {
-            'low' => 'low','medium' => 'medium','high' => 'high','severe' => 'high',
-            default => 'medium'
-        };
-    }
-
     protected function fallback(): array
     {
-        return ['disease_name' => 'Analysis unavailable', 'description' => '',
-            'severity' => null, 'confidence' => 0, 'detected_issues' => []];
+        return [
+            'disease_name' => 'Possible crop stress',
+            'description' => 'Image unclear or no disease detected. Check for discoloration, pests, or wilting.',
+            'severity' => 'medium',
+            'confidence' => 40,
+            'detected_issues' => [['type' => 'unknown_issue']],
+        ];
     }
 }

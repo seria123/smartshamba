@@ -56,6 +56,18 @@ class CropCycleController extends Controller
             'irrigation_schedule' => 'nullable|string',
             'drainage' => 'nullable|string',
             'water_source_override' => 'nullable|string|max:255',
+            // Planting Details
+            'seed_batch_number' => 'nullable|string|max:255',
+            'seed_quantity' => 'nullable|numeric',
+            'seedling_quantity' => 'nullable|integer',
+            'spacing_row' => 'nullable|integer',
+            'spacing_plant' => 'nullable|integer',
+            'plant_population' => 'nullable|integer',
+            'germination_rate' => 'nullable|numeric|between:0,100',
+            'survival_rate' => 'nullable|numeric|between:0,100',
+            'planting_labor_workers' => 'nullable|integer',
+            'planting_labor_cost' => 'nullable|numeric',
+            'planting_notes' => 'nullable|string',
         ]);
 
         $validated['current_stage'] = 'planning';
@@ -142,6 +154,18 @@ class CropCycleController extends Controller
             'irrigation_schedule' => 'nullable|string',
             'drainage' => 'nullable|string',
             'water_source_override' => 'nullable|string|max:255',
+            // Planting Details
+            'seed_batch_number' => 'nullable|string|max:255',
+            'seed_quantity' => 'nullable|numeric',
+            'seedling_quantity' => 'nullable|integer',
+            'spacing_row' => 'nullable|integer',
+            'spacing_plant' => 'nullable|integer',
+            'plant_population' => 'nullable|integer',
+            'germination_rate' => 'nullable|numeric|between:0,100',
+            'survival_rate' => 'nullable|numeric|between:0,100',
+            'planting_labor_workers' => 'nullable|integer',
+            'planting_labor_cost' => 'nullable|numeric',
+            'planting_notes' => 'nullable|string',
         ]);
 
         $cropCycle->update($validated);

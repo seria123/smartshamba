@@ -174,12 +174,293 @@
             </div>
         </div>
 
-        <div class="flex justify-end space-x-3">
-            <a href="{{ route('crop_cycles.index') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</a>
-            <button type="submit" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
-                <i class="fas fa-save mr-2"></i> Update Crop Cycle
+        <!-- Inputs (Seeds, Fertilizers, Agrochemicals) -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <span class="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-2">4</span>
+                Inputs
+            </h2>
+            <p class="text-gray-500 text-sm mb-4">This is where money quietly disappears if not tracked well</p>
+
+            <div id="inputsContainer">
+                <div class="input-row grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Input Type</label>
+                        <select name="input_type[]" class="input-type w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="">Select type...</option>
+                            <option value="seed">Seed</option>
+                            <option value="seedling">Seedling</option>
+                            <option value="fertilizer">Fertilizer</option>
+                            <option value="pesticide">Pesticide</option>
+                            <option value="herbicide">Herbicide</option>
+                            <option value="fungicide">Fungicide</option>
+                            <option value="water">Water</option>
+                            <option value="fuel">Fuel</option>
+                            <option value="packaging">Packaging</option>
+                            <option value="other">Other Supplies</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                        <input type="text" name="input_name[]" value="{{ old('input_name.0') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., DAP, Maize H1">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                        <input type="number" name="input_quantity[]" step="0.01" value="{{ old('input_quantity.0') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Application Date</label>
+                        <input type="date" name="input_date[]" value="{{ old('input_date.0') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cost (KES)</label>
+                        <input type="number" name="input_cost[]" step="0.01" value="{{ old('input_cost.0') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 5000">
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" onclick="addInputRow()" class="mt-2 text-green-600 hover:text-green-700 text-sm font-medium flex items-center">
+                <i class="fas fa-plus mr-1"></i> Add Another Input
             </button>
         </div>
-    </form>
+
+        <!-- Planting Details -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <span class="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-2">5</span>
+                Planting Details
+            </h2>
+            <p class="text-gray-500 text-sm mb-4">Specifics about how the crop was planted</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Seed Batch Number</label>
+                    <input type="text" name="seed_batch_number" id="seed_batch_number" value="{{ old('seed_batch_number', $cropCycle->seed_batch_number) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Seed lot number or nursery batch">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Seed Quantity</label>
+                    <input type="number" name="seed_quantity" id="seed_quantity" step="0.01" value="{{ old('seed_quantity', $cropCycle->seed_quantity) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 2 kg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Seedling Quantity</label>
+                    <input type="number" name="seedling_quantity" id="seedling_quantity" value="{{ old('seedling_quantity', $cropCycle->seedling_quantity) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 5000">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Area Planted (m²)</label>
+                    <input type="number" name="area_planted" id="area" step="0.01" value="{{ old('area_planted', $cropCycle->area_planted) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 100">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Row Spacing (cm)</label>
+                    <input type="number" name="spacing_row" id="spacing_row" value="{{ old('spacing_row', $cropCycle->spacing_row) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 30">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Plant Spacing (cm)</label>
+                    <input type="number" name="spacing_plant" id="spacing_plant" value="{{ old('spacing_plant', $cropCycle->spacing_plant) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 60">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Expected Plant Population</label>
+                    <input type="number" name="plant_population" id="plant_population" value="{{ old('plant_population', $cropCycle->plant_population) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Germination Rate (%)</label>
+                    <input type="number" name="germination_rate" id="germination_rate" step="0.01" min="0" max="100" value="{{ old('germination_rate', $cropCycle->germination_rate) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Survival Rate (%)</label>
+                    <input type="number" name="survival_rate" id="survival_rate" step="0.01" min="0" max="100" value="{{ old('survival_rate', $cropCycle->survival_rate) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actual Survivors</label>
+                    <input type="number" name="survival_count" id="survival_count" value="{{ old('survival_count', $cropCycle->survival_count) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor (Workers)</label>
+                    <input type="number" name="planting_labor_workers" id="planting_labor_workers" value="{{ old('planting_labor_workers', $cropCycle->planting_labor_workers) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Number of workers">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor Cost (KES)</label>
+                    <input type="number" name="planting_labor_cost" id="planting_labor_cost" step="0.01" value="{{ old('planting_labor_cost', $cropCycle->planting_labor_cost) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Total cost">
+                </div>
+            </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Seed Quantity</label>
+                    <input type="number" name="seed_quantity" id="seed_quantity" step="0.01" value="{{ old('seed_quantity', $cropCycle->seed_quantity) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 2 kg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Seedling Quantity</label>
+                    <input type="number" name="seedling_quantity" id="seedling_quantity" value="{{ old('seedling_quantity', $cropCycle->seedling_quantity) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 5000">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Area Planted (m²)</label>
+                    <input type="number" name="area_planted" id="area" step="0.01" value="{{ old('area_planted', $cropCycle->area_planted) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 100">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Row Spacing (cm)</label>
+                    <input type="number" name="spacing_row" id="spacing_row" value="{{ old('spacing_row', $cropCycle->spacing_row) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 30">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Plant Spacing (cm)</label>
+                    <input type="number" name="spacing_plant" id="spacing_plant" value="{{ old('spacing_plant', $cropCycle->spacing_plant) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 60">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Expected Plant Population</label>
+                    <input type="number" name="plant_population" id="plant_population" value="{{ old('plant_population', $cropCycle->plant_population) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Germination Rate (%)</label>
+                    <input type="number" name="germination_rate" id="germination_rate" step="0.01" min="0" max="100" value="{{ old('germination_rate', $cropCycle->germination_rate) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Survival Rate (%)</label>
+                    <input type="number" name="survival_rate" id="survival_rate" step="0.01" min="0" max="100" value="{{ old('survival_rate', $cropCycle->survival_rate) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actual Survivors</label>
+                    <input type="number" name="survival_count" id="survival_count" value="{{ old('survival_count', $cropCycle->survival_count) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor (Workers)</label>
+                    <input type="number" name="planting_labor_workers" id="planting_labor_workers" value="{{ old('planting_labor_workers', $cropCycle->planting_labor_workers) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Number of workers">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor Cost (KES)</label>
+                    <input type="number" name="planting_labor_cost" id="planting_labor_cost" step="0.01" value="{{ old('planting_labor_cost', $cropCycle->planting_labor_cost) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Total cost">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Planting Notes</label>
+                <textarea name="planting_notes" id="planting_notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., Poor rainfall, delayed transplant">{{ old('planting_notes', $cropCycle->planting_notes) }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Row Spacing (cm)</label>
+                    <input type="number" name="spacing_row" value="{{ old('spacing_row', $cropCycle->spacing_row) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus-ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 30">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Plant Spacing (cm)</label>
+                    <input type="number" name="spacing_plant" value="{{ old('spacing_plant', $cropCycle->spacing_plant) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 60">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Expected Plant Population</label>
+                    <input type="number" name="plant_population" value="{{ old('plant_population', $cropCycle->plant_population) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Germination Rate (%)</label>
+                    <input type="number" name="germination_rate" step="0.01" min="0" max="100" value="{{ old('germination_rate', $cropCycle->germination_rate) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Survival Rate (%)</label>
+                    <input type="number" name="survival_rate" step="0.01" min="0" max="100" value="{{ old('survival_rate', $cropCycle->survival_rate) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actual Survivors</label>
+                    <input type="number" name="survival_count" value="{{ old('survival_count', $cropCycle->survival_count) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor (Workers)</label>
+                    <input type="number" name="planting_labor_workers" value="{{ old('planting_labor_workers', $cropCycle->planting_labor_workers) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Number of workers">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor Cost (KES)</label>
+                    <input type="number" name="planting_labor_cost" step="0.01" value="{{ old('planting_labor_cost', $cropCycle->planting_labor_cost) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Total cost">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Planting Notes</label>
+                <textarea name="planting_notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., Poor rainfall, delayed transplant">{{ old('planting_notes', $cropCycle->planting_notes) }}</textarea>
+            </div>
+        </div>
+
+    <div class="flex justify-end space-x-3">
+        <a href="{{ route('crop_cycles.index') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</a>
+        <button type="submit" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
+            <i class="fas fa-save mr-2"></i> Update Crop Cycle
+        </button>
+    </div>
+</form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Auto-calculate plant population and survival count
+    function calculatePlantPopulation() {
+        const spacingRow = parseFloat(document.getElementById('spacing_row')?.value) || 0;
+        const spacingPlant = parseFloat(document.getElementById('spacing_plant')?.value) || 0;
+        const seedQuantity = parseFloat(document.getElementById('seed_quantity')?.value) || 0;
+        const seedlingQuantity = parseInt(document.getElementById('seedling_quantity')?.value) || 0;
+        
+        // If we have spacing values, calculate theoretical plant population per unit area
+        // Assuming spacing is in cm, we calculate plants per square meter: 10000 / (row_spacing * plant_spacing)
+        let plantPopulation = 0;
+        if (spacingRow > 0 && spacingPlant > 0) {
+            // Plants per square meter
+            const plantsPerSqM = 10000 / (spacingRow * spacingPlant);
+            // For now, we'll just store the spacing-based calculation as a reference
+            // In a real app, you'd multiply by area planted
+            plantPopulation = plantsPerSqM;
+        }
+        
+        // If seedling quantity is provided, use that as the actual planted amount
+        const actualPlanted = seedlingQuantity > 0 ? seedlingQuantity : seedQuantity * 1000; // Rough conversion: 1kg seed ≈ 1000 seeds
+        
+        document.getElementById('plant_population')?.value = isFinite(plantPopulation) ? Math.round(plantPopulation) : '';
+        
+        // Calculate survival count if germination rate is provided
+        const germinationRate = parseFloat(document.getElementById('germination_rate')?.value) || 0;
+        const survivalRate = parseFloat(document.getElementById('survival_rate')?.value) || 0;
+        
+        if (germinationRate > 0 && actualPlanted > 0) {
+            const expectedSurvivors = actualPlanted * (germinationRate / 100);
+            document.getElementById('survival_count')?.value = Math.round(expectedSurvivors);
+        } else if (survivalRate > 0 && actualPlanted > 0) {
+            const expectedSurvivors = actualPlanted * (survivalRate / 100);
+            document.getElementById('survival_count')?.value = Math.round(expectedSurvivors);
+        }
+    }
+    
+    // Add event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = [
+            'spacing_row', 'spacing_plant', 'seed_quantity', 'seedling_quantity',
+            'germination_rate', 'survival_rate'
+        ];
+        
+        inputs.forEach(inputId => {
+            const element = document.getElementById(inputId);
+            if (element) {
+                element.addEventListener('change', calculatePlantPopulation);
+                element.addEventListener('keyup', calculatePlantPopulation);
+            }
+        });
+    });
+</script>
+</body>
+</html>

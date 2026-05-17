@@ -119,4 +119,5 @@ class CropController extends Controller
         return redirect()->route('crops.index')
             ->with('success', 'Crop deleted successfully.');
     }
+    
 }

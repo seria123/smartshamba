@@ -27,7 +27,11 @@
                                 <tr>
                                     <td><strong>Type</strong></td>
                                     <td>
-                                        <span class="badge bg-{{ $expense->expense_type === 'inputs' ? 'primary' : ($expense->expense_type === 'labor' ? 'success' : ($expense->expense_type === 'equipment' ? 'info' : 'secondary')) }}">
+                                        @php
+                                            $types = $expense->expense_type;
+                                            $firstType = is_array($types) ? ($types[0] ?? 'other') : $types;
+                                        @endphp
+                                        <span class="badge bg-{{ $firstType === 'inputs' ? 'primary' : ($firstType === 'labor' ? 'success' : ($firstType === 'equipment' ? 'info' : 'secondary')) }}">
                                             {{ $expense->type_label }}
                                         </span>
                                     </td>
@@ -41,8 +45,8 @@
                                     <td>{{ $expense->crop?->name ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Worker</strong></td>
-                                    <td>{{ $expense->worker?->fullName() ?? 'N/A' }}</td>
+                                    <td><strong>Worker/Staff</strong></td>
+                                    <td>{{ $expense->staff?->fullName() ?? 'N/A' }}</td>
                                 </tr>
                             </table>
                         </div>

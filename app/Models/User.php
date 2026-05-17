@@ -55,6 +55,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'last_seen_at' => 'datetime',
             'password' => 'hashed',
+            'preferences' => 'array',
             'notification_preferences' => 'array',
             'weather_alerts' => 'boolean',
             'ai_recommendations' => 'boolean',

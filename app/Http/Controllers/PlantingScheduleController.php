@@ -214,6 +214,12 @@ class PlantingScheduleController extends Controller
             ->with('success', 'Planting schedule updated successfully.');
     }
 
+  public function show($id)
+{
+    $plantingSchedule = PlantingSchedule::findOrFail($id);
+
+    return view('planting_schedules.show', compact('plantingSchedule'));
+}
     /**
      * Delete a planting schedule.
      */

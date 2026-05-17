@@ -36,8 +36,8 @@ return [
     ],
 
     'plant_id' => [
-        'key' => env('PLANT_ID_API_KEY'),
-        'url' => 'https://plant.id/api/v3/health_assessment',
+        'key' => env('PLANT_ID_KEY'),
+        'url' => env('PLANT_ID_URL', 'https://api.plant.id/v3/health_assessment'),
     ],
 
     'tomorrow' => [

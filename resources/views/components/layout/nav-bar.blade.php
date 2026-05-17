@@ -1,8 +1,9 @@
 <nav class="bg-white shadow px-6 py-4 flex justify-between items-center">
 
-    <!-- Page Title -->
-    <div class="font-bold text-green-700">
-        @yield('page-title', 'SmartShamba Dashboard 🌿')
+    <!-- Logo -->
+    <div class="flex items-center space-x-2">
+        <x-application-logo class="h-8 w-auto" />
+        <span class="font-bold text-green-700 ml-2">SmartShamba</span>
     </div>
 
     <!-- Right Side -->

@@ -151,7 +151,7 @@ class IrrigationController extends Controller
             ->with('success', 'Irrigation zone updated successfully.');
     }
 
-    /**
+/**
      * Remove the specified irrigation zone from storage.
      */
     public function destroy(IrrigationZone $irrigation): RedirectResponse
@@ -197,11 +197,81 @@ class IrrigationController extends Controller
     }
 
     /**
+     * Create a new irrigation record with detailed data.
+     */
+    public function createRecord(IrrigationZone $irrigation): View
+    {
+        $fields = Field::all();
+
+        $methods = [
+            IrrigationLog::METHOD_DRIP => 'Drip',
+            IrrigationLog::METHOD_SPRINKLER => 'Sprinkler',
+            IrrigationLog::METHOD_FLOOD => 'Flood',
+            IrrigationLog::METHOD_CENTER_PIVOT => 'Center Pivot',
+            IrrigationLog::METHOD_SUBSURFACE => 'Subsurface',
+            IrrigationLog::METHOD_MANUAL => 'Manual',
+        ];
+
+        $sources = [
+            IrrigationLog::SOURCE_BOREHOLE => 'Borehole',
+            IrrigationLog::SOURCE_RIVER => 'River',
+            IrrigationLog::SOURCE_DAM => 'Dam',
+            IrrigationLog::SOURCE_RAINWATER => 'Rainwater',
+            IrrigationLog::SOURCE_MUNICIPAL => 'Municipal',
+            IrrigationLog::SOURCE_WELL => 'Well',
+            IrrigationLog::SOURCE_CANAL => 'Canal',
+        ];
+
+        $costTypes = [
+            IrrigationLog::COST_TYPE_PUMP => 'Pump',
+            IrrigationLog::COST_TYPE_FUEL => 'Fuel',
+            IrrigationLog::COST_TYPE_ELECTRICITY => 'Electricity',
+            IrrigationLog::COST_TYPE_LABOR => 'Labor',
+        ];
+
+        return view('irrigation.create-record', compact('irrigation', 'fields', 'methods', 'sources', 'costTypes'));
+    }
+
+    /**
+     * Store a new irrigation record.
+     */
+    public function storeRecord(Request $request, IrrigationZone $irrigation): RedirectResponse
+    {
+        $validated = $request->validate([
+            'started_at' => 'required|date',
+            'ended_at' => 'nullable|date|after:started_at',
+            'irrigation_method' => 'required|string',
+            'water_source' => 'required|string',
+            'duration_minutes' => 'nullable|integer|min:0',
+            'water_used_liters' => 'nullable|numeric|min:0',
+            'estimated_volume_liters' => 'nullable|numeric|min:0',
+            'cost' => 'nullable|numeric|min:0',
+            'cost_type' => 'nullable|string',
+            'notes' => 'nullable|string',
+        ]);
+
+        if (!$validated['duration_minutes'] && $validated['started_at'] && $validated['ended_at']) {
+            $start = \Carbon\Carbon::parse($validated['started_at']);
+            $end = \Carbon\Carbon::parse($validated['ended_at']);
+            $validated['duration_minutes'] = $start->diffInMinutes($end);
+        }
+
+        $validated['irrigation_zone_id'] = $irrigation->id;
+        $validated['triggered_by'] = auth()->id();
+        $validated['event_type'] = IrrigationLog::EVENT_MANUAL;
+        $validated['status'] = $validated['ended_at'] ? IrrigationLog::STATUS_COMPLETED : IrrigationLog::STATUS_RUNNING;
+
+        IrrigationLog::create($validated);
+
+        return redirect()->route('irrigation.logs')->with('success', 'Irrigation record created successfully.');
+    }
+
+    /**
      * Get irrigation logs.
      */
     public function logs(Request $request): View
     {
-        $query = IrrigationLog::with(['irrigationZone', 'triggeredByUser']);
+        $query = IrrigationLog::with(['irrigationZone.field', 'triggeredByUser']);
 
         if ($request->filled('zone_id')) {
             $query->where('irrigation_zone_id', $request->zone_id);
@@ -220,7 +290,7 @@ class IrrigationController extends Controller
         }
 
         $logs = $query->orderBy('started_at', 'desc')->paginate(20);
-        $zones = IrrigationZone::all();
+        $zones = IrrigationZone::with('field')->get();
 
         return view('irrigation.logs', compact('logs', 'zones'));
     }

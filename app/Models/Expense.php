@@ -29,6 +29,25 @@ class Expense extends Model
         'amount' => 'decimal:2',
     ];
 
+    // Accessor: always return array
+    public function getExpenseTypeAttribute($value)
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+        return array_filter(explode(',', $value));
+    }
+
+    // Mutator: accept array or string, store as CSV
+    public function setExpenseTypeAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['expense_type'] = implode(',', $value);
+        } else {
+            $this->attributes['expense_type'] = $value;
+        }
+    }
+
     const TYPE_INPUTS = 'inputs';
 
     const TYPE_LABOR = 'labor';
@@ -74,6 +93,24 @@ class Expense extends Model
 
     public function getTypeLabelAttribute(): string
     {
+        if (is_array($this->expense_type)) {
+            return implode(', ', array_map(function ($type) {
+                return match ($type) {
+                    self::TYPE_INPUTS => 'Inputs',
+                    self::TYPE_LABOR => 'Labor',
+                    self::TYPE_EQUIPMENT => 'Equipment',
+                    self::TYPE_FERTILIZER => 'Fertilizer',
+                    self::TYPE_SEEDS => 'Seeds',
+                    self::TYPE_PESTICIDES => 'Pesticides',
+                    self::TYPE_FUEL => 'Fuel',
+                    self::TYPE_MAINTENANCE => 'Maintenance',
+                    self::TYPE_TRANSPORT => 'Transport',
+                    self::TYPE_OTHER => 'Other',
+                    default => $type,
+                };
+            }, $this->expense_type));
+        }
+
         return match ($this->expense_type) {
             self::TYPE_INPUTS => 'Inputs',
             self::TYPE_LABOR => 'Labor',

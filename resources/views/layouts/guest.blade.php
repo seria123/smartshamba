@@ -26,7 +26,7 @@
                 </a>
 
                 <div class="bg-white rounded-2xl shadow-xl p-8 mx-4 sm:mx-0">
-                    {{ $slot }}
+                    {{ $slot ?? '' }}
                 </div>
 
                 <div class="text-center mt-6 text-sm text-gray-500">

@@ -1,53 +1,56 @@
 @extends('layouts.MainLayout')
 
-@section('title', $feedType->name . ' - SmartShamba')
+@section('title', 'Feed Type Details - SmartShamba')
 
 @section('content')
-<div class="p-4 max-w-2xl">
-    <div class="mb-4">
-        <a href="{{ route('feed_types.index') }}" class="text-gray-600 hover:text-gray-800">
-            <i class="fas fa-arrow-left mr-2"></i>Back to Feed Types
-        </a>
-    </div>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col gap-4">
 
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-start mb-4">
-            <h4 class="text-lg font-semibold"><i class="fas fa-wheat-awn mr-2"></i>{{ $feedType->name }}</h4>
-            <span class="bg-emerald-100 text-emerald-800 text-sm px-3 py-1 rounded-full">
-                {{ $feedType->default_unit ?? 'unit' }}
-            </span>
-        </div>
-
-        @if($feedType->description)
-            <p class="text-gray-600 mb-4">{{ $feedType->description }}</p>
-        @else
-            <p class="text-gray-400 italic mb-4">No description provided.</p>
-        @endif
-
-        <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-200">
+        {{-- Header --}}
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-                <span class="text-sm text-gray-500">Minimum Threshold</span>
-                <p class="font-semibold {{ $feedType->min_threshold ? 'text-orange-600' : 'text-gray-400' }}">
-                    {{ $feedType->min_threshold ?? 'Not set' }}
-                </p>
+                <h1 class="text-2xl font-bold mb-0">{{ $feedType->name }}</h1>
+                <small class="text-gray-500">{{ $feedType->description ?? 'Feed type details' }}</small>
             </div>
-            <div>
-                <span class="text-sm text-gray-500">Created</span>
-                <p class="font-semibold text-gray-700">{{ $feedType->created_at->format('M d, Y') }}</p>
+            <div class="flex gap-2">
+                <a href="{{ route('feed-types.index') }}" class="btn btn-outline-secondary whitespace-nowrap">
+                    ← Back to Feed Types
+                </a>
+                @if(auth()->user()->hasRole(['admin', 'manager']))
+                    <a href="{{ route('admin/feed-types.edit', $feedType) }}" class="btn btn-primary whitespace-nowrap">
+                        <i class="fas fa-edit me-2"></i>Edit Feed Type
+                    </a>
+                @endif
             </div>
         </div>
 
-        <div class="mt-6 flex space-x-3">
-            <a href="{{ route('feed_types.edit', $feedType) }}" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition">
-                <i class="fas fa-edit mr-2"></i>Edit
-            </a>
-            <form action="{{ route('feed_types.destroy', $feedType) }}" method="POST" onsubmit="return confirm('Delete this feed type?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
-                    <i class="fas fa-trash mr-2"></i>Delete
-                </button>
-            </form>
+        {{-- Feed Type Details Card --}}
+        <div class="card-modern p-4 sm:p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Default Unit</p>
+                    <p class="text-xl font-semibold text-gray-900">{{ $feedType->default_unit }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Minimum Threshold</p>
+                    <p class="text-xl font-semibold text-gray-900">{{ $feedType->min_threshold }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Status</p>
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full @if($feedType->is_active) bg-green-100 text-green-800 @else bg-red-100 text-red-800 @endif">
+                        {{ $feedType->is_active ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Current Stock Level</p>
+                    <p class="text-xl font-semibold text-gray-900">
+                        {{ $feedType->totalQuantity() }} {{ $feedType->default_unit }}
+                        @if($feedType->isBelowThreshold())
+                            <span class="ml-2 px-2 py-0.5 text-sm font-semibold bg-red-100 text-red-800 rounded">LOW STOCK</span>
+                        @endif
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

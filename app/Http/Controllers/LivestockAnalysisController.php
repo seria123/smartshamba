@@ -55,7 +55,7 @@ class LivestockAnalysisController extends Controller
   public function store(Request $request)
 {
     $request->validate([
-        'livestock_id' => 'required|exists:livestocks,id',
+        'livestock_id' => 'required|exists:livestock,id',
     ]);
 
     LivestockAnalysis::create([

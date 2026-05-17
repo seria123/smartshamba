@@ -13,6 +13,10 @@
                         @csrf
                         @method('PUT')
 
+                        @php
+                            $selectedTypes = old('expense_type', $expense->expense_type);
+                        @endphp
+
                         <div class="row mb-4">
                             <div class="col-md-4">
                                 <div class="mb-3">
@@ -20,7 +24,7 @@
                                     <select name="farm_id" class="form-select" required>
                                         <option value="">Select Farm</option>
                                         @foreach(\App\Models\Farm::all() as $farm)
-                                        <option value="{{ $farm->id }}" {{ $expense->farm_id == $farm->id ? 'selected' : '' }}>
+                                        <option value="{{ $farm->id }}" {{ old('farm_id', $expense->farm_id) == $farm->id ? 'selected' : '' }}>
                                             {{ $farm->name }}
                                         </option>
                                         @endforeach
@@ -33,7 +37,7 @@
                                     <select name="crop_id" class="form-select">
                                         <option value="">Select Crop</option>
                                         @foreach(\App\Models\Crop::all() as $crop)
-                                        <option value="{{ $crop->id }}" {{ $expense->crop_id == $crop->id ? 'selected' : '' }}>
+                                        <option value="{{ $crop->id }}" {{ old('crop_id', $expense->crop_id) == $crop->id ? 'selected' : '' }}>
                                             {{ $crop->name }}
                                         </option>
                                         @endforeach
@@ -43,19 +47,35 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Expense Type *</label>
-                                    <select name="expense_type" class="form-select" required>
-                                        <option value="">Select Type</option>
-                                        <option value="inputs" {{ $expense->expense_type === 'inputs' ? 'selected' : '' }}>Inputs</option>
-                                        <option value="labor" {{ $expense->expense_type === 'labor' ? 'selected' : '' }}>Labor</option>
-                                        <option value="equipment" {{ $expense->expense_type === 'equipment' ? 'selected' : '' }}>Equipment</option>
-                                        <option value="fertilizer" {{ $expense->expense_type === 'fertilizer' ? 'selected' : '' }}>Fertilizer</option>
-                                        <option value="seeds" {{ $expense->expense_type === 'seeds' ? 'selected' : '' }}>Seeds</option>
-                                        <option value="pesticides" {{ $expense->expense_type === 'pesticides' ? 'selected' : '' }}>Pesticides</option>
-                                        <option value="fuel" {{ $expense->expense_type === 'fuel' ? 'selected' : '' }}>Fuel</option>
-                                        <option value="maintenance" {{ $expense->expense_type === 'maintenance' ? 'selected' : '' }}>Maintenance</option>
-                                        <option value="transport" {{ $expense->expense_type === 'transport' ? 'selected' : '' }}>Transport</option>
-                                        <option value="other" {{ $expense->expense_type === 'other' ? 'selected' : '' }}>Other</option>
-                                    </select>
+                                    <div class="border rounded p-3 bg-white" style="max-height: 250px; overflow-y: auto;">
+                                        @php
+                                            $allTypes = [
+                                                        'inputs' => 'Inputs',
+                                                        'labor' => 'Labor',
+                                                        'equipment' => 'Equipment',
+                                                        'fertilizer' => 'Fertilizer',
+                                                        'seeds' => 'Seeds',
+                                                        'pesticides' => 'Pesticides',
+                                                        'fuel' => 'Fuel',
+                                                        'maintenance' => 'Maintenance',
+                                                        'transport' => 'Transport',
+                                                        'other' => 'Other'
+                                                    ];
+                                            $selectedTypes = old('expense_type', $expense->expense_type);
+                                        @endphp
+                                        @foreach($allTypes as $value => $label)
+                                            <div class="form-check form-check-sm mb-2">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       name="expense_type[]" 
+                                                       value="{{ $value }}" 
+                                                       id="expense_type_{{ $value }}"
+                                                       {{ (is_array($selectedTypes) && in_array($value, $selectedTypes)) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="expense_type_{{ $value }}">
+                                                    {{ $label }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -116,15 +136,29 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Worker (Optional)</label>
-                                    <select name="worker_id" class="form-select">
-                                        <option value="">Select Worker</option>
+                                    <label class="form-label">Staff (Optional - for Labor expenses)</label>
+                                    @php
+                                        $staffCount = \App\Models\Staff::count();
+                                        $selectedStaff = old('staff_id', $expense->staff_id);
+                                    @endphp
+                                    @if($staffCount == 0)
+                                        <div class="alert alert-info py-2">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            No staff added yet. 
+                                            <a href="{{ route('staff.create') }}" class="alert-link">Add staff first</a> before assigning to labor expenses.
+                                        </div>
+                                    @endif
+                                    <select name="staff_id" class="form-select" {{ $staffCount == 0 ? 'disabled' : '' }}>
+                                        <option value="">Select Staff</option>
                                         @foreach(\App\Models\Staff::all() as $worker)
-                                        <option value="{{ $worker->id }}" {{ $expense->worker_id == $worker->id ? 'selected' : '' }}>
-                                            {{ $worker->fullName() }}
+                                        <option value="{{ $worker->id }}" {{ $selectedStaff == $worker->id ? 'selected' : '' }}>
+                                            {{ $worker->fullName() }} - {{ $worker->role }}
                                         </option>
                                         @endforeach
                                     </select>
+                                    @if($staffCount > 0)
+                                        <small class="text-muted">Manage staff in <a href="{{ route('staff.index') }}">Staff section</a></small>
+                                    @endif
                                 </div>
                             </div>
                         </div>

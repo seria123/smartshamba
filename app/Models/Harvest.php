@@ -16,14 +16,20 @@ class Harvest extends Model
         'farm_id',
         'crop_cycle_id',
         'harvest_date',
-        'harvest_batch',
+        'harvest_number',
         'quantity_harvested',
         'unit',
         'quality_grade',
         'quality_percentage',
+        'grade_1_quantity',
+        'grade_2_quantity',
+        'rejects_quantity',
         'loss_quantity',
         'loss_reason',
         'loss_percentage',
+        'destination',
+        'buyer_reference',
+        'staff_id',
         'storage_location',
         'storage_details',
         'moisture_content',
@@ -34,6 +40,9 @@ class Harvest extends Model
         'harvest_date' => 'date',
         'quantity_harvested' => 'decimal:2',
         'quality_percentage' => 'decimal:2',
+        'grade_1_quantity' => 'decimal:2',
+        'grade_2_quantity' => 'decimal:2',
+        'rejects_quantity' => 'decimal:2',
         'loss_quantity' => 'decimal:2',
         'loss_percentage' => 'decimal:2',
         'moisture_content' => 'decimal:2',
@@ -141,5 +150,43 @@ class Harvest extends Model
     public function scopeByField($query, $fieldId)
     {
         return $query->where('field_id', $fieldId);
+    }
+
+    public function getHarvestNumberLabelAttribute(): string
+    {
+        return match ($this->harvest_number) {
+            '1st' => '1st Harvest',
+            '2nd' => '2nd Harvest',
+            '3rd' => '3rd Harvest',
+            '4th' => '4th Harvest',
+            '5th' => '5th Harvest',
+            default => $this->harvest_number ?? 'Harvest',
+        };
+    }
+
+    public function getTotalGradedQuantityAttribute(): float
+    {
+        return (float) ($this->grade_1_quantity ?? 0) + 
+               (float) ($this->grade_2_quantity ?? 0) + 
+               (float) ($this->rejects_quantity ?? 0);
+    }
+
+    const DESTINATION_STORE = 'store';
+    const DESTINATION_SOLD_DIRECTLY = 'sold_directly';
+    const DESTINATION_PROCESSING = 'processing';
+
+    public function staff(): BelongsTo
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
+
+    public function getDestinationLabelAttribute(): string
+    {
+        return match ($this->destination) {
+            self::DESTINATION_STORE => 'Store',
+            self::DESTINATION_SOLD_DIRECTLY => 'Sold Directly',
+            self::DESTINATION_PROCESSING => 'Processing',
+            default => 'Unknown',
+        };
     }
 }

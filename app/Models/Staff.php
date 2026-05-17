@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Staff extends Model
 {
@@ -90,9 +91,23 @@ class Staff extends Model
         return $this->hasMany(Task::class, 'assigned_to');
     }
 
+    public function activities(): BelongsToMany
+    {
+        return $this->belongsToMany(Activity::class, 'activity_staff')
+            ->withTimestamps();
+    }
+
     public function fullName(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    /**
+     * Get the staff's full name as an accessor.
+     */
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     public function isActive(): bool

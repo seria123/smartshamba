@@ -16,7 +16,11 @@ class CropCycleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Crop Management';
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?string $navigationGroup = 'Crop Management';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $modelLabel = 'Crop Cycle';
 
@@ -43,12 +47,18 @@ class CropCycleResource extends Resource
                                             $component->state($record->crop->id);
                                         }
                                     }),
-                                Forms\Components\TextInput::make('crop_name')
-                                    ->label('Crop Name')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->default(fn ($record) => $record?->crop?->name),
-                                Forms\Components\TextInput::make('variety')
+Forms\Components\TextInput::make('crop_name')
+                                     ->label('Crop Name')
+                                     ->required()
+                                     ->maxLength(255)
+                                     ->default(fn ($record) => $record?->crop?->name),
+                                 Forms\Components\TextInput::make('code')
+                                     ->label('Cycle Code')
+                                     ->required()
+                                     ->maxLength(50)
+                                     ->unique(ignorable: fn ($record) => $record)
+                                     ->default(fn ($record) => $record?->code ?? strtoupper(substr($record?->crop?->name ?? 'CRP', 0, 3)) . '-' . now()->format('ym')),
+                                 Forms\Components\TextInput::make('variety')
                                     ->label('Variety')
                                     ->maxLength(255)
                                     ->default(fn ($record) => $record?->crop?->variety),
@@ -75,13 +85,30 @@ class CropCycleResource extends Resource
                                         'year_round' => 'Year Round',
                                     ])
                                     ->required(),
-                                Forms\Components\DatePicker::make('start_date')
-                                    ->label('Planting Date')
-                                    ->required(),
-                                Forms\Components\DatePicker::make('expected_harvest_date')
-                                    ->label('Expected Harvest Date')
-                                    ->required(),
-                            ]),
+Forms\Components\DatePicker::make('planned_start_date')
+                                     ->label('Planned Start Date'),
+                                 Forms\Components\DatePicker::make('start_date')
+                                     ->label('Actual Planting Date')
+                                     ->required(),
+                                 Forms\Components\DatePicker::make('expected_harvest_date')
+                                     ->label('Expected Harvest Date')
+                                     ->required(),
+                                 Forms\Components\Select::make('status')
+                                     ->label('Status')
+                                     ->options([
+                                         'planned' => 'Planned',
+                                         'active' => 'Active',
+                                         'completed' => 'Completed',
+                                         'cancelled' => 'Cancelled',
+                                     ])
+                                     ->default('planned')
+                                     ->required(),
+                                 Forms\Components\Select::make('staff_id')
+                                     ->label('Responsible Person')
+                                     ->relationship('staff', 'fullName')
+                                     ->searchable()
+                                     ->preload(),
+                             ]),
 
                         // Step 2: Land & Soil Requirements
                         Forms\Components\Wizard\Step::make('Land & Soil')
@@ -106,20 +133,176 @@ class CropCycleResource extends Resource
                                     ->label('pH Level')
                                     ->numeric()
                                     ->step(0.1),
-                                Forms\Components\TextInput::make('land_size_hectares')
-                                    ->label('Land Size (Hectares)')
-                                    ->numeric()
-                                    ->default(fn ($record) => $record?->field?->size_hectares)
-                                    ->disabled(),
-                                Forms\Components\Select::make('previous_crop_cycle_id')
-                                    ->label('Previous Crop')
-                                    ->relationship('previousCycle', 'crop_name')
-                                    ->placeholder('Select previous crop (optional)')
-                                    ->searchable()
-                                    ->preload(),
-                            ]),
+Forms\Components\TextInput::make('land_size_hectares')
+                                     ->label('Land Size (Hectares)')
+                                     ->numeric()
+                                     ->default(fn ($record) => $record?->field?->size_hectares)
+                                     ->disabled(),
+                                 Forms\Components\TextInput::make('area_planted')
+                                     ->label('Area Planted (Hectares)')
+                                     ->numeric()
+                                     ->step(0.01),
+                                 Forms\Components\Select::make('planting_method')
+                                     ->label('Planting Method')
+                                     ->options([
+                                         'direct_seeding' => 'Direct Seeding',
+                                         'transplanting' => 'Transplanting',
+                                         'cuttings' => 'Cuttings',
+                                         'other' => 'Other',
+                                     ]),
+Forms\Components\Select::make('previous_crop_cycle_id')
+                                     ->label('Previous Crop')
+                                     ->relationship('previousCycle', 'crop_name')
+                                     ->placeholder('Select previous crop (optional)')
+                                     ->searchable()
+                                     ->preload(),
+                             ]),
 
-                        // Step 3: Water & Irrigation
+                         // Step 2.5: Land/Plot Preparation Details
+                         Forms\Components\Wizard\Step::make('Land Preparation')
+                             ->icon('heroicon-o-wrench')
+                             ->schema([
+                                 Forms\Components\CheckboxList::make('preparation_activities')
+                                     ->label('Land Preparation Activities')
+                                     ->options([
+                                         'ploughing' => 'Ploughing',
+                                         'harrowing' => 'Harrowing',
+                                         'bed_preparation' => 'Bed Preparation',
+                                         'ridging' => 'Ridging',
+                                         'levelling' => 'Levelling',
+                                         'drainage_digging' => 'Drainage Digging',
+                                         'other' => 'Other',
+                                     ])
+                                     ->columns(3),
+                                 Forms\Components\TextInput::make('soil_test_ph')
+                                     ->label('Soil Test pH')
+                                     ->numeric()
+                                     ->step(0.1),
+                                 Forms\Components\TextInput::make('soil_test_nitrogen')
+                                     ->label('Nitrogen (ppm)')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('soil_test_phosphorus')
+                                     ->label('Phosphorus (ppm)')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('soil_test_potassium')
+                                     ->label('Potassium (ppm)')
+                                     ->numeric(),
+                                 Forms\Components\Textarea::make('soil_test_recommendations')
+                                     ->label('Soil Test Recommendations')
+                                     ->rows(2),
+                                 Forms\Components\TextInput::make('manure_quantity')
+                                     ->label('Manure/Compost Quantity')
+                                     ->numeric()
+                                     ->suffix('tons'),
+                                 Forms\Components\TextInput::make('manure_cost')
+                                     ->label('Manure Cost')
+                                     ->numeric()
+                                     ->prefix('$'),
+                                 Forms\Components\TextInput::make('manure_source')
+                                     ->label('Manure Source')
+                                     ->maxLength(255),
+                                 Forms\Components\TextInput::make('basal_fertilizer_dap')
+                                     ->label('DAP (kg)')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('basal_fertilizer_npk')
+                                     ->label('NPK (kg)')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('basal_fertilizer_lime')
+                                     ->label('Lime (kg)')
+                                     ->numeric(),
+                                 Forms\Components\Select::make('irrigation_setup')
+                                     ->label('Irrigation Setup')
+                                     ->options([
+                                         'drip_installed' => 'Drip Irrigation Installed',
+                                         'sprinkler_installed' => 'Sprinkler Installed',
+                                         'manual' => 'Manual/Baseline',
+                                         'existing' => 'Existing System',
+                                         'none' => 'No Irrigation',
+                                     ]),
+                                 Forms\Components\TextInput::make('prep_labor_workers')
+                                     ->label('Preparation Workers')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('prep_labor_hours')
+                                     ->label('Preparation Hours')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('prep_labor_cost')
+                                     ->label('Preparation Labor Cost')
+                                     ->numeric()
+                                     ->prefix('$'),
+                                 Forms\Components\TextInput::make('machinery_tractor')
+                                     ->label('Tractor Hours')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('machinery_pump')
+                                     ->label('Pump Hours')
+                                     ->numeric(),
+                                 Forms\Components\TextInput::make('machinery_sprayer')
+                                     ->label('Sprayer Hours')
+                                     ->numeric(),
+                                 Forms\Components\Textarea::make('machinery_notes')
+                                     ->label('Machinery Notes')
+                                     ->rows(2),
+                             ]),
+
+                         // Step 3: Planting Details
+                         Forms\Components\Wizard\Step::make('Planting Details')
+                             ->icon('heroicon-o-sun')
+                             ->schema([
+                                 Forms\Components\TextInput::make('seed_batch_number')
+                                     ->label('Seed/Seedling Batch Number')
+                                     ->maxLength(255)
+                                     ->placeholder('Seed lot number or nursery batch'),
+                                 Forms\Components\Grid::make(2)
+                                     ->schema([
+                                         Forms\Components\TextInput::make('seed_quantity')
+                                             ->label('Seed Quantity')
+                                             ->numeric()
+                                             ->suffix('kg/kg'),
+                                         Forms\Components\TextInput::make('seedling_quantity')
+                                             ->label('Seedling Quantity')
+                                             ->numeric()
+                                             ->suffix('plants'),
+                                     ]),
+                                 Forms\Components\Grid::make(2)
+                                     ->schema([
+                                         Forms\Components\TextInput::make('spacing_row')
+                                             ->label('Row Spacing (cm)')
+                                             ->numeric(),
+                                         Forms\Components\TextInput::make('spacing_plant')
+                                             ->label('Plant Spacing (cm)')
+                                             ->numeric(),
+                                     ]),
+                                 Forms\Components\TextInput::make('plant_population')
+                                     ->label('Plant Population')
+                                     ->numeric()
+                                     ->helperText('Expected number of plants'),
+                                 Forms\Components\Grid::make(2)
+                                     ->schema([
+                                         Forms\Components\TextInput::make('germination_rate')
+                                             ->label('Germination Rate (%)')
+                                             ->numeric()
+                                             ->maxValue(100),
+                                         Forms\Components\TextInput::make('survival_rate')
+                                             ->label('Survival Rate (%)')
+                                             ->numeric()
+                                             ->maxValue(100),
+                                     ]),
+                                 Forms\Components\Grid::make(2)
+                                     ->schema([
+                                         Forms\Components\TextInput::make('planting_labor_workers')
+                                             ->label('Planting Workers')
+                                             ->numeric(),
+                                         Forms\Components\TextInput::make('planting_labor_cost')
+                                             ->label('Planting Labor Cost')
+                                             ->numeric()
+                                             ->prefix('$'),
+                                     ]),
+                                 Forms\Components\Textarea::make('planting_notes')
+                                     ->label('Planting Notes')
+                                     ->rows(2)
+                                     ->placeholder('Poor rainfall, delayed transplanting...'),
+                             ]),
+
+                         // Step 4: Water & Irrigation
                         Forms\Components\Wizard\Step::make('Water & Irrigation')
                             ->icon('heroicon-o-water')
                             ->schema([
@@ -393,61 +576,92 @@ class CropCycleResource extends Resource
                                     ->deletable(),
                             ]),
 
-                        // Step 9: Harvest & Yield
-                        Forms\Components\Wizard\Step::make('Harvest & Yield')
-                            ->icon('heroicon-o-currency-dollar')
-                            ->schema([
-                                Forms\Components\Repeater::make('harvests')
-                                    ->label('Harvest Records')
-                                    ->schema([
-                                        Forms\Components\DatePicker::make('harvest_date')
-                                            ->label('Harvest Date')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('harvest_batch')
-                                            ->label('Batch ID')
-                                            ->maxLength(255),
-                                        Forms\Components\TextInput::make('quantity_harvested')
-                                            ->label('Quantity Harvested')
-                                            ->numeric()
-                                            ->required(),
-                                        Forms\Components\TextInput::make('unit')
-                                            ->label('Unit')
-                                            ->default('kg')
-                                            ->maxLength(50),
-                                        Forms\Components\Select::make('quality_grade')
-                                            ->label('Quality Grade')
-                                            ->options([
-                                                'grade_a' => 'Grade A (Premium)',
-                                                'grade_b' => 'Grade B (Standard)',
-                                                'grade_c' => 'Grade C (Economy)',
-                                                'reject' => 'Reject',
-                                            ])
-                                            ->default('grade_b'),
-                                        Forms\Components\TextInput::make('quality_percentage')
-                                            ->label('Quality %')
-                                            ->numeric()
-                                            ->default(100),
-                                        Forms\Components\Textarea::make('storage_location')
-                                            ->label('Storage Location')
-                                            ->rows(1),
-                                        Forms\Components\Textarea::make('storage_details')
-                                            ->label('Storage Details')
-                                            ->rows(2),
-                                        Forms\Components\TextInput::make('moisture_content')
-                                            ->label('Moisture Content (%)')
-                                            ->numeric(),
-                                        Forms\Components\Textarea::make('loss_reason')
-                                            ->label('Loss Reason')
-                                            ->rows(2),
-                                        Forms\Components\TextInput::make('loss_quantity')
-                                            ->label('Loss Quantity')
-                                            ->numeric(),
-                                    ])
-                                    ->columns(2)
-                                    ->defaultItems(0)
-                                    ->addable()
-                                    ->deletable(),
-                            ]),
+// Step 9: Harvest & Yield
+                         Forms\Components\Wizard\Step::make('Harvest & Yield')
+                             ->icon('heroicon-o-currency-dollar')
+                             ->schema([
+                                 Forms\Components\Repeater::make('harvests')
+                                     ->label('Harvest Records')
+                                     ->schema([
+                                         Forms\Components\DatePicker::make('harvest_date')
+                                             ->label('Harvest Date')
+                                             ->required(),
+                                         Forms\Components\Select::make('harvest_number')
+                                             ->label('Harvest Number')
+                                             ->options([
+                                                 '1st' => '1st Harvest',
+                                                 '2nd' => '2nd Harvest',
+                                                 '3rd' => '3rd Harvest',
+                                                 '4th' => '4th Harvest',
+                                                 '5th' => '5th Harvest',
+                                             ])
+                                             ->required(),
+                                         Forms\Components\TextInput::make('quantity_harvested')
+                                             ->label('Total Quantity Harvested')
+                                             ->numeric()
+                                             ->required(),
+                                         Forms\Components\Select::make('unit')
+                                             ->label('Unit')
+                                             ->options([
+                                                 'kg' => 'Kilograms (kg)',
+                                                 'crates' => 'Crates',
+                                                 'bags' => 'Bags',
+                                                 'bunches' => 'Bunches',
+                                             ])
+                                             ->default('kg')
+                                             ->required(),
+                                         Forms\Components\Select::make('quality_grade')
+                                             ->label('Overall Grade')
+                                             ->options([
+                                                 'grade_1' => 'Grade 1',
+                                                 'grade_2' => 'Grade 2',
+                                                 'grade_3' => 'Grade 3',
+                                                 'rejects' => 'Rejects',
+                                             ])
+                                             ->default('grade_2'),
+                                         Forms\Components\Grid::make(3)
+                                             ->schema([
+                                                 Forms\Components\TextInput::make('grade_1_quantity')
+                                                     ->label('Grade 1')
+                                                     ->numeric()
+                                                     ->default(0),
+                                                 Forms\Components\TextInput::make('grade_2_quantity')
+                                                     ->label('Grade 2')
+                                                     ->numeric()
+                                                     ->default(0),
+                                                 Forms\Components\TextInput::make('rejects_quantity')
+                                                     ->label('Rejects')
+                                                     ->numeric()
+                                                     ->default(0),
+                                             ]),
+                                         Forms\Components\Select::make('destination')
+                                             ->label('Destination')
+                                             ->options([
+                                                 'store' => 'Store',
+                                                 'sold_directly' => 'Sold Directly',
+                                                 'processing' => 'Processing',
+                                             ])
+                                             ->default('store'),
+                                         Forms\Components\TextInput::make('buyer_reference')
+                                             ->label('Buyer/Sales Reference')
+                                             ->maxLength(255),
+                                         Forms\Components\Select::make('staff_id')
+                                             ->label('Harvested By')
+                                             ->relationship('staff', 'fullName')
+                                             ->searchable()
+                                             ->preload(),
+                                         Forms\Components\TextInput::make('loss_quantity')
+                                             ->label('Wastage/Rejects')
+                                             ->numeric(),
+                                         Forms\Components\Textarea::make('notes')
+                                             ->label('Notes')
+                                             ->rows(2),
+                                     ])
+                                     ->columns(2)
+                                     ->defaultItems(0)
+                                     ->addable()
+                                     ->deletable(),
+                             ]),
 
                         // Step 10: Sales & Profitability
                         Forms\Components\Wizard\Step::make('Sales & Profitability')
@@ -517,16 +731,31 @@ class CropCycleResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('code')
+                    ->label('Code')
+                    ->searchable()
+                    ->copyable(),
                 Tables\Columns\TextColumn::make('crop_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('field.name')
                     ->label('Field')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'planned' => 'gray',
+                        'active' => 'success',
+                        'completed' => 'info',
+                        'cancelled' => 'danger',
+                    ]),
                 Tables\Columns\TextColumn::make('start_date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expected_harvest_date')
                     ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('staff.fullName')
+                    ->label('Responsible')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('variety')
                     ->searchable(),

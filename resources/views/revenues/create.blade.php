@@ -114,16 +114,29 @@
                             </div>
                             <div>
                                 <label for="unit" class="block text-sm font-medium text-gray-700 mb-2">Unit</label>
-                                <input type="text" name="unit" id="unit" 
+                                <input type="text" name="unit" id="unit" list="unit-suggestions"
                                     class="form-input-modern" placeholder="kg, tons, bags...">
+                                <datalist id="unit-suggestions">
+                                    <option value="kg">
+                                    <option value="grams">
+                                    <option value="tons">
+                                    <option value="bags">
+                                    <option value="sacks">
+                                    <option value="cartons">
+                                    <option value="liters">
+                                    <option value="ml">
+                                    <option value="pieces">
+                                    <option value="bunches">
+                                </datalist>
                             </div>
-                            <div>
+                             <div>
                                 <label for="price_per_unit" class="block text-sm font-medium text-gray-700 mb-2">Price per Unit (KES)</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">KES</span>
                                     <input type="number" step="0.01" name="price_per_unit" id="price_per_unit" 
-                                        class="form-input-modern pl-12" placeholder="Auto-calculated">
+                                        class="form-input-modern pl-12" placeholder="Auto-calculated from amount ÷ quantity">
                                 </div>
+                                <p id="price-hint" class="text-xs text-gray-500 mt-1 hidden">Auto-calculated</p>
                             </div>
                         </div>
                     </div>
@@ -199,4 +212,37 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const amountInput = document.getElementById('amount');
+    const quantityInput = document.getElementById('quantity_sold');
+    const priceInput = document.getElementById('price_per_unit');
+    const priceHint = document.getElementById('price-hint');
+
+    if (!amountInput || !quantityInput || !priceInput) return;
+
+    function calculatePricePerUnit(force = false) {
+        const amount = parseFloat(amountInput.value);
+        const quantity = parseFloat(quantityInput.value);
+        
+        if (amount && quantity && quantity > 0) {
+            const price = amount / quantity;
+            if (force || priceInput.value === '') {
+                priceInput.value = price.toFixed(2);
+                if (priceHint) priceHint.classList.remove('hidden');
+            }
+        } else if (force) {
+            priceInput.value = '';
+            if (priceHint) priceHint.classList.add('hidden');
+        }
+    }
+
+    amountInput.addEventListener('input', () => calculatePricePerUnit(true));
+    quantityInput.addEventListener('input', () => calculatePricePerUnit(true));
+    
+    // Initial calculation if fields are pre-filled and price is empty
+    calculatePricePerUnit(false);
+});
+</script>
 @endsection

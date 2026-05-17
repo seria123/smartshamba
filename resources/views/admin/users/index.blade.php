@@ -3,36 +3,35 @@
 @section('title', 'User Management - SmartShamba')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col gap-6">
 
-    {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold mb-0">👥 User Management</h3>
-            <small class="text-muted">Manage system users, roles, and access</small>
+        {{-- HEADER --}}
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+                <h3 class="text-2xl font-bold mb-0">👥 User Management</h3>
+                <small class="text-gray-500">Manage system users, roles, and access</small>
+            </div>
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary whitespace-nowrap">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
         </div>
 
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-        </a>
-    </div>
-
-    {{-- SEARCH & FILTERS --}}
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
+        {{-- SEARCH & FILTERS --}}
+        <div class="card-modern p-4">
             <form method="GET" class="row g-3">
                 {{-- Search --}}
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" class="form-control" placeholder="Search by name or email..."
+                        <input type="text" name="search" class="form-input-modern" placeholder="Search by name or email..."
                                value="{{ request('search') }}">
                     </div>
                 </div>
 
                 {{-- Role Filter --}}
-                <div class="col-md-3">
-                    <select name="role" class="form-select">
+                <div class="col-12 col-md-3">
+                    <select name="role" class="form-select-modern">
                         <option value="">All Roles</option>
                         <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                         <option value="manager" {{ request('role') === 'manager' ? 'selected' : '' }}>Manager</option>
@@ -41,8 +40,8 @@
                 </div>
 
                 {{-- Status Filter --}}
-                <div class="col-md-3">
-                    <select name="status" class="form-select">
+                <div class="col-12 col-md-3">
+                    <select name="status" class="form-select-modern">
                         <option value="">All Statuses</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -51,7 +50,7 @@
                 </div>
 
                 {{-- Actions --}}
-                <div class="col-md-2">
+                <div class="col-12 col-md-2">
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary flex-fill">
                             <i class="fas fa-filter me-1"></i> Filter
@@ -65,14 +64,12 @@
                 </div>
             </form>
         </div>
-    </div>
 
-    {{-- USERS TABLE --}}
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+        {{-- USERS TABLE --}}
+        <div class="card-modern overflow-hidden flex flex-col" style="max-height: calc(100vh - 260px);">
+            <div class="overflow-y-auto flex-1">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
                         <tr>
                             <th>ID</th>
                             <th>User</th>
@@ -90,7 +87,7 @@
                             <td>{{ $user->id }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full d-flex items-center justify-center text-white fw-bold">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full d-flex items-center justify-center text-white fw-bold flex-shrink-0">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </div>
                                     <div>
@@ -219,11 +216,6 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            {{-- PAGINATION --}}
-            <div class="mt-4">
-                {{ $users->withQueryString()->links() }}
             </div>
         </div>
     </div>

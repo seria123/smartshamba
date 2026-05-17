@@ -1,4 +1,4 @@
-<aside class="w-64 bg-green-800 text-white flex flex-col h-screen">
+<aside class="w-64 min-w-[16rem] bg-green-800 text-white flex flex-col h-screen overflow-y-auto">
 
     <!-- Logo -->
     <div class="p-6 text-2xl font-bold border-b border-green-700">
@@ -63,12 +63,35 @@
         <!-- Crops Section -->
         <div>
             <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Crops</h3>
-            <a href="{{ route('crop_cycles.index') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('crop_cycles.*') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-seedling w-5"></i>
-                <span>Crop Management</span>
-            </a>
             
+            <!-- Crop Management Dropdown -->
+            <div class="relative group">
+                <button class="flex items-center space-x-2 w-full hover:bg-green-700 p-2 rounded transition-all duration-200">
+                    <i class="fas fa-seedling w-5"></i>
+                    <span>Crop Management</span>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform group-hover:rotate-180"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div class="hidden group-hover:block pl-4 space-y-1 mt-1">
+                    <a href="{{ route('crop_cycles.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('crop_stages.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-layer-group text-sm"></i>
+                        <span>Crop Cycle</span>
+                    </a>
+                    <a href="{{ route('crop_stages.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('crop_cycles.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-seedling text-sm"></i>
+                        <span>Crop Stage</span>
+                    </a>
+                    <a href="{{ route('equipment.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('equipment.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-tools text-sm"></i>
+                        <span>Equipment</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Planning Section -->
             <a href="{{ route('planting-schedules.index') }}"
                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('planting-schedules.*') && !request()->routeIs('planting-schedules.calendar') ? 'bg-green-700 text-yellow-300' : '' }}">
@@ -101,9 +124,31 @@
                 <span>Animal Types</span>
             </a>
             <a href="{{ route('livestock-analysis.index') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('livestock-analysis.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('livestock-analysis.*') ? 'bg-green-700 text-yellow-300' : '' }}">
                 <i class="fas fa-virus w-5"></i>
                 <span>Disease Analysis</span>
+            </a>
+            
+            <a href="{{ route('filament.admin.resources.feed-types.index') }}"
+                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('feed-types.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-leaf w-5"></i>
+                <span>Feed Types</span>
+            </a>
+        </div>
+
+
+        <!-- Team / Staff Section (for Labor expenses) -->
+        <div>
+            <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Labor & Staff</h3>
+            <a href="{{ route('staff.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('staff.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-users w-5"></i>
+                <span>Manage Staff</span>
+            </a>
+            <a href="{{ route('staff.create') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('staff.create') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-user-plus w-5"></i>
+                <span>Add Staff Member</span>
             </a>
         </div>
 
@@ -130,6 +175,7 @@
             </a>
         </div>
 
+
         <!-- Analytics Section -->
         <div>
             <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Analytics</h3>
@@ -142,6 +188,11 @@
                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('yield_estimations.*') ? 'bg-green-700 text-yellow-300' : '' }}">
                 <i class="fas fa-chart-pie w-5"></i>
                 <span>Yield Analysis</span>
+            </a>
+            <a href="{{ route('harvests.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('harvests.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-seedling w-5"></i>
+                <span>Harvest Records</span>
             </a>
         </div>
 
@@ -165,7 +216,7 @@
              </div>
              <div class="flex-1 min-w-0">
                  <p class="text-sm font-medium truncate">{{ Auth::user()->name ?? 'User' }}</p>
-                 <p class="text-xs text-green-300 truncate">{{ Auth::user()->role ?? 'farmer' }}</p>
+                 <p class="text-xs text-green-300 truncate">{{ Auth::user()->role ?? 'user' }}</p>
              </div>
              <i class="fas fa-user-circle text-green-300"></i>
          </a>

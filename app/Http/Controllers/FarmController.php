@@ -51,13 +51,26 @@ class FarmController extends Controller
             // Staff fields (stored in farm_operation_details)
             'staff_permanent' => 'nullable|integer|min:0',
             'staff_casual' => 'nullable|integer|min:0',
-            // Conditional fields
+            // Per-crop details (array of objects)
             'crops' => 'required_if:farm_type,crop,mixed|array|nullable',
-            'crops.*' => 'string|exists:crops,name',
-            'season_type' => 'required_if:farm_type,crop,mixed|string|in:short_rain,long_rain,year-round|nullable',
-            'livestock_types' => 'required_if:farm_type,livestock,mixed|array|nullable',
+            'crops.*.name' => 'nullable|string|exists:crops,name',
+            'crops.*.season_type' => 'nullable|string|in:short_rain,long_rain,year-round',
+            'crops.*.variety' => 'nullable|string|max:255',
+            'crops.*.quantity' => 'nullable|numeric|min:0',
+            'crops.*.notes' => 'nullable|string|max:500',
+            // season_type kept for backward compat
+            'season_type' => 'nullable|string|in:short_rain,long_rain,year-round',
+            // Per-livestock details (array of objects)
+            'livestock' => 'required_if:farm_type,livestock,mixed|array|nullable',
+            'livestock.*.name' => 'nullable|string|exists:livestock_types,name',
+            'livestock.*.quantity' => 'nullable|integer|min:1',
+            'livestock.*.production_goal' => 'nullable|string|in:meat,milk,eggs,breeding',
+            'livestock.*.notes' => 'nullable|string|max:500',
+            // livestock_types kept for backward compat
+            'livestock_types' => 'nullable|array',
             'livestock_types.*' => 'string|exists:livestock_types,name',
-            'production_goal' => 'required_if:farm_type,livestock,mixed|string|in:meat,milk,eggs,breeding|nullable',
+            // production_goal kept for backward compat
+            'production_goal' => 'nullable|string|in:meat,milk,eggs,breeding',
         ]);
 
         // Extract staff counts (not direct columns)
@@ -70,13 +83,24 @@ class FarmController extends Controller
         $farmType = $validated['farm_type'];
 
         if (in_array($farmType, ['crop', 'mixed'])) {
-            $operationDetails['crops'] = $request->input('crops', []);
-            $operationDetails['season_type'] = $request->input('season_type');
+            $rawCrops = $request->input('crops', []);
+            // Sanitize: keep only entries with a crop name
+            $operationDetails['crops_details'] = array_values(array_filter($rawCrops, fn($c) => !empty($c['name'])));
+            if ($request->filled('season_type')) {
+                $operationDetails['season_type'] = $request->input('season_type');
+            }
+            // Legacy flat key for backwards compat
+            $operationDetails['crops'] = array_column($operationDetails['crops_details'], 'name');
         }
 
         if (in_array($farmType, ['livestock', 'mixed'])) {
-            $operationDetails['livestock_types'] = $request->input('livestock_types', []);
-            $operationDetails['production_goal'] = $request->input('production_goal');
+            $rawLs = $request->input('livestock', []);
+            $operationDetails['livestock_details'] = array_values(array_filter($rawLs, fn($l) => !empty($l['name'])));
+            if ($request->filled('production_goal')) {
+                $operationDetails['production_goal'] = $request->input('production_goal');
+            }
+            // Legacy flat key for backwards compat
+            $operationDetails['livestock_types'] = array_column($operationDetails['livestock_details'], 'name');
         }
 
         // Add staff counts
@@ -138,39 +162,61 @@ class FarmController extends Controller
             'longitude' => 'nullable|numeric|between:-180,180',
             'size_hectares' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
-            // Staff fields (stored in farm_operation_details)
+            // Staff fields
             'staff_permanent' => 'nullable|integer|min:0',
             'staff_casual' => 'nullable|integer|min:0',
-            // Conditional fields
-            'crops' => 'required_if:farm_type,crop,mixed|array|nullable',
-            'crops.*' => 'string|exists:crops,name',
-            'season_type' => 'required_if:farm_type,crop,mixed|string|in:short_rain,long_rain,year-round|nullable',
-            'livestock_types' => 'required_if:farm_type,livestock,mixed|array|nullable',
+            // Per-crop detail fields
+            'crops' => 'nullable|array',
+            'crops.*.name' => 'nullable|string|exists:crops,name',
+            'crops.*.season_type' => 'nullable|string|in:short_rain,long_rain,year-round',
+            'crops.*.variety' => 'nullable|string|max:255',
+            'crops.*.quantity' => 'nullable|numeric|min:0',
+            'crops.*.notes' => 'nullable|string|max:500',
+            // season_type kept for backward compat
+            'season_type' => 'nullable|string|in:short_rain,long_rain,year-round',
+            // Per-livestock detail fields
+            'livestock' => 'nullable|array',
+            'livestock.*.name' => 'nullable|string|exists:livestock_types,name',
+            'livestock.*.quantity' => 'nullable|integer|min:1',
+            'livestock.*.production_goal' => 'nullable|string|in:meat,milk,eggs,breeding',
+            'livestock.*.notes' => 'nullable|string|max:500',
+            // Legacy flat keys
+            'livestock_types' => 'nullable|array',
             'livestock_types.*' => 'string|exists:livestock_types,name',
-            'production_goal' => 'required_if:farm_type,livestock,mixed|string|in:meat,milk,eggs,breeding|nullable',
+            'production_goal' => 'nullable|string|in:meat,milk,eggs,breeding',
         ]);
 
-        // Extract staff counts (not direct columns)
+        // Extract staff counts
         $staffPermanent = $validated['staff_permanent'] ?? 0;
         $staffCasual = $validated['staff_casual'] ?? 0;
         unset($validated['staff_permanent'], $validated['staff_casual']);
 
-        // Build farm_operation_details based on the farm_type
+        // Merge old operation details so we don't lose unrelated keys
         $operationDetails = $farm->farm_operation_details ?? [];
         $newFarmType = $validated['farm_type'];
 
         if (in_array($newFarmType, ['crop', 'mixed'])) {
-            $operationDetails['crops'] = $request->input('crops', []);
-            $operationDetails['season_type'] = $request->input('season_type');
+            $rawCrops = $request->input('crops', []);
+            $operationDetails['crops_details'] = array_values(array_filter($rawCrops, fn($c) => !empty($c['name'])));
+            if ($request->filled('season_type')) {
+                $operationDetails['season_type'] = $request->input('season_type');
+            }
+            // Legacy flat key
+            $operationDetails['crops'] = array_column($operationDetails['crops_details'], 'name');
         } else {
-            unset($operationDetails['crops'], $operationDetails['season_type']);
+            unset($operationDetails['crops_details'], $operationDetails['season_type'], $operationDetails['crops']);
         }
 
         if (in_array($newFarmType, ['livestock', 'mixed'])) {
-            $operationDetails['livestock_types'] = $request->input('livestock_types', []);
-            $operationDetails['production_goal'] = $request->input('production_goal');
+            $rawLs = $request->input('livestock', []);
+            $operationDetails['livestock_details'] = array_values(array_filter($rawLs, fn($l) => !empty($l['name'])));
+            if ($request->filled('production_goal')) {
+                $operationDetails['production_goal'] = $request->input('production_goal');
+            }
+            // Legacy flat key
+            $operationDetails['livestock_types'] = array_column($operationDetails['livestock_details'], 'name');
         } else {
-            unset($operationDetails['livestock_types'], $operationDetails['production_goal']);
+            unset($operationDetails['livestock_details'], $operationDetails['production_goal'], $operationDetails['livestock_types']);
         }
 
         // Always update staff counts

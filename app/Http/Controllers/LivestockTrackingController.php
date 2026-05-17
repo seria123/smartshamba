@@ -76,4 +76,22 @@ class LivestockTrackingController extends Controller
 
         return view('livestock.tracking.by_location', compact('locations', 'byField', 'byFarm'));
     }
+    public function store(Request $request, Livestock $livestock)
+{
+    $data = $request->validate([
+        'gps_latitude' => 'required',
+        'gps_longitude' => 'required',
+        'movement_type' => 'nullable|string',
+        'location_type' => 'nullable|string',
+        'notes' => 'nullable|string',
+    ]);
+
+    $location = $livestock->locations()->create($data);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Location saved',
+        'data' => $location
+    ]);
+}
 }

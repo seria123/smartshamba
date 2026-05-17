@@ -6,9 +6,16 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1><i class="fas fa-history"></i> Irrigation Logs</h1>
-                <a href="{{ route('irrigation.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Zones
-                </a>
+                <div>
+                    @if(auth()->user()->role !== 'user')
+                        <a href="{{ route('irrigation.index') }}" class="btn btn-info me-2">
+                            <i class="fas fa-tint"></i> Manage Zones
+                        </a>
+                    @endif
+                    <a href="{{ route('irrigation.logs') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Zones
+                    </a>
+                </div>
             </div>
 
             <!-- Filters -->
@@ -59,13 +66,15 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Zone</th>
-                                    <th>Event Type</th>
-                                    <th>Started</th>
-                                    <th>Ended</th>
+                                    <th>Field</th>
+                                    <th>Date</th>
+                                    <th>Method</th>
+                                    <th>Water Source</th>
                                     <th>Duration</th>
-                                    <th>Water Used</th>
+                                    <th>Volume</th>
+                                    <th>Cost</th>
                                     <th>Status</th>
-                                    <th>Triggered By</th>
+                                    <th>Notes</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,13 +82,13 @@
                                     <tr>
                                         <td>{{ $log->id }}</td>
                                         <td>{{ $log->irrigationZone->name ?? 'N/A' }}</td>
-                                        <td>
-                                            <span class="badge bg-info">{{ ucfirst($log->event_type) }}</span>
-                                        </td>
-                                        <td>{{ $log->started_at->format('M d, H:i') }}</td>
-                                        <td>{{ $log->ended_at?->format('M d, H:i') ?? '-' }}</td>
+                                        <td>{{ $log->irrigationZone->field->name ?? 'N/A' }}</td>
+                                        <td>{{ $log->started_at->format('M d, Y') }}</td>
+                                        <td>{{ ucfirst(str_replace('_', ' ', $log->irrigation_method ?? 'N/A')) }}</td>
+                                        <td>{{ ucfirst($log->water_source ?? 'N/A') }}</td>
                                         <td>{{ $log->duration_minutes ?? '-' }} min</td>
-                                        <td>{{ $log->water_used_liters ?? '-' }} L</td>
+                                        <td>{{ $log->water_used_liters ?? $log->estimated_volume_liters ?? '-' }} L</td>
+                                        <td>{{ $log->cost ? 'KES ' . number_format($log->cost, 2) : '-' }}</td>
                                         <td>
                                             @php
                                                 $statusClass = match($log->status) {
@@ -93,11 +102,11 @@
                                                 {{ ucfirst($log->status) }}
                                             </span>
                                         </td>
-                                        <td>{{ $log->triggeredByUser->name ?? 'System' }}</td>
+                                        <td>{{ Str::limit($log->notes ?? '-', 30) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center">No irrigation logs found.</td>
+                                        <td colspan="11" class="text-center">No irrigation logs found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
