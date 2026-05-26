@@ -289,71 +289,21 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seed Batch Number</label>
-                    <input type="text" name="seed_batch_number" id="seed_batch_number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Seed lot number or nursery batch">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seedling Quantity</label>
-                    <input type="number" name="seedling_quantity" id="seedling_quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 5000">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Area Planted (m²)</label>
-                    <input type="number" name="area_planted" id="area" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 100">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Row Spacing (cm)</label>
-                    <input type="number" name="spacing_row" id="spacing_row" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 30">
-                </div>
-               
-            </div>
             
+           
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Germination Rate (%)</label>
-                    <input type="number" name="germination_rate" id="germination_rate" step="0.01" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Survival Rate (%)</label>
-                    <input type="number" name="survival_rate" id="survival_rate" step="0.01" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 85">
-                </div>
-            </div>
-               
-            </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Plant Spacing (cm)</label>
-                    <input type="number" name="spacing_plant" id="spacing_plant" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 60">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Expected Plant Population</label>
-                    <input type="number" name="plant_population" id="plant_population" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
-                </div>
+             
+            
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Actual Survivors</label>
-                    <input type="number" name="survival_count" id="survival_count" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Calculated automatically">
-                </div>
-            </div>
+                
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor (Workers)</label>
-                    <input type="number" name="planting_labor_workers" id="planting_labor_workers" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Number of workers">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Planting Labor Cost (KES)</label>
-                    <input type="number" name="planting_labor_cost" id="planting_labor_cost" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Total cost">
-                </div>
-            </div>
+                
+               
 
             <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Planting Notes</label>
