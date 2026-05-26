@@ -13,22 +13,95 @@
                         @csrf
                         @method('PUT')
                         
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="crop_id" class="form-label">Crop *</label>
-                                    <select class="form-select @error('crop_id') is-invalid @enderror" id="crop_id" name="crop_id" required>
-                                        <option value="">Select Crop</option>
-                                        @foreach($crops as $crop)
-                                        <option value="{{ $crop->id }}" {{ old('crop_id', $harvest->crop_id) == $crop->id ? 'selected' : '' }}>
-                                            {{ $crop->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                    @error('crop_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                         <div class="row">
+                             <div class="col-md-4">
+                                 <div class="mb-3">
+                                     <label for="crop_id" class="form-label">Crop *</label>
+                                     <select class="form-select @error('crop_id') is-invalid @enderror" id="crop_id" name="crop_id" required>
+                                         <option value="">Select Crop</option>
+                                         @foreach($crops as $crop)
+                                         <option value="{{ $crop->id }}" {{ old('crop_id', $harvest->crop_id) == $crop->id ? 'selected' : '' }}>
+                                             {{ $crop->name }}
+                                         </option>
+                                         @endforeach
+                                     </select>
+                                     @error('crop_id')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                             <div class="col-md-4">
+                                 <div class="mb-3">
+                                     <label for="field_id" class="form-label">Field *</label>
+                                     <select class="form-select @error('field_id') is-invalid @enderror" id="field_id" name="field_id" required>
+                                         <option value="">Select Field</option>
+                                         @foreach($fields as $field)
+                                         <option value="{{ $field->id }}" {{ old('field_id', $harvest->field_id) == $field->id ? 'selected' : '' }}>
+                                             {{ $field->name }}
+                                         </option>
+                                         @endforeach
+                                     </select>
+                                     @error('field_id')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                             <div class="col-md-4">
+                                 <div class="mb-3">
+                                     <label for="farm_id" class="form-label">Farm *</label>
+                                     <select class="form-select @error('farm_id') is-invalid @enderror" id="farm_id" name="farm_id" required>
+                                         <option value="">Select Farm</option>
+                                         @foreach(\App\Models\Farm::all() as $farm)
+                                         <option value="{{ $farm->id }}" {{ old('farm_id', $harvest->farm_id) == $farm->id ? 'selected' : '' }}>
+                                             {{ $farm->name }}
+                                         </option>
+                                         @endforeach
+                                     </select>
+                                     @error('farm_id')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div class="row">
+                             <div class="col-md-4">
+                                 <div class="mb-3">
+                                     <label for="crop_cycle_id" class="form-label">Crop Cycle (Optional)</label>
+                                     <select class="form-select @error('crop_cycle_id') is-invalid @enderror" id="crop_cycle_id" name="crop_cycle_id">
+                                         <option value="">Select Crop Cycle (Optional)</option>
+                                         @foreach(\App\Models\CropCycle::with(['crop', 'field'])->get() as $cycle)
+                                             <option value="{{ $cycle->id }}" {{ old('crop_cycle_id', $harvest->crop_cycle_id) == $cycle->id ? 'selected' : '' }}>
+                                                 {{ $cycle->crop->name }} - {{ $cycle->field->name ?? 'No Field' }} ({{ $cycle->start_date->format('M d, Y') }})
+                                             </option>
+                                         @endforeach
+                                     </select>
+                                     @error('crop_cycle_id')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                             <div class="col-md-4">
+                                 <div class="mb-3">
+                                     <label for="harvest_date" class="form-label">Harvest Date *</label>
+                                     <input type="date" class="form-control @error('harvest_date') is-invalid @enderror" 
+                                         id="harvest_date" name="harvest_date" value="{{ old('harvest_date', $harvest->harvest_date->toDateString()) }}" required>
+                                     @error('harvest_date')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                             <div class="col-md-4">
+                                 <div class="mb-3">
+                                     <label for="harvest_batch" class="form-label">Batch Number</label>
+                                     <input type="text" class="form-control @error('harvest_batch') is-invalid @enderror" 
+                                         id="harvest_batch" name="harvest_batch" value="{{ old('harvest_batch', $harvest->harvest_batch) }}">
+                                     @error('harvest_batch')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                         </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">

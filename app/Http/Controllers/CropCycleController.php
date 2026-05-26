@@ -26,10 +26,11 @@ class CropCycleController extends Controller
         $farms = \App\Models\Farm::all();
         $fields = \App\Models\Field::all();
         $crops = \App\Models\Crop::all();
+        $staff = \App\Models\Staff::all();
         // Get crop cycles that have at least one harvest
         $cropCycles = \App\Models\CropCycle::whereHas('harvests')->get();
 
-        return view('crop_cycles.create', compact('farms', 'fields', 'crops', 'cropCycles'));
+        return view('crop_cycles.create', compact('farms', 'fields', 'crops', 'cropCycles', 'staff'));
     }
 
     /**
@@ -41,6 +42,7 @@ class CropCycleController extends Controller
             'field_id' => 'required|exists:fields,id',
             'crop_id' => 'required|exists:crops,id',
             'farm_id' => 'required|exists:farms,id',
+            'staff_id' => 'nullable|exists:staff,id',
             // Basic Crop Identity
             'category' => 'nullable|string|max:255',
             'variety' => 'nullable|string|max:255',
@@ -62,12 +64,18 @@ class CropCycleController extends Controller
             'seedling_quantity' => 'nullable|integer',
             'spacing_row' => 'nullable|integer',
             'spacing_plant' => 'nullable|integer',
+            'planting_method' => 'nullable|string|max:255',
             'plant_population' => 'nullable|integer',
             'germination_rate' => 'nullable|numeric|between:0,100',
             'survival_rate' => 'nullable|numeric|between:0,100',
             'planting_labor_workers' => 'nullable|integer',
             'planting_labor_cost' => 'nullable|numeric',
             'planting_notes' => 'nullable|string',
+            // Machinery
+            'machinery_tractor' => 'nullable|integer',
+            'machinery_pump' => 'nullable|integer',
+            'machinery_sprayer' => 'nullable|integer',
+            'machinery_notes' => 'nullable|string',
         ]);
 
         $validated['current_stage'] = 'planning';

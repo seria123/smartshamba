@@ -18,14 +18,18 @@
                             <span class="text-muted">Batch Number</span>
                             <span>{{ $harvest->harvest_batch ?? 'N/A' }}</span>
                         </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="text-muted">Crop</span>
-                            <span>{{ $harvest->crop?->name ?? 'N/A' }}</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="text-muted">Field</span>
-                            <span>{{ $harvest->field?->name ?? 'N/A' }}</span>
-                        </div>
+                     <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                         <span class="text-muted">Crop</span>
+                         <span>{{ $harvest->crop?->name ?? 'N/A' }}</span>
+                     </div>
+                     <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                         <span class="text-muted">Field</span>
+                         <span>{{ $harvest->field?->name ?? 'N/A' }}</span>
+                     </div>
+                     <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                         <span class="text-muted">Crop Cycle</span>
+                         <span>{{ $harvest->cropCycle ? ($harvest->cropCycle->crop->name ?? 'Unknown') . ' - ' . ($harvest->cropCycle->variety ?? 'No Variety') . ' (Planted: ' . $harvest->cropCycle->start_date->format('M d, Y') . ')' : 'Not Linked' }}</span>
+                     </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="text-muted">Quantity</span>
                             <span class="fw-semibold text-success">{{ number_format($harvest->quantity_harvested, 2) }} {{ $harvest->unit }}</span>

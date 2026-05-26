@@ -13,10 +13,6 @@
                         @csrf
                         @method('PUT')
 
-                        @php
-                            $selectedTypes = old('expense_type', $expense->expense_type);
-                        @endphp
-
                         <div class="row mb-4">
                             <div class="col-md-4">
                                 <div class="mb-3">
@@ -46,6 +42,36 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
+                                    <label class="form-label">Staff (Optional - for Labor expenses)</label>
+                                    @php
+                                        $staffCount = \App\Models\Staff::count();
+                                        $selectedStaff = old('staff_id', $expense->staff_id);
+                                    @endphp
+                                    @if($staffCount == 0)
+                                        <div class="alert alert-info py-2">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            No staff added yet.
+                                            <a href="{{ route('staff.create') }}" class="alert-link">Add staff first</a> before assigning to labor expenses.
+                                        </div>
+                                    @endif
+                                    <select name="staff_id" class="form-select" {{ $staffCount == 0 ? 'disabled' : '' }}>
+                                        <option value="">Select Staff</option>
+                                        @foreach(\App\Models\Staff::all() as $worker)
+                                        <option value="{{ $worker->id }}" {{ $selectedStaff == $worker->id ? 'selected' : '' }}>
+                                            {{ $worker->fullName() }} - {{ $worker->role }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    @if($staffCount > 0)
+                                        <small class="text-muted">Manage staff in <a href="{{ route('staff.index') }}">Staff section</a></small>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
                                     <label class="form-label">Expense Type *</label>
                                     <div class="border rounded p-3 bg-white" style="max-height: 250px; overflow-y: auto;">
                                         @php
@@ -60,14 +86,14 @@
                                                         'maintenance' => 'Maintenance',
                                                         'transport' => 'Transport',
                                                         'other' => 'Other'
-                                                    ];
+                                            ];
                                             $selectedTypes = old('expense_type', $expense->expense_type);
                                         @endphp
                                         @foreach($allTypes as $value => $label)
                                             <div class="form-check form-check-sm mb-2">
-                                                <input class="form-check-input" type="checkbox" 
-                                                       name="expense_type[]" 
-                                                       value="{{ $value }}" 
+                                                <input class="form-check-input" type="checkbox"
+                                                       name="expense_type[]"
+                                                       value="{{ $value }}"
                                                        id="expense_type_{{ $value }}"
                                                        {{ (is_array($selectedTypes) && in_array($value, $selectedTypes)) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="expense_type_{{ $value }}">
@@ -129,36 +155,6 @@
                                 <div class="mb-3">
                                     <label class="form-label">Receipt Number</label>
                                     <input type="text" name="receipt_number" class="form-control" value="{{ old('receipt_number', $expense->receipt_number) }}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Staff (Optional - for Labor expenses)</label>
-                                    @php
-                                        $staffCount = \App\Models\Staff::count();
-                                        $selectedStaff = old('staff_id', $expense->staff_id);
-                                    @endphp
-                                    @if($staffCount == 0)
-                                        <div class="alert alert-info py-2">
-                                            <i class="fas fa-info-circle me-2"></i>
-                                            No staff added yet. 
-                                            <a href="{{ route('staff.create') }}" class="alert-link">Add staff first</a> before assigning to labor expenses.
-                                        </div>
-                                    @endif
-                                    <select name="staff_id" class="form-select" {{ $staffCount == 0 ? 'disabled' : '' }}>
-                                        <option value="">Select Staff</option>
-                                        @foreach(\App\Models\Staff::all() as $worker)
-                                        <option value="{{ $worker->id }}" {{ $selectedStaff == $worker->id ? 'selected' : '' }}>
-                                            {{ $worker->fullName() }} - {{ $worker->role }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                    @if($staffCount > 0)
-                                        <small class="text-muted">Manage staff in <a href="{{ route('staff.index') }}">Staff section</a></small>
-                                    @endif
                                 </div>
                             </div>
                         </div>

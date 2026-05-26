@@ -11,7 +11,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -112,7 +111,8 @@ class UserResource extends Resource
                     ->copyable()
                     ->copyMessage('Email copied to clipboard'),
 
-                BadgeColumn::make('role')
+                TextColumn::make('role')
+                    ->badge()
                     ->colors([
                         'danger' => 'admin',
                         'warning' => 'manager',
@@ -126,7 +126,8 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                BadgeColumn::make('status')
+                TextColumn::make('status')
+                    ->badge()
                     ->colors([
                         'success' => 'active',
                         'gray' => 'inactive',

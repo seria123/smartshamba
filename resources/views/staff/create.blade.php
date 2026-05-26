@@ -230,7 +230,7 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="fas fa-circle"></i></span>
                                 <select class="form-select-modern @error('status') is-invalid @enderror" id="status" name="status" required>
-                                    <option value="active" {{ old('status') == 'inactive' ? 'inactive' : 'active' }}>Active</option>
+                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
                                     <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                     <option value="terminated" {{ old('status') == 'terminated' ? 'selected' : '' }}>Terminated</option>
                                 </select>

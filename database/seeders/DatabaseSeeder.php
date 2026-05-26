@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             CropSeeder::class,
             LivestockFeedSeeder::class,
             CropCycleSeeder::class,
+            BuyerSeeder::class,
         ]);
 
         // Create users (update if already exists)

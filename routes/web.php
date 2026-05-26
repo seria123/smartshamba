@@ -24,7 +24,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\HarvestController;
-
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\YieldEstimationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -59,9 +60,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // Alert routes
 Route::middleware(['auth'])->group(function () {
-    Route::resource('alerts', AlertController::class);
+    Route::post('/staff/{staff}/terminate', [StaffController::class, 'terminate'])->name('staff.terminate');
 });
-
+// Comments
+Route::middleware(['auth'])->group(function () {
+    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+});
 Route::middleware(['auth'])->group(function () {
     Route::resource('livestock', LivestockController::class);
     Route::post('livestock/{livestock}/mark-read', [LivestockController::class, 'markAsRead'])->name('livestock.markRead');
@@ -216,19 +222,19 @@ Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
         ->name('reports.download');
 });
 
-    // Feed Types routes for farmers/users (view only)
-    Route::middleware(['auth'])->group(function () {
-        Route::resource('feed-types', FeedTypeController::class)
-            ->names([
-                'index' => 'feed-types.index',
-                'create' => 'feed-types.create',
-                'store' => 'feed-types.store',
-                'show' => 'feed-types.show',
-                'edit' => 'feed-types.edit',
-                'update' => 'feed-types.update',
-                'destroy' => 'feed-types.destroy',
-            ]);
-    });
+        // Feed Types routes for farmers/users (full CRUD)
+        Route::middleware(['auth'])->group(function () {
+            Route::resource('feed-types', FeedTypeController::class)
+                ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+                ->names([
+                    'index' => 'feed-types.index',
+                    'create' => 'feed-types.create',
+                    'store' => 'feed-types.store',
+                    'edit' => 'feed-types.edit',
+                    'update' => 'feed-types.update',
+                    'destroy' => 'feed-types.destroy',
+                ]);
+        });
 // Staff / Labor Management routes
 Route::middleware(['auth'])->group(function () {
     Route::resource('staff', StaffController::class);
@@ -252,12 +258,54 @@ Route::middleware(['auth'])->group(function () {
         ->name('harvests.statistics');
 });
 
+// ============================================================
+//  EXPORT & IMPORT ROUTES  (Data Tools)
+// ============================================================
+use App\Http\Controllers\ExportController;
+
+Route::middleware(['auth'])->prefix('exports')->name('exports.')->group(function () {
+    // Index / hub page
+    Route::get('/', [ExportController::class, 'index'])->name('index');
+
+    // ---- CSV / XLSX exports ----
+    Route::get('/sensor-readings', [ExportController::class, 'exportSensorReadings'])->name('sensorReadings');
+    Route::get('/tasks',           [ExportController::class, 'exportTasks'])->name('tasks');
+    Route::get('/irrigation-logs', [ExportController::class, 'exportIrrigationLogs'])->name('irrigationLogs');
+    Route::get('/weather-data',    [ExportController::class, 'exportWeatherData'])->name('weatherData');
+    Route::get('/crops',           [ExportController::class, 'exportCrops'])->name('crops');
+    Route::get('/crop-analyses',   [ExportController::class, 'exportCropAnalyses'])->name('cropAnalyses');
+    Route::get('/livestock',       [ExportController::class, 'exportLivestock'])->name('livestock');
+    Route::get('/equipment',       [ExportController::class, 'exportEquipment'])->name('equipment');
+    Route::get('/fields',          [ExportController::class, 'exportFields'])->name('fields');
+    Route::get('/crop-cycles',     [ExportController::class, 'exportCropCycles'])->name('cropCycles');
+
+    // ---- PDF exports ----
+    Route::get('/pdf/livestock',   [ExportController::class, 'pdfLivestock'])->name('pdf.livestock');
+    Route::get('/pdf/harvests',    [ExportController::class, 'pdfHarvests'])->name('pdf.harvests');
+    Route::get('/pdf/farm/{farm}', [ExportController::class, 'pdfFarmSummary'])->name('pdf.farm');
+
+    // ---- Sample template downloads (import helper) ----
+    Route::get('/sample/livestock', [ExportController::class, 'sampleLivestock'])->name('sample.livestock');
+    Route::get('/sample/crops',     [ExportController::class, 'sampleCrops'])->name('sample.crops');
+    Route::get('/sample/equipment', [ExportController::class, 'sampleEquipment'])->name('sample.equipment');
+
+    // ---- CSV imports ----
+    Route::post('/import/livestock', [ExportController::class, 'importLivestock'])->name('import.livestock');
+    Route::post('/import/crops',     [ExportController::class, 'importCrops'])->name('import.crops');
+    Route::post('/import/equipment', [ExportController::class, 'importEquipment'])->name('import.equipment');
+});
+
+// Posts within livestock group
 Route::post('/alerts/{alert}/read', [AlertController::class, 'markAsRead'])
     ->name('alerts.markAsRead');
 Route::get('/alerts/{alert}/read', function (\App\Models\Alert $alert) {
     return redirect()->route('alerts.show', $alert)
         ->with('error', 'Please use the button to mark alerts as read.');
 })->name('alerts.markAsRead.get');
+Route::middleware('auth')->group(function () {
+    Route::resource('support-tickets', SupportTicketController::class);
+});
+
 // Yield Analysis Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('yield_estimations/dashboard', [YieldEstimationController::class, 'dashboard'])->name('yield_estimations.dashboard');
@@ -274,6 +322,8 @@ Route::middleware('auth')->group(function () {
         ->name('settings.edit');
 
 });
+
+Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
 
 // Irrigation Routes
 Route::middleware(['auth'])->group(function () {

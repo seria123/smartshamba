@@ -17,6 +17,7 @@ class CropStage extends Model
         'end_date',
         'health_status',
         'germination_rate',
+        'notes',
     ];
 
     protected $casts = [

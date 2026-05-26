@@ -63,9 +63,22 @@ class CropCycle extends Model
         'plant_population',
         'germination_rate',
         'survival_rate',
+        'survival_count',
         'planting_labor_workers',
         'planting_labor_cost',
         'planting_notes',
+        // Growth Metrics
+        'average_plant_height',
+        'yield_estimate',
+        // Cost Tracking
+        'input_cost_total',
+        'labor_cost_total',
+        'equipment_cost_total',
+        'total_cost_of_production',
+        'revenue_from_sales',
+        'profit_loss',
+        // Cycle Management
+        'notes_for_improvement',
     ];
 
     protected $casts = [

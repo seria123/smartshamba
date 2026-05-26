@@ -129,7 +129,7 @@
                 <span>Disease Analysis</span>
             </a>
             
-            <a href="{{ route('filament.admin.resources.feed-types.index') }}"
+            <a href="{{ route('feed-types.index') }}"
                 class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('feed-types.*') ? 'bg-green-700 text-yellow-300' : '' }}">
                 <i class="fas fa-leaf w-5"></i>
                 <span>Feed Types</span>
@@ -196,6 +196,31 @@
             </a>
         </div>
 
+        <!-- Data Tools Section -->
+        <div>
+            <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Data Tools</h3>
+            <a href="{{ route('exports.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('exports.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-file-export w-5"></i>
+                <span>Import &amp; Export</span>
+            </a>
+            <a href="{{ route('comments.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('comments.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-comments w-5"></i>
+                <span>Comments</span>
+            </a>
+        </div>
+
+        <!-- Customer Support Section -->
+        <div>
+            <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Support</h3>
+            <a href="{{ route('support-tickets.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('support-tickets.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-headset w-5"></i>
+                <span>Customer Support</span>
+            </a>
+        </div>
+
         <!-- Settings Section -->
         <div>
             <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Settings</h3>
@@ -205,6 +230,8 @@
                 <span>Settings</span>
             </a>
         </div>
+        
+
 
     </nav>
 

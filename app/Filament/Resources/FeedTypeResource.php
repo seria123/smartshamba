@@ -5,61 +5,48 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\FeedTypeResource\Pages;
 use App\Models\FeedType;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FeedTypeResource extends Resource
 {
     protected static ?string $model = FeedType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?string $navigationGroup = 'Farm Operations';
+    protected static ?string $navigationIcon = 'heroicon-o-archive';
 
-    public static function canAccess(): bool
-    {
-        // Allow admin and manager roles to access this resource in Filament
-        $user = auth()->user();
+    protected static ?string $navigationLabel = 'Feed Types';
 
-        if (!$user) {
-            return false;
-        }
+    protected static ?string $modelLabel = 'Feed Type';
 
-        $role = $user->role;
+    protected static ?string $pluralModelLabel = 'Feed Types';
 
-        // Assuming role is a string like 'admin', 'manager', or 'user'
-        // Adjust this if your role storage is different (e.g., JSON, multiple roles)
-        return in_array($role, ['admin', 'manager']);
-    }
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->maxLength(65535),
-                Forms\Components\Select::make('default_unit')
-                    ->options([
-                        'kg' => 'Kilograms',
-                        'g' => 'Grams',
-                        'lbs' => 'Pounds',
-                        'bags' => 'Bags',
-                        'tons' => 'Tons',
-                    ])
-                    ->required(),
-                Forms\Components\TextInput::make('min_threshold')
-                    ->label('Minimum Threshold')
-                    ->type('number')
-                    ->step('0.01')
-                    ->required(),
-                Forms\Components\Toggle::make('is_active')
+                TextInput::make('description')
+                    ->maxLength(255),
+                TextInput::make('default_unit')
+                    ->required()
+                    ->maxLength(50),
+                TextInput::make('min_threshold')
+                    ->required()
+                    ->numeric()
+                    ->prefix('kg '),
+                Toggle::make('is_active')
                     ->label('Active')
                     ->default(true),
             ]);
@@ -69,27 +56,19 @@ class FeedTypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('default_unit')
+                TextColumn::make('default_unit')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('min_threshold')
-                    ->label('Min Threshold')
+                TextColumn::make('min_threshold')
                     ->numeric()
                     ->sortable(),
-                 Tables\Columns\ToggleColumn::make('is_active')
-                     ->label('Active'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                ToggleColumn::make('is_active')
+                    ->label('Active')
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -97,6 +76,7 @@ class FeedTypeResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -107,9 +87,7 @@ class FeedTypeResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -117,6 +95,7 @@ class FeedTypeResource extends Resource
         return [
             'index' => Pages\ListFeedTypes::route('/'),
             'create' => Pages\CreateFeedType::route('/create'),
+            'view' => Pages\ViewFeedType::route('/{record}'),
             'edit' => Pages\EditFeedType::route('/{record}/edit'),
         ];
     }

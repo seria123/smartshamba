@@ -24,33 +24,54 @@
             <p class="text-gray-500 text-sm mb-4">The "passport" of the crop</p>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Farm *</label>
-                    <select name="farm_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        <option value="">Select farm...</option>
-                        @foreach($farms as $farm)
-                            <option value="{{ $farm->id }}">{{ $farm->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Field *</label>
-                    <select name="field_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        <option value="">Select field...</option>
-                        @foreach($fields as $field)
-                            <option value="{{ $field->id }}">{{ $field->name }} ({{ $field->farm->name ?? 'N/A' }})</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Crop *</label>
-                    <select name="crop_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        <option value="">Select crop...</option>
-                        @foreach($crops as $crop)
-                            <option value="{{ $crop->id }}">{{ $crop->name }} ({{ $crop->category ?? 'N/A' }})</option>
-                        @endforeach
-                    </select>
-                </div>
+                 <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">Farm *</label>
+                     <select name="farm_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                         <option value="">Select farm...</option>
+                         @foreach($farms as $farm)
+                             <option value="{{ $farm->id }}">{{ $farm->name }}</option>
+                         @endforeach
+                     </select>
+                 </div>
+                 <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">Field *</label>
+                     <select name="field_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                         <option value="">Select field...</option>
+                         @foreach($fields as $field)
+                             <option value="{{ $field->id }}">{{ $field->name }} ({{ $field->farm->name ?? 'N/A' }})</option>
+                         @endforeach
+                     </select>
+                 </div>
+                 <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">Crop *</label>
+                     <select name="crop_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                         <option value="">Select crop...</option>
+                         @foreach($crops as $crop)
+                             <option value="{{ $crop->id }}">{{ $crop->name }} ({{ $crop->category ?? 'N/A' }})</option>
+                         @endforeach
+                     </select>
+                 </div>
+                 <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Farmer/User Responsible</label>
+                      <select name="staff_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                          <option value="">Select farmer/user...</option>
+                          @foreach($staff as $member)
+                              <option value="{{ $member->id }}">
+                                  @php
+                                      $displayName = 'Staff Member #' . $member->id;
+                                      if ($member->user) {
+                                          if ($member->user->name !== null) {
+                                              $displayName = $member->user->name;
+                                          } elseif ($member->user->email !== null) {
+                                              $displayName = $member->user->email;
+                                          }
+                                      }
+                                  @endphp
+                                  {{ $displayName }}
+                              </option>
+                          @endforeach
+                      </select>
+                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
@@ -70,14 +91,15 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Season Type</label>
-                    <select name="season" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                        <option value="">Select season...</option>
-                        <option value="rain-fed">Rain-fed</option>
-                        <option value="irrigated">Irrigated</option>
-                    </select>
-                </div>
+                 <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">Season Type</label>
+                     <select name="season" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                         <option value="">Select season...</option>
+                         <option value="rainy">Rainy</option>
+                         <option value="dry">Dry</option>
+                         <option value="greenhouse">Greenhouse</option>
+                     </select>
+                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -229,20 +251,31 @@
             </h2>
             <p class="text-gray-500 text-sm mb-4">Specifics about how the crop was planted</p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seed Batch Number</label>
-                    <input type="text" name="seed_batch_number" id="seed_batch_number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Seed lot number or nursery batch">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seed Quantity</label>
-                    <input type="number" name="seed_quantity" id="seed_quantity" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 2 kg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seedling Quantity</label>
-                    <input type="number" name="seedling_quantity" id="seedling_quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 5000">
-                </div>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Seed Batch Number</label>
+            <input type="text" name="seed_batch_number" id="seed_batch_number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Seed lot number or nursery batch">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Seed Quantity</label>
+            <input type="number" name="seed_quantity" id="seed_quantity" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 2 kg">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Seedling Quantity</label>
+            <input type="number" name="seedling_quantity" id="seedling_quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g., 5000">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Planting Method</label>
+            <select name="planting_method" id="planting_method" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                <option value="">Select method...</option>
+                <option value="direct_seeding">Direct Seeding</option>
+                <option value="transplanting">Transplanting</option>
+                <option value="broadcasting">Broadcasting</option>
+                <option value="drilling">Drilling</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+    </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <div>

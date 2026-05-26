@@ -8,13 +8,10 @@
 
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div>
-                <h1 class="text-2xl font-bold mb-0">Feed Types</h1>
-                <small class="text-gray-500">Manage feed types and stock levels</small>
-            </div>
-            <a href="{{ route('admin/feed-types') }}" class="btn btn-primary whitespace-nowrap">
-                <i class="fas fa-cog me-2"></i>Manage Feed Types (Admin)
-            </a>
+             <div>
+                 <h1 class="text-2xl font-bold mb-0">Feed Types</h1>
+                 <small class="text-gray-500">Manage feed types and stock levels</small>
+             </div>
         </div>
 
         {{-- Feed Types Table --}}

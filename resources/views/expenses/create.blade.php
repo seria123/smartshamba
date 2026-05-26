@@ -13,7 +13,29 @@
                         @csrf
 
                         <div class="row mb-4">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Farm *</label>
+                                    <select name="farm_id" class="form-select" required>
+                                        <option value="">Select Farm</option>
+                                        @foreach(\App\Models\Farm::all() as $farm)
+                                        <option value="{{ $farm->id }}">{{ $farm->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Crop (Optional)</label>
+                                    <select name="crop_id" class="form-select">
+                                        <option value="">Select Crop</option>
+                                        @foreach(\App\Models\Crop::all() as $crop)
+                                        <option value="{{ $crop->id }}">{{ $crop->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Staff (Optional - for Labor expenses)</label>
                                     @php
@@ -22,7 +44,7 @@
                                     @if($staffCount == 0)
                                         <div class="alert alert-info py-2">
                                             <i class="fas fa-info-circle me-2"></i>
-                                            No staff added yet. 
+                                            No staff added yet.
                                             <a href="{{ route('staff.create') }}" class="alert-link">Add staff first</a> before assigning to labor expenses.
                                         </div>
                                     @endif
@@ -40,19 +62,9 @@
                                 </div>
                             </div>
                         </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label class="form-label">Crop (Optional)</label>
-                                    <select name="crop_id" class="form-select">
-                                        <option value="">Select Crop</option>
-                                        @foreach(\App\Models\Crop::all() as $crop)
-                                        <option value="{{ $crop->id }}">{{ $crop->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+
+                        <div class="row mb-4">
+                            <div class="col-md-12">
                                 <div class="mb-3">
                                     <label class="form-label">Expense Type *</label>
                                     <div class="border rounded p-3 bg-white" style="max-height: 250px; overflow-y: auto;">
@@ -68,13 +80,13 @@
                                                         'maintenance' => 'Maintenance',
                                                         'transport' => 'Transport',
                                                         'other' => 'Other'
-                                                    ];
+                                            ];
                                         @endphp
                                         @foreach($allTypes as $value => $label)
                                             <div class="form-check form-check-sm mb-2">
-                                                <input class="form-check-input" type="checkbox" 
-                                                       name="expense_type[]" 
-                                                       value="{{ $value }}" 
+                                                <input class="form-check-input" type="checkbox"
+                                                       name="expense_type[]"
+                                                       value="{{ $value }}"
                                                        id="expense_type_{{ $value }}"
                                                        {{ is_array(old('expense_type')) && in_array($value, old('expense_type')) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="expense_type_{{ $value }}">
@@ -136,33 +148,6 @@
                                 <div class="mb-3">
                                     <label class="form-label">Receipt Number</label>
                                     <input type="text" name="receipt_number" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Staff (Optional - for Labor expenses)</label>
-                                    @php
-                                        $staffCount = \App\Models\Staff::count();
-                                    @endphp
-                                    @if($staffCount == 0)
-                                        <div class="alert alert-info py-2">
-                                            <i class="fas fa-info-circle me-2"></i>
-                                            No staff added yet. 
-                                            <a href="{{ route('staff.create') }}" class="alert-link">Add staff first</a> before assigning to labor expenses.
-                                        </div>
-                                    @endif
-                                    <select name="staff_id" class="form-select" {{ $staffCount == 0 ? 'disabled' : '' }}>
-                                        <option value="">Select Staff</option>
-                                        @foreach(\App\Models\Staff::all() as $worker)
-                                        <option value="{{ $worker->id }}">{{ $worker->fullName() }} - {{ $worker->role }}</option>
-                                        @endforeach
-                                    </select>
-                                    @if($staffCount > 0)
-                                        <small class="text-muted">Manage staff in <a href="{{ route('staff.index') }}">Staff section</a></small>
-                                    @endif
                                 </div>
                             </div>
                         </div>

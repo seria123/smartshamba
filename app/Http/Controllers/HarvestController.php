@@ -63,8 +63,9 @@ class HarvestController extends Controller
     {
         $crops = Crop::all();
         $fields = Field::all();
+        $cropCycles = \App\Models\CropCycle::with(['crop', 'field'])->get();
 
-        return view('harvests.create', compact('crops', 'fields'));
+        return view('harvests.create', compact('crops', 'fields', 'cropCycles'));
     }
 
     public function store(Request $request)
@@ -73,6 +74,7 @@ class HarvestController extends Controller
             'crop_id' => 'required|exists:crops,id',
             'field_id' => 'required|exists:fields,id',
             'farm_id' => 'required|exists:farms,id',
+            'crop_cycle_id' => 'nullable|exists:crop_cycles,id',
             'harvest_date' => 'required|date',
             'harvest_batch' => 'nullable|string|max:100',
             'quantity_harvested' => 'required|numeric|min:0',
@@ -102,8 +104,9 @@ class HarvestController extends Controller
     {
         $crops = Crop::all();
         $fields = Field::all();
+        $cropCycles = \App\Models\CropCycle::with(['crop', 'field'])->get();
 
-        return view('harvests.edit', compact('harvest', 'crops', 'fields'));
+        return view('harvests.edit', compact('harvest', 'crops', 'fields', 'cropCycles'));
     }
 
     public function update(Request $request, Harvest $harvest)
@@ -112,6 +115,7 @@ class HarvestController extends Controller
             'crop_id' => 'required|exists:crops,id',
             'field_id' => 'required|exists:fields,id',
             'farm_id' => 'required|exists:farms,id',
+            'crop_cycle_id' => 'nullable|exists:crop_cycles,id',
             'harvest_date' => 'required|date',
             'harvest_batch' => 'nullable|string|max:100',
             'quantity_harvested' => 'required|numeric|min:0',

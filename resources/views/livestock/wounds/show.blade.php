@@ -70,7 +70,7 @@
                             <table class="table table-sm">
                                 <tr>
                                     <th width="40%">Analyzed By</th>
-                                    <td>{{ $wound->user->name }}</td>
+                                     <td>{{ $wound->user ? $wound->user->name : 'System' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Date</th>

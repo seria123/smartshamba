@@ -16,11 +16,11 @@
                 <a href="{{ route('feed-types.index') }}" class="btn btn-outline-secondary whitespace-nowrap">
                     ← Back to Feed Types
                 </a>
-                @if(auth()->user()->hasRole(['admin', 'manager']))
-                    <a href="{{ route('admin/feed-types.edit', $feedType) }}" class="btn btn-primary whitespace-nowrap">
-                        <i class="fas fa-edit me-2"></i>Edit Feed Type
-                    </a>
-                @endif
+                 @if(auth()->user()->hasRole(['admin', 'manager']))
+                     <a href="{{ route('feed-types.edit', $feedType) }}" class="btn btn-primary whitespace-nowrap">
+                         <i class="fas fa-edit me-2"></i>Edit Feed Type
+                     </a>
+                 @endif
             </div>
         </div>
 
