@@ -27,14 +27,14 @@
         @endif
 
         {{-- Form Card --}}
-        <div class="card-modern p-4 sm:p-6 space-y-6">
+        <div class="card-modern p-4 sm:p-6 space-y-6" style="border-left: 4px solid #6D4C41;">
             <form action="{{ route('food-stocks.store') }}" method="POST">
                 @csrf
 
-                {{-- Feed Type --}}
+{{-- Feed Type --}}
                 <div>
                     <label for="feed_type_id" class="form-label">Feed Type <span class="text-danger">*</span></label>
-                    <select class="form-select-modern @error('feed_type_id') is-invalid @enderror" id="feed_type_id" name="feed_type_id" required>
+                    <select class="form-select-brown @error('feed_type_id') is-invalid @enderror" id="feed_type_id" name="feed_type_id" required>
                         <option value="">Select Feed Type</option>
                         @foreach($feedTypes as $type)
                             <option value="{{ $type->id }}" {{ old('feed_type_id') == $type->id ? 'selected' : '' }}>

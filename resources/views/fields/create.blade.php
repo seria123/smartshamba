@@ -3,18 +3,15 @@
 @section('title', 'Create Field - SmartShamba')
 
 @section('content')
-<div class="space-y-1">
-    <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800">Create Field</h1>
-        <a href="{{ route('fields.index') }}" class="text-gray-600 hover:text-gray-800">
-            <i class="fas fa-arrow-left mr-2"></i>Back to Fields
+<x-ui.card style="border-left: 4px solid #43A047;">
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="text-2xl font-bold text-gray-800">Create Field</h1>
+        <a href="{{ route('fields.index') }}" class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800">
+            <i class="fas fa-arrow-left mr-2"></i>
+            <span>Back to List</span>
         </a>
     </div>
-
-    <!-- Create Form -->
-    <div class="bg-white rounded-lg shadow-md p-2">
-        <form action="{{ route('fields.store') }}" method="POST">
+    <form action="{{ route('fields.store') }}" method="POST">
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

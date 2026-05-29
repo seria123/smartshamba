@@ -16,22 +16,21 @@
 @endsection
 
 @section('content')
-<div class="space-y-6">
-    <x-ui.card>
+<x-ui.card style="border-left: 4px solid #6D4C41;">
         <form action="{{ route('livestock.store') }}" method="POST" id="livestockCreateForm">
             @csrf
 
             <!-- Animal Type -->
             <div class="mb-6">
-                <label for="livestock_type_id" class="block text-sm font-medium text-gray-700 mb-2">Animal Type *</label>
+                <label for="livestock_type_id" class="form-label">Animal Type *</label>
                 <select name="livestock_type_id" id="livestock_type_id" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('livestock_type_id') border-red-500 @enderror">
+                    class="form-select-brown @error('livestock_type_id') border-red-500 @enderror">
                     <option value="">Select animal type...</option>
                     @foreach($types as $type)
                         <option value="{{ $type->id }}" {{ old('livestock_type_id') == $type->id ? 'selected' : '' }}>
                             {{ $type->name }}
                             @if($type->requires_individual_tracking)
-                                <span class="text-xs text-emerald-600">(Individual tracking required)</span>
+                                <span class="text-xs text-brown-600">(Individual tracking required)</span>
                             @endif
                         </option>
                     @endforeach
@@ -42,14 +41,14 @@
             </div>
 
             <!-- Basic Information -->
-            <h3 class="font-bold text-lg text-gray-800 mb-4 border-b border-gray-200 pb-2">🐾 Animal Details</h3>
+            <h3 class="font-bold text-lg text-gray-800 mb-4 border-b border-brown-600 pb-2">🐾 Animal Details</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Name -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                    <label for="name" class="form-label">Name</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('name') border-red-500 @enderror"
+                        class="form-input-brown @error('name') border-red-500 @enderror"
                         placeholder="e.g., Bessie, Daisy">
                     @error('name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -58,9 +57,9 @@
 
                 <!-- Breed -->
                 <div>
-                    <label for="breed" class="block text-sm font-medium text-gray-700 mb-2">Breed</label>
+                    <label for="breed" class="form-label">Breed</label>
                     <input type="text" name="breed" id="breed" value="{{ old('breed') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('breed') border-red-500 @enderror"
+                        class="form-input-brown @error('breed') border-red-500 @enderror"
                         placeholder="e.g., Holstein, Jersey">
                     @error('breed')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -69,9 +68,9 @@
 
                 <!-- Gender -->
                 <div>
-                    <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gender *</label>
+                    <label for="gender" class="form-label">Gender *</label>
                     <select name="gender" id="gender" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('gender') border-red-500 @enderror">
+                        class="form-select-brown @error('gender') border-red-500 @enderror">
                         <option value="">Select gender...</option>
                         <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
                         <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
@@ -83,9 +82,9 @@
 
                 <!-- Date of Birth / Age -->
                 <div>
-                    <label for="birth_date" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                    <label for="birth_date" class="form-label">Date of Birth</label>
                     <input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('birth_date') border-red-500 @enderror">
+                        class="form-input-brown @error('birth_date') border-red-500 @enderror">
                     @error('birth_date')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -98,9 +97,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Tag Number (for cows, goats, sheep) -->
                 <div>
-                    <label for="tag_number" class="block text-sm font-medium text-gray-700 mb-2">Tag Number</label>
+                    <label for="tag_number" class="form-label">Tag Number</label>
                     <input type="text" name="tag_number" id="tag_number" value="{{ old('tag_number') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('tag_number') border-red-500 @enderror"
+                        class="form-input-brown @error('tag_number') border-red-500 @enderror"
                         placeholder="e.g., TAG-001 (for cattle, goats, sheep)">
                     <p class="text-xs text-gray-500 mt-1">For individual animals (cattle, goats, sheep)</p>
                     @error('tag_number')
@@ -110,9 +109,9 @@
 
                 <!-- Group Name (for poultry) -->
                 <div>
-                    <label for="group_name" class="block text-sm font-medium text-gray-700 mb-2">Group Name</label>
+                    <label for="group_name" class="form-label">Group Name</label>
                     <input type="text" name="group_name" id="group_name" value="{{ old('group_name') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('group_name') border-red-500 @enderror"
+                        class="form-input-brown @error('group_name') border-red-500 @enderror"
                         placeholder="e.g., Broiler Group A (for poultry)">
                     <p class="text-xs text-gray-500 mt-1">For group animals (poultry)</p>
                     @error('group_name')
@@ -127,9 +126,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Farm -->
                 <div>
-                    <label for="farm_id" class="block text-sm font-medium text-gray-700 mb-2">Farm</label>
+                    <label for="farm_id" class="form-label">Farm</label>
                     <select name="farm_id" id="farm_id"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('farm_id') border-red-500 @enderror">
+                        class="form-select-brown @error('farm_id') border-red-500 @enderror">
                         <option value="">Select farm...</option>
                         @foreach($farms as $farm)
                             <option value="{{ $farm->id }}" {{ old('farm_id') == $farm->id ? 'selected' : '' }}>
@@ -144,9 +143,9 @@
 
                 <!-- Field -->
                 <div>
-                    <label for="field_id" class="block text-sm font-medium text-gray-700 mb-2">Field/Pasture</label>
+                    <label for="field_id" class="form-label">Field/Pasture</label>
                     <select name="field_id" id="field_id"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('field_id') border-red-500 @enderror">
+                        class="form-select-brown @error('field_id') border-red-500 @enderror">
                         <option value="">Select field...</option>
                         @foreach($fields as $field)
                             <option value="{{ $field->id }}" {{ old('field_id') == $field->id ? 'selected' : '' }}>
@@ -166,9 +165,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Acquisition Type -->
                 <div>
-                    <label for="acquisition_type" class="block text-sm font-medium text-gray-700 mb-2">Acquisition Type *</label>
+                    <label for="acquisition_type" class="form-label">Acquisition Type *</label>
                     <select name="acquisition_type" id="acquisition_type" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('acquisition_type') border-red-500 @enderror">
+                        class="form-select-brown @error('acquisition_type') border-red-500 @enderror">
                         <option value="">Select acquisition type...</option>
                         <option value="purchased" {{ old('acquisition_type') == 'purchased' ? 'selected' : '' }}>Purchased</option>
                         <option value="born_on_farm" {{ old('acquisition_type') == 'born_on_farm' ? 'selected' : '' }}>Born on Farm</option>
@@ -180,12 +179,12 @@
 
                 <!-- Purchase Cost -->
                 <div>
-                    <label for="purchase_price" class="block text-sm font-medium text-gray-700 mb-2">Purchase Cost</label>
+                    <label for="purchase_price" class="form-label">Purchase Cost</label>
                     <div class="relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">KSH</span>
                         <input type="number" name="purchase_price" id="purchase_price" value="{{ old('purchase_price') }}" 
                             step="0.01" min="0"
-                            class="w-full pl-7 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('purchase_price') border-red-500 @enderror"
+                            class="w-full pl-7 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 @error('purchase_price') border-red-500 @enderror"
                             placeholder="0.00">
                     </div>
                     <p class="text-xs text-gray-500 mt-1">Enter purchase price if acquired</p>
@@ -196,9 +195,9 @@
 
                 <!-- Date Acquired -->
                 <div>
-                    <label for="date_acquired" class="block text-sm font-medium text-gray-700 mb-2">Date Acquired</label>
+                    <label for="date_acquired" class="form-label">Date Acquired</label>
                     <input type="date" name="date_acquired" id="date_acquired" value="{{ old('date_acquired') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('date_acquired') border-red-500 @enderror">
+                        class="form-input-brown @error('date_acquired') border-red-500 @enderror">
                     @error('date_acquired')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -211,11 +210,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Weight -->
                 <div>
-                    <label for="weight" class="block text-sm font-medium text-gray-700 mb-2">Weight</label>
+                    <label for="weight" class="form-label">Weight</label>
                     <div class="relative">
                         <input type="number" name="weight" id="weight" value="{{ old('weight') }}" 
                             step="0.01" min="0"
-                            class="w-full pl-3 pr-8 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('weight') border-red-500 @enderror"
+                            class="w-full pl-3 pr-8 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 @error('weight') border-red-500 @enderror"
                             placeholder="0.00">
                         <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">kg</span>
                     </div>
@@ -230,9 +229,9 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                    <label for="status" class="form-label">Status *</label>
                     <select name="status" id="status" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('status') border-red-500 @enderror">
+                        class="form-select-brown @error('status') border-red-500 @enderror">
                         <option value="">Select status...</option>
                         <option value="healthy" {{ old('status') == 'healthy' ? 'selected' : '' }}>Healthy</option>
                         <option value="sick" {{ old('status') == 'sick' ? 'selected' : '' }}>Sick</option>
@@ -247,9 +246,9 @@
 
             <!-- Notes -->
             <div class="mt-6">
-                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                <label for="notes" class="form-label">Notes</label>
                 <textarea name="notes" id="notes" rows="4"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('notes') border-red-500 @enderror"
+                    class="form-textarea-brown @error('notes') border-red-500 @enderror"
                     placeholder="Additional notes about this livestock...">{{ old('notes') }}</textarea>
                 @error('notes')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -264,12 +263,11 @@
                     Cancel
                 </a>
                 <button type="submit"
-                    class="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl shadow-md hover:bg-emerald-700 hover:shadow-lg active:scale-95 transition">
+                    class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-xl shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition">
                     <i class="fas fa-plus mr-2"></i>
                     Add Livestock
                 </button>
             </div>
         </form>
     </x-ui.card>
-</div>
 @endsection

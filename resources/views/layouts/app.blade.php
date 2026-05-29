@@ -23,11 +23,13 @@
              <!-- Navbar -->
              <x-layout.nav-bar />
 
-             <!-- Page content -->
-             <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-     @yield('content')
-     {{ $slot ?? '' }}
- </main>
+<!-- Page content -->
+              <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                  <div class="max-w-4xl mx-auto space-y-6">
+                      @yield('content')
+      {{ $slot ?? '' }}
+                  </div>
+              </main>
 
          </div>
      </div>

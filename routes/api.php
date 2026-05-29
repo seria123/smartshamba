@@ -57,3 +57,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/yield-estimations', [CropController::class, 'createYieldEstimation']);
     Route::put('/yield-estimations/{id}', [CropController::class, 'updateYieldEstimation']);
 });
+
+Route::middleware('auth:sanctum')->prefix('agronomist')->group(function () {
+    Route::post('/analyze-health', [App\Http\Controllers\AgronomistAIController::class, 'analyzeHealth']);
+    Route::post('/suggest-fertilizer', [App\Http\Controllers\AgronomistAIController::class, 'suggestFertilizer']);
+    Route::post('/predict-harvest', [App\Http\Controllers\AgronomistAIController::class, 'predictHarvest']);
+    Route::post('/detect-risks', [App\Http\Controllers\AgronomistAIController::class, 'detectRisks']);
+});

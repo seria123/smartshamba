@@ -4,8 +4,8 @@
 <div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card" style="border-left: 4px solid #6D4C41;">
+                <div class="card-header" style="background-color: #EFEBE9;">
                     <h4><i class="fas fa-edit"></i> Edit Food Stock</h4>
                 </div>
                 <div class="card-body">
