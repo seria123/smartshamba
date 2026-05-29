@@ -3,7 +3,7 @@
 @section('title', 'Create Field - SmartShamba')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-1">
     <!-- Page Header -->
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800">Create Field</h1>
@@ -13,11 +13,11 @@
     </div>
 
     <!-- Create Form -->
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="bg-white rounded-lg shadow-md p-2">
         <form action="{{ route('fields.store') }}" method="POST">
             @csrf
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Farm -->
                 <div>
                     <label for="farm_id" class="block text-sm font-medium text-gray-700 mb-2">Farm *</label>

@@ -1,68 +1,77 @@
 @extends('layouts.MainLayout')
 
-@section('title', 'New Feed Type - SmartShamba')
+@section('title', 'Add Feed Type - SmartShamba')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800">🌾 New Feed Type</h1>
+<div class="p-4 max-w-2xl">
+    <div class="mb-4">
         <a href="{{ route('feed-types.index') }}" class="text-gray-600 hover:text-gray-800">
-            <i class="fas fa-arrow-left mr-2"></i>Back
+            <i class="fas fa-arrow-left mr-2"></i>Back to Feed Types
         </a>
     </div>
 
-    <form action="{{ route('feed-types.store') }}" method="POST" class="space-y-8">
-        @csrf
+    <div class="bg-green rounded-lg shadow-md p-6">
+        <h4 class="text-lg font-semibold mb-4"><i class="fas fa-plus mr-2"></i>Add New Feed Type</h4>
 
-        <!-- Basic Feed Information -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                <span class="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-2">1</span>
-                Basic Feed Information
-            </h2>
-            <p class="text-gray-500 text-sm mb-4">Define the feed type details</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form action="{{ route('feed-types.store') }}" method="POST">
+            @csrf
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Name -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Name *</label>
-                    <input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required placeholder="e.g., Hay, Maize Bran">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Feed Type Name *</label>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('name') border-red-500 @enderror"
+                        placeholder="e.g., Hay, Maize Bran, Silage">
+                    @error('name')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
+
+                <!-- Default Unit -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Brief description of the feed type"></textarea>
+                    <label for="default_unit" class="block text-sm font-medium text-gray-700 mb-2">Default Unit</label>
+                    <input type="text" name="default_unit" id="default_unit" value="{{ old('default_unit') }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="e.g., kg, bags, tonnes">
+                    @error('default_unit')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Minimum Threshold -->
+                <div>
+                    <label for="min_threshold" class="block text-sm font-medium text-gray-700 mb-2">Minimum Stock Threshold</label>
+                    <input type="number" name="min_threshold" id="min_threshold" value="{{ old('min_threshold') }}" step="0.01" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Alert when stock falls below this level">
+                    @error('min_threshold')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Default Unit *</label>
-                    <input type="text" name="default_unit" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required placeholder="e.g., kg, lbs, bags" value="kg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Threshold *</label>
-                    <input type="number" name="min_threshold" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required placeholder="e.g., 50" min="0" step="0.01">
-                </div>
+
+            <!-- Description -->
+            <div class="mt-6">
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea name="description" id="description" rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent @error('description') border-red-500 @enderror"
+                    placeholder="Optional description of this feed type...">{{ old('description') }}</textarea>
+                @error('description')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
-            
-            <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <div class="flex items-center space-x-3">
-                    <input type="checkbox" name="is_active" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" checked>
-                    <span class="text-sm font-medium text-gray-700">Active</span>
-                </div>
+
+            <!-- Submit -->
+            <div class="mt-6 flex justify-end space-x-3">
+                <a href="{{ route('feed-types.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save mr-2"></i>Create Feed Type
+                </button>
             </div>
-        </div>
-    </form>
-    
-    <!-- Submit -->
-    <div class="flex justify-end space-x-3">
-        <a href="{{ route('feed-types.index') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-            Cancel
-        </a>
-        <button type="submit" form="feedTypeForm" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
-            <i class="fas fa-save mr-2"></i> Create Feed Type
-        </button>
+        </form>
     </div>
 </div>
 @endsection

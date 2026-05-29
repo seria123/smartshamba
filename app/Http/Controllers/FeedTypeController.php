@@ -11,12 +11,12 @@ class FeedTypeController extends Controller
     {
         $feedTypes = FeedType::all();
 
-        return view('feed_types.index', compact('feedTypes'));
+        return view('feed-types.index', compact('feedTypes'));
     }
 
     public function create()
     {
-        return view('feed_types.create');
+        return view('feed-types.create');
     }
 
     public function store(Request $request)
@@ -30,18 +30,18 @@ class FeedTypeController extends Controller
 
         FeedType::create($validated);
 
-        return redirect()->route('feed_types.index')
+        return redirect()->route('feed-types.index')
             ->with('success', 'Feed type created successfully');
     }
 
     public function show(FeedType $feedType)
     {
-        return view('feed_types.show', compact('feedType'));
+        return view('feed-types.show', compact('feedType'));
     }
 
     public function edit(FeedType $feedType)
     {
-        return view('feed_types.edit', compact('feedType'));
+        return view('feed-types.edit', compact('feedType'));
     }
 
     public function update(Request $request, FeedType $feedType)
@@ -55,7 +55,7 @@ class FeedTypeController extends Controller
 
         $feedType->update($validated);
 
-        return redirect()->route('feed_types.index')
+        return redirect()->route('feed-types.index')
             ->with('success', 'Feed type updated successfully');
     }
 
@@ -63,7 +63,7 @@ class FeedTypeController extends Controller
     {
         $feedType->delete();
 
-        return redirect()->route('feed_types.index')
+        return redirect()->route('feed-types.index')
             ->with('success', 'Feed type deleted successfully');
     }
 }

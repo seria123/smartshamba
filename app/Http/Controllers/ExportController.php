@@ -44,7 +44,7 @@ class ExportController extends Controller
     //  CSV EXPORTS  (original — unchanged)
     // ============================================================
 
-    public function exportSensorReadings(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+public function exportSensorReadings(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm     = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
         $fromDate = $request->filled('from_date') ? Carbon::parse($request->from_date) : null;
@@ -53,7 +53,7 @@ class ExportController extends Controller
         return $this->exportService->exportSensorReadings($farm, $fromDate, $toDate, $request->get('format', 'csv'));
     }
 
-    public function exportTasks(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportTasks(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm     = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
         $status   = $request->filled('status') ? $request->status : null;
@@ -63,7 +63,7 @@ class ExportController extends Controller
         return $this->exportService->exportTasks($farm, $status, $fromDate, $toDate, $request->get('format', 'csv'));
     }
 
-    public function exportIrrigationLogs(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportIrrigationLogs(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm     = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
         $fromDate = $request->filled('from_date') ? Carbon::parse($request->from_date) : null;
@@ -72,24 +72,19 @@ class ExportController extends Controller
         return $this->exportService->exportIrrigationLogs($farm, $fromDate, $toDate, $request->get('format', 'csv'));
     }
 
-    public function exportWeatherData(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
-    {
-        $request->validate(['farm_id' => 'required|exists:farms,id']);
-        $farm     = Farm::find($request->farm_id);
-        $fromDate = $request->filled('from_date') ? Carbon::parse($request->from_date) : null;
-        $toDate   = $request->filled('to_date') ? Carbon::parse($request->to_date) : null;
+    public function exportWeatherData(string $format)
+{
+    return $this->exportService->exportWeatherData($format);
+}
 
-        return $this->exportService->exportWeatherData($farm, $fromDate, $toDate, $request->get('format', 'csv'));
-    }
-
-    public function exportCrops(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportCrops(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
 
         return $this->exportService->exportCrops($farm, $request->get('format', 'csv'));
     }
 
-    public function exportCropAnalyses(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportCropAnalyses(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm     = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
         $fromDate = $request->filled('from_date') ? Carbon::parse($request->from_date) : null;
@@ -105,7 +100,7 @@ class ExportController extends Controller
     /**
      * Export livestock as CSV or XLSX.
      */
-    public function exportLivestock(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportLivestock(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
 
@@ -115,7 +110,7 @@ class ExportController extends Controller
     /**
      * Export equipment as CSV or XLSX.
      */
-    public function exportEquipment(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportEquipment(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
 
@@ -125,7 +120,7 @@ class ExportController extends Controller
     /**
      * Export fields as CSV or XLSX.
      */
-    public function exportFields(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportFields(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
 
@@ -135,7 +130,7 @@ class ExportController extends Controller
     /**
      * Export crop cycles as CSV or XLSX.
      */
-    public function exportCropCycles(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function exportCropCycles(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $farm     = $request->filled('farm_id') ? Farm::find($request->farm_id) : null;
         $fromDate = $request->filled('from_date') ? Carbon::parse($request->from_date) : null;

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Livestock extends Model
 {
@@ -41,15 +42,10 @@ class Livestock extends Model
     ];
 
     const STATUS_HEALTHY = 'healthy';
-
     const STATUS_SICK = 'sick';
-
     const STATUS_SOLD = 'sold';
-
     const STATUS_DEAD = 'dead';
-
     const GENDER_MALE = 'male';
-
     const GENDER_FEMALE = 'female';
 
     public function type(): BelongsTo
@@ -72,36 +68,29 @@ class Livestock extends Model
         return $this->hasMany(Livestock::class, 'parent_id');
     }
 
-    /**
-     * Get the location history for this livestock.
-     */
     public function locations(): HasMany
     {
         return $this->hasMany(LivestockLocation::class)->orderBy('entered_at', 'desc');
     }
 
-    /**
-     * Get the current/latest active location (where left_at is null).
-     */
     public function currentLocation(): HasOne
     {
         return $this->hasOne(LivestockLocation::class)->active()->latest('entered_at');
     }
 
-    /**
-     * Get the movement history for this livestock.
-     */
     public function movements(): HasMany
     {
         return $this->hasMany(LivestockMovement::class)->orderBy('movement_date', 'desc');
     }
 
-    /**
-     * Get the analyses for this livestock.
-     */
     public function analyses(): HasMany
     {
         return $this->hasMany(LivestockAnalysis::class);
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     public function scopeHealthy($query)

@@ -9,6 +9,7 @@ use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FarmDocumentController;
 use App\Http\Controllers\CropStageController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\FeedUsageController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\FarmerController;
 use  App\Http\Controllers\FeedTypeController;
@@ -112,7 +113,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-Route::resource('fields', FieldController::class);
+Route::middleware(['auth'])->group(function () {
+    Route::resource('fields', FieldController::class);
+});
 
 // Farm CRUD routes
 Route::middleware(['auth'])->group(function () {
@@ -123,25 +126,34 @@ Route::middleware(['auth'])->group(function () {
     Route::post('farms/{farm}/documents', [FarmDocumentController::class, 'store'])->name('farms.documents.store');
     Route::delete('farms/{farm}/documents/{document}', [FarmDocumentController::class, 'destroy'])->name('farms.documents.destroy');
 });
-Route::get('/crops/create', [CropController::class, 'create'])->name('crops.create');
-Route::get('/crops', [CropController::class, 'index'])->name('crops.index');
-Route::post('/crops', [CropController::class, 'store'])->name('crops.store');
-Route::get('/crops/{crop}', [CropController::class, 'show'])->name('crops.show');
-Route::delete('/crops/{crop}', [CropController::class, 'destroy'])->name('crops.destroy');
-Route::put('/crops/{crop}', [CropController::class, 'update'])->name('crops.update');
-
-Route::get('/crops/{crop}/edit', [CropController::class, 'edit'])->name('crops.edit');
 // Farm onboarding (step 1)
 Route::middleware(['auth'])->post('/farms/onboarding', [FarmerController::class, 'store'])->name('farms.onboarding.store');
 
-// Field CRUD routes
+// Crop Routes
 Route::middleware(['auth'])->group(function () {
-    Route::resource('yield_estimations', YieldEstimationController::class);
+    Route::get('/crops', [CropController::class, 'index'])->name('crops.index');
+    Route::get('/crops/create', [CropController::class, 'create'])->name('crops.create');
+    Route::post('/crops', [CropController::class, 'store'])->name('crops.store');
+    Route::get('/crops/{crop}', [CropController::class, 'show'])->name('crops.show');
+    Route::get('/crops/{crop}/edit', [CropController::class, 'edit'])->name('crops.edit');
+    Route::put('/crops/{crop}', [CropController::class, 'update'])->name('crops.update');
+    Route::delete('/crops/{crop}', [CropController::class, 'destroy'])->name('crops.destroy');
 });
+
+// Yield Estimation Routes
+Route::resource('yield_estimations', YieldEstimationController::class);
+Route::get('/yield_estimations/dashboard', [YieldEstimationController::class, 'dashboard'])
+    ->name('yield_estimations.dashboard');
+  Route::get('/yield_estimations/statistics', [YieldEstimationController::class, 'statistics'])
+    ->name('yield_estimations.statistics');  
+
 
 // Settings routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/bulk-update', [App\Http\Controllers\SettingsController::class, 'bulkUpdate'])->name('settings.bulkUpdate');
+    Route::post('/settings', [App\Http\Controllers\SettingsController::class, 'store'])->name('settings.store');
+    Route::put('/settings/{id}', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
     Route::put('/settings/profile', [App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('settings.profile.update');
     Route::put('/settings/farm', [App\Http\Controllers\SettingsController::class, 'updateFarm'])->name('settings.farm.update');
     Route::put('/settings/notifications', [App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('settings.notifications.update');
@@ -187,34 +199,25 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('planting-schedules/{plantingSchedule}', [PlantingScheduleController::class, 'destroy'])->name('planting-schedules.destroy');
 });
 
-
-Route::get('/crops/create', [CropController::class, 'create'])->name('crops.create');
-Route::get('/sensors/create', [SensorController::class, 'create'])
-    ->name('sensors.create');
-    Route::get('/sensors/{sensor}/edit', [SensorController::class, 'edit'])
-    ->name('sensors.edit');
-    Route::get('/sensors', [SensorController::class, 'index'])
-    ->name('sensors.index');
-    Route::put('/sensors/{sensor}', [SensorController::class, 'update'])
-    ->name('sensors.update');
-Route::get('/sensors/{sensor}', [SensorController::class, 'show'])
-    ->name('sensors.show');
-Route::delete('/sensors/{sensor}', [SensorController::class, 'destroy'])
-    ->name('sensors.destroy');
-    Route::post('/sensors', [SensorController::class, 'store'])
-    ->name('sensors.store');
-
-    
+// Sensor CRUD routes
 Route::middleware(['auth'])->group(function () {
-   Route::post('/livestock-analysis/{livestockAnalysis}/mark-reviewed', [LivestockAnalysisController::class, 'markReviewed'])
-    ->name('livestock-analysis.markReviewed');
+    Route::get('/sensors', [SensorController::class, 'index'])->name('sensors.index');
+    Route::get('/sensors/create', [SensorController::class, 'create'])->name('sensors.create');
+    Route::post('/sensors', [SensorController::class, 'store'])->name('sensors.store');
+    Route::get('/sensors/{sensor}', [SensorController::class, 'show'])->name('sensors.show');
+    Route::get('/sensors/{sensor}/edit', [SensorController::class, 'edit'])->name('sensors.edit');
+    Route::put('/sensors/{sensor}', [SensorController::class, 'update'])->name('sensors.update');
+    Route::delete('/sensors/{sensor}', [SensorController::class, 'destroy'])->name('sensors.destroy');
 });
+
+
+// Yield Analysis Routes
 
 // Finance Routes (Income, Expenses, Reports)
 Route::middleware(['auth'])->group(function () {
     Route::resource('revenues', \App\Http\Controllers\RevenueController::class);
     Route::get('expenses/summary', [\App\Http\Controllers\ExpenseController::class, 'summary'])->name('expenses.summary');
-Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
+    Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
     Route::resource('reports', \App\Http\Controllers\ReportController::class);
     Route::post('reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
     Route::post('revenues/{revenue}/mark-paid', [\App\Http\Controllers\RevenueController::class, 'markAsPaid'])->name('revenues.markAsPaid');
@@ -222,30 +225,30 @@ Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
         ->name('reports.download');
 });
 
-        // Feed Types routes for farmers/users (full CRUD)
-        Route::middleware(['auth'])->group(function () {
-            Route::resource('feed-types', FeedTypeController::class)
-                ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
-                ->names([
-                    'index' => 'feed-types.index',
-                    'create' => 'feed-types.create',
-                    'store' => 'feed-types.store',
-                    'edit' => 'feed-types.edit',
-                    'update' => 'feed-types.update',
-                    'destroy' => 'feed-types.destroy',
-                ]);
-        });
+// Feed Types routes for farmers/users (full CRUD)
+Route::middleware(['auth'])->group(function () {
+    Route::resource('feed-types', FeedTypeController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->names([
+            'index' => 'feed-types.index',
+            'create' => 'feed-types.create',
+            'store' => 'feed-types.store',
+            'edit' => 'feed-types.edit',
+            'update' => 'feed-types.update',
+            'destroy' => 'feed-types.destroy',
+        ]);
+});
 // Staff / Labor Management routes
 Route::middleware(['auth'])->group(function () {
     Route::resource('staff', StaffController::class);
+    Route::post('staff/{staff}/terminate', [StaffController::class, 'terminate'])->name('staff.terminate');
     Route::get('staff/{staff}/attendance', [StaffController::class, 'attendance'])->name('staff.attendance');
     Route::post('staff/{staff}/attendance', [StaffController::class, 'storeAttendance'])->name('staff.attendance.store');
     Route::get('staff/{staff}/wages', [StaffController::class, 'wages'])->name('staff.wages');
     Route::post('staff/{staff}/wages', [StaffController::class, 'storeWage'])->name('staff.wages.store');
     Route::put('staff/{staff}/wages/{wage}', [StaffController::class, 'updateWage'])->name('staff.wages.update');
     Route::get('staff/{staff}/tasks', [StaffController::class, 'tasks'])->name('staff.tasks');
-    Route::post('staff/{staff}/terminate', [StaffController::class, 'terminate'])->name('staff.terminate');
-    });
+});
 Route::middleware(['auth'])->group(function () {
     Route::resource('equipment', EquipmentController::class);
     Route::resource('harvests', HarvestController::class)->except([
@@ -296,34 +299,39 @@ Route::middleware(['auth'])->prefix('exports')->name('exports.')->group(function
 });
 
 // Posts within livestock group
-Route::post('/alerts/{alert}/read', [AlertController::class, 'markAsRead'])
-    ->name('alerts.markAsRead');
-Route::get('/alerts/{alert}/read', function (\App\Models\Alert $alert) {
-    return redirect()->route('alerts.show', $alert)
-        ->with('error', 'Please use the button to mark alerts as read.');
-})->name('alerts.markAsRead.get');
 Route::middleware('auth')->group(function () {
+    Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
+    Route::get('/alerts/create', [AlertController::class, 'create'])->name('alerts.create');
+    Route::post('/alerts', [AlertController::class, 'store'])->name('alerts.store');
+    Route::get('/alerts/{alert}', [AlertController::class, 'show'])->name('alerts.show');
+    Route::get('/alerts/{alert}/edit', [AlertController::class, 'edit'])->name('alerts.edit');
+    Route::put('/alerts/{alert}', [AlertController::class, 'update'])->name('alerts.update');
+    Route::delete('/alerts/{alert}', [AlertController::class, 'destroy'])->name('alerts.destroy');
+    Route::post('/alerts/{alert}/read', [AlertController::class, 'markAsRead'])->name('alerts.markAsRead');
+    Route::get('/alerts/{alert}/read', function (\App\Models\Alert $alert) {
+        return redirect()->route('alerts.show', $alert)
+            ->with('error', 'Please use the button to mark alerts as read.');
+    })->name('alerts.markAsRead.get');
     Route::resource('support-tickets', SupportTicketController::class);
 });
 
-// Yield Analysis Routes
+//feedusage routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('yield_estimations/dashboard', [YieldEstimationController::class, 'dashboard'])->name('yield_estimations.dashboard');
-    Route::get('yield_estimations/statistics', [YieldEstimationController::class, 'statistics'])->name('yield_estimations.statistics');
-    Route::resource('yield_estimations', YieldEstimationController::class);
+
+    Route::get('/feed_usages', [FeedUsageController::class, 'index'])->name('feed_usages.index');
+
+    Route::get('/feed_usages/create', [FeedUsageController::class, 'create'])->name('feed_usages.create');
+
+    Route::post('/feed_usages', [FeedUsageController::class, 'store'])->name('feed_usages.store');
+
+    Route::get('/feed_usages/{feed_usage}', [FeedUsageController::class, 'show'])->name('feed_usages.show');
+
+    Route::get('/feed_usages/{feed_usage}/edit', [FeedUsageController::class, 'edit'])->name('feed_usages.edit');
+
+    Route::put('/feed_usages/{feed_usage}', [FeedUsageController::class, 'update'])->name('feed_usages.update');
+
+    Route::delete('/feed_usages/{feed_usage}', [FeedUsageController::class, 'destroy'])->name('feed_usages.destroy');
 });
-
-Route::middleware('auth')->group(function () {
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
-    Route::post('/settings/bulk-update', [SettingsController::class, 'bulkUpdate'])->name('settings.bulkUpdate');
-    Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
-   Route::put('/settings/{id}', [SettingsController::class, 'update'])->name('settings.update');
-    Route::get('/settings/system', [SettingsController::class, 'editSystem'])
-        ->name('settings.edit');
-
-});
-
-Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
 
 // Irrigation Routes
 Route::middleware(['auth'])->group(function () {
@@ -340,6 +348,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('irrigation/{irrigation}/create-record', [\App\Http\Controllers\IrrigationController::class, 'createRecord'])->name('irrigation.create-record');
     Route::post('irrigation/{irrigation}/store-record', [\App\Http\Controllers\IrrigationController::class, 'storeRecord'])->name('irrigation.store-record');
 });
+
 
 require __DIR__.'/auth.php';
 require __DIR__.'/plantid_test.php';

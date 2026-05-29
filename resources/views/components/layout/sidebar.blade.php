@@ -98,11 +98,7 @@
                 <i class="fas fa-calendar-alt w-5"></i>
                 <span>Planting Schedule</span>
             </a>
-            <a href="{{ route('planting-schedules.calendar') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('planting-schedules.calendar') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-calendar-days w-5"></i>
-                <span>Crop Calendar</span>
-            </a>
+           
         </div>
 
         <!-- Livestock Section -->
@@ -133,6 +129,12 @@
                 class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('feed-types.*') ? 'bg-green-700 text-yellow-300' : '' }}">
                 <i class="fas fa-leaf w-5"></i>
                 <span>Feed Types</span>
+            </a>
+
+            <a href="{{ route('feed_usages.index') }}"
+                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('feed-usages.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-leaf w-5"></i>
+                <span>Feed Usages</span>
             </a>
         </div>
 

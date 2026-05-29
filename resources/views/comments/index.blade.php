@@ -5,20 +5,24 @@
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
 
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-3 rounded">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-red-100 text-red-800 p-3 rounded">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
             <i class="fas fa-comments text-green-600"></i>
-            @if(($commentableType ?? '') && ($commentableId ?? ''))
-                Comments
-            @else
-                All Comments
-            @endif
+            Comments
         </h1>
-        <a href="{{ url()->previous() }}"
-           class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-medium">
-            <i class="fas fa-arrow-left mr-2"></i> Back
-        </a>
     </div>
 
     <!-- Comment Form -->
@@ -26,8 +30,8 @@
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Add a Comment</h3>
         <form action="{{ route('comments.store') }}" method="POST">
             @csrf
-            <input type="hidden" name="commentable_type" value="{{ $commentableType ?? '' }}">
-            <input type="hidden" name="commentable_id" value="{{ $commentableId ?? '' }}">
+            <input type="hidden" name="commentable_type" value="">
+            <input type="hidden" name="commentable_id" value="">
 
             <div class="mb-4">
                 <label for="body" class="block text-sm font-medium text-gray-700 mb-2">Your Comment</label>
@@ -55,13 +59,7 @@
 
     <!-- Comments List -->
     <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">
-            @if(($commentableType ?? '') && ($commentableId ?? ''))
-                Comments on this item
-            @else
-                All Comments
-            @endif
-        </h3>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">All Comments</h3>
 
         @if($comments->count() === 0)
             <p class="text-gray-500">No comments yet. Be the first to comment!</p>

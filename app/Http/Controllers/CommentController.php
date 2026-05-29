@@ -32,22 +32,22 @@ class CommentController extends Controller
         return view('comments.index', compact('comments', 'commentableType', 'commentableId'));
     }
 
-    /**
-     * Store a new comment.
-     */
+/**
+      * Store a new comment.
+      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'commentable_type' => 'required|string',
-            'commentable_id' => 'required|integer',
+            'commentable_type' => 'nullable|string',
+            'commentable_id' => 'nullable|integer',
             'body' => 'required|string|max:2000',
             'parent_id' => 'nullable|integer|exists:comments,id',
         ]);
 
         $comment = Comment::create([
             'user_id' => auth()->id(),
-            'commentable_type' => $validated['commentable_type'],
-            'commentable_id' => $validated['commentable_id'],
+            'commentable_type' => $validated['commentable_type'] ?? null,
+            'commentable_id' => $validated['commentable_id'] ?? null,
             'parent_id' => $validated['parent_id'] ?? null,
             'body' => $validated['body'],
         ]);

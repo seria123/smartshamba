@@ -149,25 +149,25 @@
                     @else
                         <div class="space-y-4">
                             @foreach($analyses as $analysis)
-                            <div class="border rounded-xl p-3 hover:shadow-md transition">
-                                <div class="flex items-start justify-between mb-2">
-                                    <h4 class="font-bold text-gray-800 text-sm">{{ $analysis->diagnosis ?? 'Unknown' }}</h4>
-                                    <span class="badge bg-{{ $analysis->severity_color ?? 'secondary' }} text-xs">
-                                        {{ ucfirst($analysis->severity ?? 'N/A') }}
-                                    </span>
+                                <div class="border rounded-xl p-3 hover:shadow-md transition">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <h4 class="font-bold text-gray-800 text-sm">{{ $analysis->diagnosis ?? 'Unknown' }}</h4>
+                                        <span class="badge bg-{{ $analysis->severity_color ?? 'secondary' }} text-xs">
+                                            {{ ucfirst($analysis->severity ?? 'N/A') }}
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mb-2">
+                                        {{ $analysis->created_at->format('M d, Y') }}
+                                    </p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs px-2 py-1 rounded-full {{ $analysis->status === 'reviewed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                            {{ ucfirst($analysis->status) }}
+                                        </span>
+                                        <a href="{{ route('livestock-analysis.show', $analysis) }}" class="text-xs font-medium text-emerald-600 hover:underline">
+                                            View →
+                                        </a>
+                                    </div>
                                 </div>
-                                <p class="text-xs text-gray-500 mb-2">
-                                    {{ $analysis->created_at->format('M d, Y') }}
-                                </p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-xs px-2 py-1 rounded-full {{ $analysis->status === 'reviewed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
-                                        {{ ucfirst($analysis->status) }}
-                                    </span>
-                                    <a href="{{ route('livestock-analysis.show', $analysis) }}" class="text-xs font-medium text-emerald-600 hover:underline">
-                                        View →
-                                    </a>
-                                </div>
-                            </div>
                             @endforeach
                         </div>
                         <div class="mt-4 text-center">

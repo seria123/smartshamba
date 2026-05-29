@@ -12,6 +12,9 @@
                  <h1 class="text-2xl font-bold mb-0">Feed Types</h1>
                  <small class="text-gray-500">Manage feed types and stock levels</small>
              </div>
+            <a href="{{ route('feed-types.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus mr-2"></i>Add Feed Type
+            </a>
         </div>
 
         {{-- Feed Types Table --}}
@@ -25,6 +28,7 @@
                             <th>Default Unit</th>
                             <th>Min Threshold</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,11 +43,23 @@
                                         {{ $feedType->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                                    <a href="{{ route('feed-types.edit', $feedType) }}" class="text-blue-600 hover:text-blue-800" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('feed-types.destroy', $feedType) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this feed type?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center p-4 text-gray-500">
-                                    No feed types found.
+<td colspan="6" class="text-center p-4 text-gray-500">
+                                     No feed types found.
                                 </td>
                             </tr>
                         @endforelse

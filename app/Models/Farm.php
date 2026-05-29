@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Equipment;
+use App\Models\Harvest;
+
+use App\Models\Livestock;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -81,4 +85,17 @@ class Farm extends Model
     {
         return $this->belongsTo(FarmImage::class, 'main_image_id');
     }
+    public function livestock()
+{
+    return $this->hasMany(Livestock::class);
+}
+
+public function equipment()
+{
+    return $this->hasMany(Equipment::class);
+}
+public function harvests()
+{
+    return $this->hasMany(Harvest::class);
+}
 }

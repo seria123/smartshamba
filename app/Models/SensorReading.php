@@ -23,6 +23,7 @@ class SensorReading extends Model
         'phosphorus_level',
         'potassium_level',
         'timestamp',
+        'recorded_at',
     ];
 
     protected $casts = [
@@ -36,6 +37,7 @@ class SensorReading extends Model
         'phosphorus_level' => 'decimal:2',
         'potassium_level' => 'decimal:2',
         'timestamp' => 'datetime',
+        'recorded_at' => 'datetime',
     ];
 
     /**

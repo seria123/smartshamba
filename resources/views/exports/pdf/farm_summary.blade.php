@@ -124,8 +124,8 @@
                 <td>{{ $cycle->field?->name ?? 'N/A' }}</td>
                 <td>{{ $cycle->status }}</td>
                 <td>{{ $cycle->start_date?->format('Y-m-d') ?? '—' }}</td>
-                <td>{{ $cycle->end_date?->format('Y-m-d') ?? '—' }}</td>
-                <td>{{ $cycle->seed_variety ?? '—' }}</td>
+                <td>{{ $cycle->expected_harvest_date?->format('Y-m-d') ?? '—' }}</td>
+                <td>{{ $cycle->variety ?? '—' }}</td>
             </tr>
             @endforeach
             @if(($farm?->cropCycles ?? collect())->isEmpty())

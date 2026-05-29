@@ -217,7 +217,7 @@ class ReportController extends Controller
             ],
             'crop_analysis_summary' => [
                 'total_analyses' => $cropAnalyses->count(),
-                'avg_health_score' => $cropAnalyses->avg('health_score'),
+                'avg_confidence_score' => $cropAnalyses->avg('confidence_score'),
             ],
         ];
     }
@@ -292,8 +292,8 @@ class ReportController extends Controller
 
         return [
             'total_analyses' => $analyses->count(),
-            'avg_health_score' => $analyses->avg('health_score'),
-            'by_disease' => $analyses->groupBy('detected_disease')->map(function ($group) {
+            'avg_confidence_score' => $analyses->avg('confidence_score'),
+            'by_severity' => $analyses->groupBy('severity')->map(function ($group) {
                 return $group->count();
             }),
         ];

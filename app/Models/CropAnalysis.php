@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Crop;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -23,11 +24,13 @@ class CropAnalysis extends Model
         'detected_issues',
         'confidence_score',
         'status',
+        'analyzed_at',
     ];
 
     protected $casts = [
         'detected_issues' => 'array',
         'confidence_score' => 'decimal:2',
+        'analyzed_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -72,6 +75,11 @@ class CropAnalysis extends Model
         };
     }
 
+
+    public function crop()
+{
+    return $this->belongsTo(Crop::class);
+}
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {
