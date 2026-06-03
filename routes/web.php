@@ -333,6 +333,31 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/feed_usages/{feed_usage}', [FeedUsageController::class, 'destroy'])->name('feed_usages.destroy');
 });
 
+// Spraying Schedules Routes (Crop Maintenance)
+Route::middleware(['auth'])->group(function () {
+    Route::resource('spraying_schedules', \App\Http\Controllers\SprayingScheduleController::class);
+});
+
+// Pest Control Schedules Routes (Crop Maintenance)
+Route::middleware(['auth'])->group(function () {
+    Route::resource('pest_control_schedules', \App\Http\Controllers\PestControlScheduleController::class);
+});
+
+// Livestock Vaccination Schedules Routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('livestock_vaccination_schedules', \App\Http\Controllers\LivestockVaccinationScheduleController::class);
+});
+
+// Livestock Deworming Schedules Routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('livestock_deworming_schedules', \App\Http\Controllers\LivestockDewormingScheduleController::class);
+});
+
+// Livestock Fumigation Schedules Routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('livestock_fumigation_schedules', \App\Http\Controllers\LivestockFumigationScheduleController::class);
+});
+
 // Irrigation Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('irrigation', [\App\Http\Controllers\IrrigationController::class, 'index'])->name('irrigation.index');

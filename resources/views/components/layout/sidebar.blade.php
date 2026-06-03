@@ -92,6 +92,29 @@
                 </div>
             </div>
 
+            <!-- Crop Maintenance Section -->
+            <div class="relative group">
+                <button class="flex items-center space-x-2 w-full hover:bg-green-700 p-2 rounded transition-all duration-200">
+                    <i class="fas fa-spray-can w-5"></i>
+                    <span>Crop Maintenance</span>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform group-hover:rotate-180"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div class="hidden group-hover:block pl-4 space-y-1 mt-1">
+                    <a href="{{ route('spraying_schedules.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('spraying_schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-spray-can text-sm"></i>
+                        <span>Spraying Schedules</span>
+                    </a>
+                    <a href="{{ route('pest_control_schedules.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('pest_control_schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-bug text-sm"></i>
+                        <span>Pest Control</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Planning Section -->
             <a href="{{ route('planting-schedules.index') }}"
                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('planting-schedules.*') && !request()->routeIs('planting-schedules.calendar') ? 'bg-green-700 text-yellow-300' : '' }}">
@@ -131,11 +154,39 @@
                 <span>Feed Types</span>
             </a>
 
-            <a href="{{ route('feed_usages.index') }}"
-                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('feed-usages.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+<a href="{{ route('feed_usages.index') }}"
+                 class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('feed-usages.*') ? 'bg-green-700 text-yellow-300' : '' }}">
                 <i class="fas fa-leaf w-5"></i>
                 <span>Feed Usages</span>
             </a>
+
+            <!-- Livestock Care Section -->
+            <div class="relative group">
+                <button class="flex items-center space-x-2 w-full hover:bg-green-700 p-2 rounded transition-all duration-200">
+                    <i class="fas fa-heartbeat w-5"></i>
+                    <span>Livestock Care</span>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform group-hover:rotate-180"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div class="hidden group-hover:block pl-4 space-y-1 mt-1">
+                    <a href="{{ route('livestock_vaccination_schedules.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('livestock_vaccination_schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-syringe text-sm"></i>
+                        <span>Vaccination Schedules</span>
+                    </a>
+                    <a href="{{ route('livestock_deworming_schedules.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('livestock_deworming_schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-pills text-sm"></i>
+                        <span>Deworming Schedules</span>
+                    </a>
+                    <a href="{{ route('livestock_fumigation_schedules.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('livestock_fumigation_schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-wind text-sm"></i>
+                        <span>Fumigation Schedules</span>
+                    </a>
+                </div>
+            </div>
         </div>
 
 

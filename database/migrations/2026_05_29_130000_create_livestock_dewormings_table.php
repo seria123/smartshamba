@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('livestock_dewormings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('livestock_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('livestock_id')->nullable()->constrained('livestock')->nullOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('treatment_type')->default('deworming');
             $table->string('medication_name');

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('livestock_fumigations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('livestock_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('livestock_id')->nullable()->constrained('livestock')->nullOnDelete();
             $table->foreignId('farm_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('procedure_type');

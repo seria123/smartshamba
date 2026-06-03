@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('livestock_vaccination_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('livestock_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('livestock_id')->nullable()->constrained('livestock')->nullOnDelete();
             $table->foreignId('livestock_type_id')->nullable()->constrained()->nullOnDelete();
             $table->string('vaccine_name');
             $table->string('vaccine_type')->nullable();

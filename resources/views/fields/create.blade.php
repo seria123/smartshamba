@@ -183,27 +183,19 @@
                 </div>
             </div>
 
-<!-- Submit Buttons -->
-            <div class="mt-8 flex justify-between items-center">
-
-    <!-- Cancel -->
-    <a href="{{ route('fields.index') }}"
-       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-100 transition">
-        <i class="fas fa-arrow-left mr-2"></i>
-        Cancel
-    </a>
-
-    <!-- Create Button -->
-    <button type="submit"
-        class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-xl shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition duration-200">
-
-        <i class="fas fa-seedling mr-2"></i>
-        Create Field
-
-</div>
-        </form>
+<div class="mt-8 flex justify-between items-center">
+        <a href="{{ route('fields.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-100 transition">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Cancel
+        </a>
+        <button type="submit" class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-xl shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition duration-200">
+            <i class="fas fa-seedling mr-2"></i>
+            Create Field
+        </button>
     </div>
-</div>
+    </form>
+</x-ui.card>
+@endsection
 
 @push('scripts')
 <script>

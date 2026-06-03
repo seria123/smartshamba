@@ -23,6 +23,8 @@ class CropCycle extends Model
         'category',
         'variety',
         'season',
+        'current_stage',
+        'status',
         'irrigation_type',
         'irrigation_schedule',
         'drainage',

@@ -2,25 +2,20 @@
 
 @section('title', 'Add Livestock - SmartShamba')
 
-@section('header')
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800 tracking-wide">Add New Livestock</h1>
-            <p class="text-sm text-gray-500 mt-1">Enter detailed animal information for tracking</p>
-        </div>
-        <a href="{{ route('livestock.index') }}" class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <i class="fas fa-arrow-left mr-2"></i>
-            <span>Back to List</span>
-        </a>
-    </div>
-@endsection
-
 @section('content')
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800 tracking-wide">Add New Livestock</h1>
+        <p class="text-sm text-gray-500 mt-1">Enter detailed animal information for tracking</p>
+    </div>
+    <a href="{{ route('livestock.index') }}" class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800">
+        <i class="fas fa-arrow-left mr-2"></i>
+        <span>Back to List</span>
+    </a>
+</div>
 <x-ui.card style="border-left: 4px solid #6D4C41;">
-        <form action="{{ route('livestock.store') }}" method="POST" id="livestockCreateForm">
-            @csrf
-
-            <!-- Animal Type -->
+    <form action="{{ route('livestock.store') }}" method="POST" id="livestockCreateForm">
+        @csrf
             <div class="mb-6">
                 <label for="livestock_type_id" class="form-label">Animal Type *</label>
                 <select name="livestock_type_id" id="livestock_type_id" required

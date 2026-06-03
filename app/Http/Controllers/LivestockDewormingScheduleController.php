@@ -34,15 +34,43 @@ class LivestockDewormingScheduleController extends Controller
             'livestock_id' => 'nullable|exists:livestock,id',
             'livestock_type_id' => 'nullable|exists:livestock_types,id',
             'dewormer_name' => 'required|string|max:255',
-            'dewormer_type' => 'nullable|string|max:255',
+            'dewormer_type' => 'nullable|string|in:oral,injection,pour_on',
             'quantity' => 'required|numeric|min:0',
             'unit' => 'required|string|max:50',
             'scheduled_date' => 'nullable|date',
+            'administered_date' => 'nullable|date',
             'administered_by' => 'nullable|string|max:255',
             'batch_number' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'cost' => 'nullable|numeric|min:0',
             'next_due_date' => 'nullable|date',
+            // Animal Identification Details
+            'breed' => 'nullable|string|max:255',
+            'group_herd_pen' => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'weight' => 'nullable|numeric|min:0',
+            // Deworming Treatment Details
+            'manufacturer_brand' => 'nullable|string|max:255',
+            'expiry_date' => 'nullable|date',
+            // Schedule & Timing
+            'deworming_frequency' => 'nullable|string|max:50',
+            'reminder_toggle' => 'nullable|boolean',
+            'reminder_method' => 'nullable|string|max:50',
+            // Health & Condition Tracking
+            'body_condition_score' => 'nullable|numeric|between:0,10',
+            'signs_of_infection' => 'nullable|array',
+            'resistance_history' => 'nullable|array',
+            'current_weight' => 'nullable|numeric|min:0',
+            'previous_deworming_date' => 'nullable|date',
+            // Administration Details
+            'administration_method' => 'nullable|string|max:255',
+            'supervised_by' => 'nullable|string|max:255',
+            'farm_location' => 'nullable|string|max:255',
+            // Notes & Observations
+            'animal_reaction' => 'nullable|string|max:100',
+            'effectiveness' => 'nullable|string|max:100',
+            'side_effects_observed' => 'nullable|string|max:255',
+            'status' => 'required|in:scheduled,administered,missed,cancelled',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -75,7 +103,7 @@ class LivestockDewormingScheduleController extends Controller
             'livestock_id' => 'nullable|exists:livestock,id',
             'livestock_type_id' => 'nullable|exists:livestock_types,id',
             'dewormer_name' => 'required|string|max:255',
-            'dewormer_type' => 'nullable|string|max:255',
+            'dewormer_type' => 'nullable|string|in:oral,injection,pour_on',
             'quantity' => 'required|numeric|min:0',
             'unit' => 'required|string|max:50',
             'scheduled_date' => 'nullable|date',
@@ -83,9 +111,35 @@ class LivestockDewormingScheduleController extends Controller
             'administered_by' => 'nullable|string|max:255',
             'batch_number' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'status' => 'required|in:scheduled,administered,missed,cancelled',
             'cost' => 'nullable|numeric|min:0',
             'next_due_date' => 'nullable|date',
+            // Animal Identification Details
+            'breed' => 'nullable|string|max:255',
+            'group_herd_pen' => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'weight' => 'nullable|numeric|min:0',
+            // Deworming Treatment Details
+            'manufacturer_brand' => 'nullable|string|max:255',
+            'expiry_date' => 'nullable|date',
+            // Schedule & Timing
+            'deworming_frequency' => 'nullable|string|max:50',
+            'reminder_toggle' => 'nullable|boolean',
+            'reminder_method' => 'nullable|string|max:50',
+            // Health & Condition Tracking
+            'body_condition_score' => 'nullable|numeric|between:0,10',
+            'signs_of_infection' => 'nullable|array',
+            'resistance_history' => 'nullable|array',
+            'current_weight' => 'nullable|numeric|min:0',
+            'previous_deworming_date' => 'nullable|date',
+            // Administration Details
+            'administration_method' => 'nullable|string|max:255',
+            'supervised_by' => 'nullable|string|max:255',
+            'farm_location' => 'nullable|string|max:255',
+            // Notes & Observations
+            'animal_reaction' => 'nullable|string|max:100',
+            'effectiveness' => 'nullable|string|max:100',
+            'side_effects_observed' => 'nullable|string|max:255',
+            'status' => 'required|in:scheduled,administered,missed,cancelled',
         ]);
 
         $livestockDewormingSchedule->update($validated);

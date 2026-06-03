@@ -26,6 +26,32 @@ class LivestockDewormingSchedule extends Model
         'status',
         'cost',
         'next_due_date',
+        // Animal Identification Details
+        'breed',
+        'group_herd_pen',
+        'date_of_birth',
+        'weight',
+        // Deworming Treatment Details
+        'manufacturer_brand',
+        'expiry_date',
+        // Schedule & Timing
+        'deworming_frequency',
+        'reminder_toggle',
+        'reminder_method',
+        // Health & Condition Tracking
+        'body_condition_score',
+        'signs_of_infection',
+        'resistance_history',
+        'current_weight',
+        'previous_deworming_date',
+        // Administration Details
+        'administration_method',
+        'supervised_by',
+        'farm_location',
+        // Notes & Observations
+        'animal_reaction',
+        'effectiveness',
+        'side_effects_observed',
     ];
 
     protected $casts = [
@@ -34,6 +60,15 @@ class LivestockDewormingSchedule extends Model
         'scheduled_date' => 'date',
         'administered_date' => 'date',
         'next_due_date' => 'date',
+        'expiry_date' => 'date',
+        'body_condition_score' => 'decimal:2',
+        'current_weight' => 'decimal:2',
+        'weight' => 'decimal:2',
+        'date_of_birth' => 'date',
+        'previous_deworming_date' => 'date',
+        'reminder_toggle' => 'boolean',
+        'signs_of_infection' => 'array',
+        'resistance_history' => 'array',
     ];
 
     const STATUS_SCHEDULED = 'scheduled';

@@ -91,15 +91,14 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
-                 <div>
-                     <label class="block text-sm font-medium text-gray-700 mb-2">Season Type</label>
-                     <select name="season" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                         <option value="">Select season...</option>
-                         <option value="rainy">Rainy</option>
-                         <option value="dry">Dry</option>
-                         <option value="greenhouse">Greenhouse</option>
-                     </select>
-                 </div>
+                  <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Season Type</label>
+                      <select name="season" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                          <option value="">Select season...</option>
+                          <option value="rain-fed">Rain-fed</option>
+                          <option value="irrigated">Irrigated</option>
+                      </select>
+                  </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
