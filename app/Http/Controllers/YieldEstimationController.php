@@ -162,7 +162,7 @@ class YieldEstimationController extends Controller
         $yieldEstimation->delete();
 
         return redirect()
-            ->route('yield_estimations.index')
+            ->route('yield-estimations.index')
             ->with('success', 'Yield estimation deleted successfully.');
     }
 

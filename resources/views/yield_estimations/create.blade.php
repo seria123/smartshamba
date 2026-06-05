@@ -157,7 +157,7 @@
                                 <i class="fas fa-calculator"></i>
                                 <span>Create Estimation</span>
                             </button>
-                            <a href="{{ route('yield_estimations.index') }}" 
+                            <a href="{{ route('yield-estimations.index') }}" 
                                class="btn-secondary flex items-center justify-center gap-2">
                                 <i class="fas fa-arrow-left"></i>
                                 <span>Back to List</span>

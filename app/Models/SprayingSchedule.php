@@ -47,6 +47,7 @@ class SprayingSchedule extends Model
         'gear_mask',
         'gear_overalls',
         'safety_notes',
+        'chemical_id',
     ];
 
     protected $casts = [
@@ -93,5 +94,10 @@ class SprayingSchedule extends Model
     public function cropCycle(): BelongsTo
     {
         return $this->belongsTo(CropCycle::class);
+    }
+
+    public function chemical()
+    {
+        return $this->belongsTo(ChemicalType::class);
     }
 }

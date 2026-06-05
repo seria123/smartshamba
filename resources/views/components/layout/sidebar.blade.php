@@ -115,12 +115,12 @@
                 </div>
             </div>
 
-            <!-- Planning Section -->
-            <a href="{{ route('planting-schedules.index') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('planting-schedules.*') && !request()->routeIs('planting-schedules.calendar') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-calendar-alt w-5"></i>
-                <span>Planting Schedule</span>
-            </a>
+             <!-- Planning Section -->
+             <a href="{{ route('planting_schedules.index') }}"
+                class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('planting_schedules.*') && !request()->routeIs('planting_schedules.calendar') ? 'bg-green-700 text-yellow-300' : '' }}">
+                 <i class="fas fa-calendar-alt w-5"></i>
+                 <span>Planting Schedule</span>
+             </a>
            
         </div>
 
@@ -187,22 +187,87 @@
                     </a>
                 </div>
             </div>
-        </div>
 
+            <a href="{{ route('fumigation_schedules.dashboard') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('fumigation_schedules.*') && !request()->routeIs('fumigation_schedules.create') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-wind w-5"></i>
+                <span>Fumigation Dashboard</span>
+            </a>
+            <a href="{{ route('fumigation_schedules.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('fumigation_schedules.index') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-calendar-check w-5"></i>
+                <span>Fumigation Schedules</span>
+            </a>
+            <a href="{{ route('fumigation_schedules.create') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('fumigation_schedules.create') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-plus-circle w-5"></i>
+                <span>New Fumigation</span>
+            </a>
+
+         </div>
 
         <!-- Team / Staff Section (for Labor expenses) -->
         <div>
             <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Labor & Staff</h3>
-            <a href="{{ route('staff.index') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('staff.*') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-users w-5"></i>
-                <span>Manage Staff</span>
+            
+            <a href="{{ route('staff.analytics.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('staff.analytics.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-chart-bar w-5"></i>
+                <span>Analytics</span>
             </a>
-            <a href="{{ route('staff.create') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('staff.create') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-user-plus w-5"></i>
-                <span>Add Staff Member</span>
+
+            <a href="{{ route('staff.presence.fields') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('staff.presence.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-map-marker-alt w-5"></i>
+                <span>Field Presence</span>
             </a>
+
+            <div class="relative group">
+                <button class="flex items-center space-x-2 w-full hover:bg-green-700 p-2 rounded transition-all duration-200">
+                    <i class="fas fa-users w-5"></i>
+                    <span>Manage Staff</span>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform group-hover:rotate-180"></i>
+                </button>
+                
+                <div class="hidden group-hover:block pl-4 space-y-1 mt-1">
+                    <a href="{{ route('staff.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('staff.index') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-list text-sm"></i>
+                        <span>All Staff</span>
+                    </a>
+                    <a href="{{ route('staff.create') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('staff.create') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-user-plus text-sm"></i>
+                        <span>Add Staff</span>
+                    </a>
+                    <a href="{{ route('staff.schedules.index', ['staff' => 'all']) }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('staff.schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-calendar-alt text-sm"></i>
+                        <span>Schedules</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <button class="flex items-center space-x-2 w-full hover:bg-green-700 p-2 rounded transition-all duration-200">
+                    <i class="fas fa-tasks w-5"></i>
+                    <span>Field Management</span>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform group-hover:rotate-180"></i>
+                </button>
+                
+                <div class="hidden group-hover:block pl-4 space-y-1 mt-1">
+                    <a href="{{ route('fields.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('fields.*') && !request()->routeIs('fields.create') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-map text-sm"></i>
+                        <span>All Fields</span>
+                    </a>
+                    <a href="{{ route('fields.create') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('fields.create') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-plus-circle text-sm"></i>
+                        <span>Add Field</span>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Finance Section -->
@@ -237,8 +302,8 @@
                 <i class="fas fa-chart-line w-5"></i>
                 <span>Reports</span>
             </a>
-            <a href="{{ route('yield_estimations.index') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('yield_estimations.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+            <a href="{{ route('yield-estimations.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('yield-estimations.*') ? 'bg-green-700 text-yellow-300' : '' }}">
                 <i class="fas fa-chart-pie w-5"></i>
                 <span>Yield Analysis</span>
             </a>

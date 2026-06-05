@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800 tracking-wide">Edit Planting Schedule</h1>
-        <a href="{{ route('planting-schedules.index') }}" class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800">
+        <a href="{{ route('planting_schedules.index') }}" class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800">
             <i class="fas fa-arrow-left mr-2"></i>
             <span>Back to List</span>
         </a>
@@ -14,10 +14,10 @@
 
 @section('content')
 <div class="space-y-6">
-    <x-ui.card>
-        <form action="{{ route('planting-schedules.update', $plantingSchedule->id) }}" method="POST" id="scheduleEditForm">
-            @csrf
-            @method('PUT')
+         <x-ui.card>
+             <form action="{{ route('planting_schedules.update', $plantingSchedule->id) }}" method="POST" id="scheduleEditForm">
+                 @csrf
+                 @method('PUT')
 
             <!-- Crop Selection -->
             <div class="mb-6">

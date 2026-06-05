@@ -3,7 +3,6 @@
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col gap-4">
-        {{-- Header --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div class="flex items-center gap-3">
                 <div class="bg-primary text-white rounded-lg p-2">
@@ -19,7 +18,6 @@
             </a>
         </div>
 
-        {{-- Error Alert --}}
         @if ($errors->any())
             <div class="bg-red-100 text-red-800 p-3 rounded">
                 <strong>Please fix the following errors:</strong>
@@ -31,12 +29,10 @@
             </div>
         @endif
 
-        {{-- Form Card --}}
         <div class="card-modern p-4 sm:p-6">
             <form action="{{ route('staff.store') }}" method="POST" class="space-y-6">
                 @csrf
 
-                {{-- Personal Information Section --}}
                 <div>
                     <h5 class="text-primary fw-bold mb-3 flex items-center gap-2">
                         <i class="fas fa-user"></i> Personal Information
@@ -64,10 +60,31 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div>
+                            <label for="email" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-input-modern @error('email') is-invalid @enderror"
+                                    id="email" name="email" value="{{ old('email') }}" placeholder="email@example.com">
+                            </div>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="employee_id" class="form-label">Employee ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-id-badge"></i></span>
+                                <input type="text" class="form-input-modern @error('employee_id') is-invalid @enderror"
+                                    id="employee_id" name="employee_id" value="{{ old('employee_id') }}" placeholder="EMP-001">
+                            </div>
+                            @error('employee_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
-                {{-- Contact & Identity Section --}}
                 <div>
                     <h5 class="text-primary fw-bold mb-3 flex items-center gap-2">
                         <i class="fas fa-address-card"></i> Contact & Identity
@@ -134,7 +151,6 @@
                     </div>
                 </div>
 
-                {{-- Assignment & Role Section --}}
                 <div>
                     <h5 class="text-primary fw-bold mb-3 flex items-center gap-2">
                         <i class="fas fa-briefcase"></i> Assignment Details
@@ -163,13 +179,16 @@
                                 <span class="input-group-text bg-light"><i class="fas fa-user-tag"></i></span>
                                 <select class="form-select-modern @error('role') is-invalid @enderror" id="role" name="role" required>
                                     <option value="">-- Select Role --</option>
-                                    <option value="general_worker" {{ old('role') == 'general_worker' ? 'selected' : '' }}>General Worker</option>
-                                    <option value="supervisor" {{ old('role') == 'supervisor' ? 'selected' : '' }}>Supervisor</option>
-                                    <option value="technician" {{ old('role') == 'technician' ? 'selected' : '' }}>Technician</option>
-                                    <option value="driver" {{ old('role') == 'driver' ? 'selected' : '' }}>Driver</option>
-                                    <option value="harvester" {{ old('role') == 'harvester' ? 'selected' : '' }}>Harvester</option>
-                                    <option value="planting" {{ old('role') == 'planting' ? 'selected' : '' }}>Planting Specialist</option>
-                                    <option value="irrigation" {{ old('role') == 'irrigation' ? 'selected' : '' }}>Irrigation Specialist</option>
+                                    <option value="manager">Manager</option>
+                                    <option value="supervisor">Supervisor</option>
+                                    <option value="worker">Worker</option>
+                                    <option value="agronomist">Agronomist</option>
+                                    <option value="general_worker">General Worker</option>
+                                    <option value="technician">Technician</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="harvester">Harvester</option>
+                                    <option value="planting">Planting Specialist</option>
+                                    <option value="irrigation">Irrigation Specialist</option>
                                 </select>
                             </div>
                             @error('role')
@@ -190,6 +209,20 @@
                             @enderror
                         </div>
                         <div>
+                            <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-file-contract"></i></span>
+                                <select class="form-select-modern @error('employment_type') is-invalid @enderror" id="employment_type" name="employment_type" required>
+                                    <option value="permanent">Permanent</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="seasonal">Seasonal</option>
+                                </select>
+                            </div>
+                            @error('employment_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div>
                             <label for="daily_wage" class="form-label">Daily Wage (KES) <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">KES</span>
@@ -200,26 +233,9 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div>
-                            <label for="payment_type" class="form-label">Payment Type <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light"><i class="fas fa-money-bill-wave"></i></span>
-                                <select class="form-select-modern @error('payment_type') is-invalid @enderror" id="payment_type" name="payment_type" required>
-                                    <option value="">-- Select Type --</option>
-                                    <option value="daily" {{ old('payment_type') == 'daily' ? 'selected' : '' }}>Daily</option>
-                                    <option value="weekly" {{ old('payment_type') == 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                    <option value="monthly" {{ old('payment_type') == 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                    <option value="piece_rate" {{ old('payment_type') == 'piece_rate' ? 'selected' : '' }}>Piece Rate</option>
-                                </select>
-                            </div>
-                            @error('payment_type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
                     </div>
                 </div>
 
-                {{-- Status Section --}}
                 <div>
                     <h5 class="text-primary fw-bold mb-3 flex items-center gap-2">
                         <i class="fas fa-user-shield"></i> Status & Termination
@@ -253,7 +269,6 @@
                     </div>
                 </div>
 
-                {{-- Emergency Contact Section --}}
                 <div>
                     <h5 class="text-primary fw-bold mb-3 flex items-center gap-2">
                         <i class="fas fa-exclamation-circle"></i> Emergency Contact
@@ -284,7 +299,6 @@
                     </div>
                 </div>
 
-                {{-- Additional Notes --}}
                 <div>
                     <h5 class="text-primary fw-bold mb-3 flex items-center gap-2">
                         <i class="fas fa-sticky-note"></i> Additional Notes
@@ -299,7 +313,6 @@
                     </div>
                 </div>
 
-                {{-- Action Buttons --}}
                 <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
                     <a href="{{ route('staff.index') }}" class="btn btn-outline-secondary text-center">
                         <i class="fas fa-times me-2"></i> Cancel

@@ -6,6 +6,7 @@ use App\Models\Crop;
 use App\Models\Field;
 use App\Models\CropCycle;
 use App\Models\SprayingSchedule;
+use App\Models\ChemicalType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,8 +28,9 @@ class SprayingScheduleController extends Controller
         $fields = Field::where('user_id', Auth::id())->get();
         $cropCycles = CropCycle::whereHas('field', function($q) { $q->where('user_id', Auth::id()); })
             ->orWhereHas('farm', function($q) { $q->where('user_id', Auth::id()); })->get();
+        $chemicalTypes = ChemicalType::all()->pluck('name', 'id');
 
-        return view('spraying_schedules.create', compact('crops', 'fields', 'cropCycles'));
+        return view('spraying_schedules.create', compact('crops', 'fields', 'cropCycles', 'chemicalTypes'));
     }
 
     public function store(Request $request)
@@ -42,7 +44,7 @@ class SprayingScheduleController extends Controller
             'planting_date' => 'nullable|date',
             'growth_stage' => 'nullable|string|max:255',
             'spray_type' => 'required|string|in:pesticide,herbicide,fungicide,insecticide',
-            'chemical_name' => 'required|string|max:255',
+            'chemical_id' => 'required|exists:chemical_types,id',
             'active_ingredient' => 'nullable|string|max:255',
             'target_pest_disease' => 'nullable|string|max:255',
             'quantity' => 'required|numeric|min:0',
@@ -70,6 +72,9 @@ class SprayingScheduleController extends Controller
         ]);
 
         $validated['user_id'] = Auth::id();
+        $chemicalType = ChemicalType::find($validated['chemical_id']);
+        $validated['chemical_name'] = $chemicalType->name;
+
         SprayingSchedule::create($validated);
 
         return redirect()->route('spraying_schedules.index')
@@ -89,8 +94,9 @@ class SprayingScheduleController extends Controller
         $fields = Field::where('user_id', Auth::id())->get();
         $cropCycles = CropCycle::whereHas('field', function($q) { $q->where('user_id', Auth::id()); })
             ->orWhereHas('farm', function($q) { $q->where('user_id', Auth::id()); })->get();
+        $chemicalTypes = ChemicalType::all()->pluck('name', 'id');
 
-        return view('spraying_schedules.edit', compact('sprayingSchedule', 'crops', 'fields', 'cropCycles'));
+        return view('spraying_schedules.edit', compact('sprayingSchedule', 'crops', 'fields', 'cropCycles', 'chemicalTypes'));
     }
 
     public function update(Request $request, SprayingSchedule $sprayingSchedule)
@@ -106,7 +112,7 @@ class SprayingScheduleController extends Controller
             'planting_date' => 'nullable|date',
             'growth_stage' => 'nullable|string|max:255',
             'spray_type' => 'required|string|in:pesticide,herbicide,fungicide,insecticide',
-            'chemical_name' => 'required|string|max:255',
+            'chemical_id' => 'required|exists:chemical_types,id',
             'active_ingredient' => 'nullable|string|max:255',
             'target_pest_disease' => 'nullable|string|max:255',
             'quantity' => 'required|numeric|min:0',
@@ -134,6 +140,10 @@ class SprayingScheduleController extends Controller
             'status' => 'required|in:scheduled,completed,cancelled',
             'cost' => 'nullable|numeric|min:0',
         ]);
+
+        $validated['user_id'] = Auth::id();
+        $chemicalType = ChemicalType::find($validated['chemical_id']);
+        $validated['chemical_name'] = $chemicalType->name;
 
         $sprayingSchedule->update($validated);
 

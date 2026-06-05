@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800 tracking-wide">Create Planting Schedule</h1>
-        <a href="{{ route('planting-schedules.index') }}" class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800">
+        <a href="{{ route('planting_schedules.index') }}" class="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-800">
             <i class="fas fa-arrow-left mr-2"></i>
             <span>Back to List</span>
         </a>
@@ -13,10 +13,10 @@
 @endsection
 
 @section('content')
-<div class="space-y-6">
-    <x-ui.card>
-        <form action="{{ route('planting-schedules.store') }}" method="POST" id="scheduleCreateForm">
-            @csrf
+            <div class="space-y-6">
+        <x-ui.card>
+            <form action="{{ route('planting_schedules.store') }}" method="POST" id="scheduleCreateForm">
+                @csrf
 
             <!-- Crop Selection -->
             <div class="mb-6">
@@ -201,18 +201,18 @@
             </div>
 
             <!-- Submit -->
-            <div class="mt-8 flex justify-between items-center">
-                <a href="{{ route('planting-schedules.index') }}"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-100 transition">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Cancel
-                </a>
-                <button type="submit"
-                    class="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl shadow-md hover:bg-emerald-700 hover:shadow-lg active:scale-95 transition">
-                    <i class="fas fa-plus mr-2"></i>
-                    Create Schedule
-                </button>
-            </div>
+             <div class="mt-8 flex justify-between items-center">
+                 <a href="{{ route('planting_schedules.index') }}"
+                     class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-100 transition">
+                     <i class="fas fa-arrow-left mr-2"></i>
+                     Cancel
+                 </a>
+                 <button type="submit"
+                     class="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl shadow-md hover:bg-emerald-700 hover:shadow-lg active:scale-95 transition">
+                     <i class="fas fa-plus mr-2"></i>
+                     Create Schedule
+                 </button>
+             </div>
         </form>
     </x-ui.card>
 </div>

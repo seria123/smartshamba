@@ -153,7 +153,7 @@ class PlantingScheduleController extends Controller
         $planting = PlantingSchedule::create($validated);
 
         return redirect()
-            ->route('planting-schedules.index')
+            ->route('planting_schedules.index')
             ->with('success', 'Planting schedule created successfully.');
     }
 
@@ -210,7 +210,7 @@ class PlantingScheduleController extends Controller
         $plantingSchedule->update($validated);
 
         return redirect()
-            ->route('planting-schedules.index')
+            ->route('planting_schedules.index')
             ->with('success', 'Planting schedule updated successfully.');
     }
 
@@ -226,11 +226,11 @@ class PlantingScheduleController extends Controller
     public function destroy(PlantingSchedule $plantingSchedule)
     {
         $this->authorizeAccess($plantingSchedule);
-        $plantingSchedule->delete();
+         $plantingSchedule->delete();
 
-        return redirect()
-            ->route('planting-schedules.index')
-            ->with('success', 'Planting schedule deleted successfully.');
+         return redirect()
+             ->route('planting_schedules.index')
+             ->with('success', 'Planting schedule deleted successfully.');
     }
 
     /**

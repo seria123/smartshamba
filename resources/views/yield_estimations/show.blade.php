@@ -20,7 +20,7 @@
                     <i class="fas fa-edit"></i>
                     <span>Edit</span>
                 </a>
-                <a href="{{ route('yield_estimations.index') }}" 
+                <a href="{{ route('yield-estimations.index') }}" 
                    class="btn-secondary flex items-center gap-2">
                     <i class="fas fa-arrow-left"></i>
                     <span>Back</span>

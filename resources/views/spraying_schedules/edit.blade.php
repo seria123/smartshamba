@@ -94,10 +94,15 @@
                     </select>
                 </div>
 
-                <div>
-                    <label for="chemical_name" class="block text-sm font-medium text-gray-700 mb-2">Chemical/Product Name *</label>
-                    <input type="text" name="chemical_name" id="chemical_name" value="{{ old('chemical_name', $sprayingSchedule->chemical_name) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" required>
-                </div>
+                 <div>
+                     <label for="chemical_id" class="block text-sm font-medium text-gray-700 mb-2">Chemical/Product Name *</label>
+                     <select name="chemical_id" id="chemical_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" required>
+                         <option value="">Select Chemical</option>
+                         @foreach($chemicalTypes as $id => $name)
+                             <option value="{{ $id }}" {{ old('chemical_id', $sprayingSchedule->chemical_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                         @endforeach
+                     </select>
+                 </div>
 
                 <div>
                     <label for="active_ingredient" class="block text-sm font-medium text-gray-700 mb-2">Active Ingredient</label>

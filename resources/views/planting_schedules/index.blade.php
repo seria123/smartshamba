@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800 tracking-wide">Planting Schedules</h1>
-        <a href="{{ route('planting-schedules.create') }}" class="inline-flex items-center space-x-2 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white px-6 py-4 rounded-xl border-2 border-emerald-800 hover:border-emerald-600 transition-all duration-200 shadow-sm hover:shadow-md font-semibold">
+        <a href="{{ route('planting_schedules.create') }}" class="inline-flex items-center space-x-2 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white px-6 py-4 rounded-xl border-2 border-emerald-800 hover:border-emerald-600 transition-all duration-200 shadow-sm hover:shadow-md font-semibold">
             <i class="fas fa-plus text-lg"></i>
             <span>Add Schedule</span>
         </a>
@@ -37,19 +37,19 @@
         </x-ui.card>
     </div>
 
-    <!-- Calendar Quick Link -->
-    <x-ui.card>
-        <div class="flex items-center justify-between">
-            <div>
-                <h3 class="font-bold text-lg text-gray-800">View Calendar</h3>
-                <p class="text-sm text-gray-500 mt-1">Visualize planting schedules across the year</p>
-            </div>
-            <a href="{{ route('planting-schedules.calendar') }}" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Open Calendar</span>
-            </a>
-        </div>
-    </x-ui.card>
+     <!-- Calendar Quick Link -->
+     <x-ui.card>
+         <div class="flex items-center justify-between">
+             <div>
+                 <h3 class="font-bold text-lg text-gray-800">View Calendar</h3>
+                 <p class="text-sm text-gray-500 mt-1">Visualize planting schedules across the year</p>
+             </div>
+             <a href="{{ route('planting_schedules.calendar') }}" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition">
+                 <i class="fas fa-calendar-alt"></i>
+                 <span>Open Calendar</span>
+             </a>
+         </div>
+     </x-ui.card>
 
     <!-- Upcoming Plantings -->
     <x-ui.card>
@@ -75,18 +75,18 @@
                             <p class="text-sm font-semibold text-gray-900">{{ $schedule->planting_date->format('M d, Y') }}</p>
                             <p class="text-xs text-gray-500">{{ ucfirst($schedule->status) }}</p>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <a href="{{ route('planting-schedules.edit', $schedule->id) }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                Edit
-                            </a>
-                            <form action="{{ route('planting-schedules.destroy', $schedule->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-700 text-sm font-medium" onclick="return confirm('Delete this schedule?')">
-                                    Delete
-                                </button>
-                            </form>
-                        </div>
+                         <div class="flex items-center space-x-2">
+                             <a href="{{ route('planting_schedules.edit', $schedule->id) }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                 Edit
+                             </a>
+                             <form action="{{ route('planting_schedules.destroy', $schedule->id) }}" method="POST" class="inline">
+                                 @csrf
+                                 @method('DELETE')
+                                 <button type="submit" class="text-red-600 hover:text-red-700 text-sm font-medium" onclick="return confirm('Delete this schedule?')">
+                                     Delete
+                                 </button>
+                             </form>
+                         </div>
                     </div>
                 @endforeach
             </div>
@@ -184,23 +184,23 @@
                                     <span class="text-sm text-gray-600">{{ $schedule->completion_percentage }}%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center gap-2">
-                                    <a href="{{ route('planting-schedules.show', $schedule->id) }}" class="text-emerald-600 hover:text-emerald-700" title="View">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('planting-schedules.edit', $schedule->id) }}" class="text-blue-600 hover:text-blue-700" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('planting-schedules.destroy', $schedule->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-700" title="Delete" onclick="return confirm('Are you sure you want to delete this schedule?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                 <div class="flex items-center gap-2">
+                                     <a href="{{ route('planting_schedules.show', $schedule->id) }}" class="text-emerald-600 hover:text-emerald-700" title="View">
+                                         <i class="fas fa-eye"></i>
+                                     </a>
+                                     <a href="{{ route('planting_schedules.edit', $schedule->id) }}" class="text-blue-600 hover:text-blue-700" title="Edit">
+                                         <i class="fas fa-edit"></i>
+                                     </a>
+                                     <form action="{{ route('planting_schedules.destroy', $schedule->id) }}" method="POST" class="inline">
+                                         @csrf
+                                         @method('DELETE')
+                                         <button type="submit" class="text-red-600 hover:text-red-700" title="Delete" onclick="return confirm('Are you sure you want to delete this schedule?')">
+                                             <i class="fas fa-trash"></i>
+                                         </button>
+                                     </form>
+                                 </div>
+                             </td>
                         </tr>
                     @empty
                         <tr>

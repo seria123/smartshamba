@@ -18,11 +18,15 @@ class Staff extends Model
         'farm_id',
         'first_name',
         'last_name',
+        'email',
         'phone',
+        'profile_photo',
         'national_id',
+        'employee_id',
         'date_of_birth',
         'gender',
         'role',
+        'employment_type',
         'daily_wage',
         'payment_type',
         'address',
@@ -33,6 +37,7 @@ class Staff extends Model
         'status',
         'notes',
         'available_equipment',
+        'current_field_id',
     ];
 
     protected $casts = [
@@ -56,6 +61,18 @@ class Staff extends Model
     const ROLE_PLANTING = 'planting';
 
     const ROLE_IRRIGATION = 'irrigation';
+
+    const ROLE_MANAGER = 'manager';
+
+    const ROLE_WORKER = 'worker';
+
+    const ROLE_AGRONOMIST = 'agronomist';
+
+    const EMPLOYMENT_PERMANENT = 'permanent';
+
+    const EMPLOYMENT_CASUAL = 'casual';
+
+    const EMPLOYMENT_SEASONAL = 'seasonal';
 
     const PAYMENT_DAILY = 'daily';
 
@@ -95,6 +112,56 @@ class Staff extends Model
     {
         return $this->belongsToMany(Activity::class, 'activity_staff')
             ->withTimestamps();
+    }
+
+    public function currentField(): BelongsTo
+    {
+        return $this->belongsTo(Field::class, 'current_field_id');
+    }
+
+    public function fieldAssignments(): HasMany
+    {
+        return $this->hasMany(StaffFieldAssignment::class);
+    }
+
+    public function activeFieldAssignments(): HasMany
+    {
+        return $this->hasMany(StaffFieldAssignment::class)->active();
+    }
+
+    public function skills(): HasMany
+    {
+        return $this->hasMany(StaffSkill::class);
+    }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(StaffSchedule::class);
+    }
+
+    public function performanceReviews(): HasMany
+    {
+        return $this->hasMany(StaffPerformanceReview::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(StaffNotification::class);
+    }
+
+    public function proofsOfWork(): HasMany
+    {
+        return $this->hasMany(StaffProofOfWork::class);
+    }
+
+    public function locations(): HasMany
+    {
+        return $this->hasMany(StaffLocation::class);
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(StaffActivityLog::class);
     }
 
     public function fullName(): string
@@ -147,5 +214,64 @@ class Staff extends Model
         }
 
         return $hours * ($this->daily_wage / 8);
+    }
+
+    public function getPerformanceScoreAttribute(): ?float
+    {
+        $latestReview = $this->performanceReviews()->latest()->first();
+        return $latestReview?->overall_score;
+    }
+
+    public function getAttendanceRateAttribute(): ?float
+    {
+        $latestReview = $this->performanceReviews()->latest()->first();
+        return $latestReview?->attendance_rate;
+    }
+
+    public function getTasksCompletedCount(int $year, int $month): int
+    {
+        return $this->tasks()
+            ->whereYear('completed_date', $year)
+            ->whereMonth('completed_date', $month)
+            ->where('status', Task::STATUS_COMPLETED)
+            ->count();
+    }
+
+    public function getUnreadNotificationsCountAttribute(): int
+    {
+        return $this->notifications()->unread()->count();
+    }
+
+    public function getTasksCountAttribute(): int
+    {
+        return $this->tasks()->where('status', Task::STATUS_PENDING)->count();
+    }
+
+    public function getActiveLocationAttribute(): ?StaffLocation
+    {
+        return $this->locations()->whereNotNull('checked_in_at')->whereNull('checked_out_at')->latest('checked_in_at')->first();
+    }
+
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_ACTIVE => 'success',
+            self::STATUS_INACTIVE => 'warning',
+            self::STATUS_TERMINATED => 'secondary',
+            default => 'secondary',
+        };
+    }
+
+    public function getRoleBadgeColorAttribute(): string
+    {
+        return match ($this->role) {
+            self::ROLE_MANAGER => 'danger',
+            self::ROLE_SUPERVISOR => 'primary',
+            self::ROLE_TECHNICIAN => 'info',
+            self::ROLE_HARVESTER => 'success',
+            self::ROLE_PLANTING => 'success',
+            self::ROLE_IRRIGATION => 'info',
+            default => 'secondary',
+        };
     }
 }

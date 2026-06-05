@@ -125,7 +125,7 @@
                             </div>
                             @endforeach
                         </div>
-                        <a href="{{ route('yield_estimations.index') }}" 
+                        <a href="{{ route('yield-estimations.index') }}" 
                            class="mt-4 w-full inline-flex items-center justify-center gap-2 text-amber-600 hover:text-amber-700">
                             <i class="fas fa-arrow-right"></i>
                             View All Estimations
