@@ -32,7 +32,7 @@
 
         {{-- Form Card --}}
         <div class="card-modern p-4 sm:p-6">
-            <form action="{{ route('revenues.update', $revenue) }}" method="POST" class="space-y-6">
+            <form action="{{ route('revenues.update', $revenue) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -66,6 +66,14 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label for="income_type" class="form-label">Income Type <span class="text-danger">*</span></label>
+                            <select name="income_type" id="income_type" class="form-select-modern" required>
+                                @foreach(['crop_sale' => 'Crop Sale', 'livestock_sale' => 'Livestock Sale', 'milk' => 'Milk', 'eggs' => 'Eggs', 'animal_sale' => 'Animal Sale', 'by_product' => 'By-product', 'grant' => 'Grant', 'subsidy' => 'Subsidy', 'contract' => 'Contract', 'other' => 'Other'] as $value => $label)
+                                    <option value="{{ $value }}" {{ old('income_type', $revenue->income_type ?? 'crop_sale') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div>
                             <label for="buyer_id" class="form-label">Buyer (Optional)</label>
                             <select name="buyer_id" class="form-select-modern">
@@ -147,6 +155,13 @@
                             <input type="text" name="invoice_number" id="invoice_number"
                                 class="form-input-modern" value="{{ old('invoice_number', $revenue->invoice_number) }}"
                                 placeholder="INV-2026-001">
+                        </div>
+                        <div>
+                            <label for="receipt" class="form-label">Receipt / Proof</label>
+                            <input type="file" name="receipt" id="receipt" class="form-input-modern" accept=".jpg,.jpeg,.png,.pdf">
+                            @if($revenue->receipt_path)
+                                <small class="text-muted">Existing receipt saved.</small>
+                            @endif
                         </div>
                         <div>
                             <label for="payment_status" class="form-label">Payment Status</label>

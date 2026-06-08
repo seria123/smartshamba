@@ -12,7 +12,7 @@ class RevenueController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Revenue::with(['farm', 'crop', 'buyer']);
+        $query = Revenue::with(['farm', 'crop', 'livestock', 'buyer']);
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -69,15 +69,17 @@ class RevenueController extends Controller
             'crop_id' => 'nullable|exists:crops,id',
             'livestock_id' => 'nullable|exists:livestock,id',
             'buyer_id' => 'nullable|exists:buyers,id',
+            'income_type' => 'required|in:crop_sale,livestock_sale,milk,eggs,animal_sale,by_product,grant,subsidy,contract,other',
             'amount' => 'required|numeric|min:0',
             'sale_date' => 'required|date',
             'quantity_sold' => 'nullable|numeric|min:0',
             'unit' => 'nullable|string',
             'price_per_unit' => 'nullable|numeric|min:0',
-            'payment_status' => 'nullable|in:pending,partial,paid',
+            'payment_status' => 'nullable|in:pending,partial,paid,overdue',
             'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',
             'invoice_number' => 'nullable|string',
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:4096',
             'notes' => 'nullable|string',
         ]);
 
@@ -87,6 +89,10 @@ class RevenueController extends Controller
             isset($validated['quantity_sold']) && 
             $validated['quantity_sold'] > 0) {
             $validated['price_per_unit'] = $validated['amount'] / $validated['quantity_sold'];
+        }
+
+        if ($request->hasFile('receipt')) {
+            $validated['receipt_path'] = $request->file('receipt')->store('receipts/revenues', 'public');
         }
 
         Revenue::create($validated);
@@ -111,15 +117,17 @@ class RevenueController extends Controller
             'crop_id' => 'nullable|exists:crops,id',
             'livestock_id' => 'nullable|exists:livestock,id',
             'buyer_id' => 'nullable|exists:buyers,id',
+            'income_type' => 'required|in:crop_sale,livestock_sale,milk,eggs,animal_sale,by_product,grant,subsidy,contract,other',
             'amount' => 'required|numeric|min:0',
             'sale_date' => 'required|date',
             'quantity_sold' => 'nullable|numeric|min:0',
             'unit' => 'nullable|string',
             'price_per_unit' => 'nullable|numeric|min:0',
-            'payment_status' => 'nullable|in:pending,partial,paid',
+            'payment_status' => 'nullable|in:pending,partial,paid,overdue',
             'payment_date' => 'nullable|date',
             'payment_method' => 'nullable|string',
             'invoice_number' => 'nullable|string',
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:4096',
             'notes' => 'nullable|string',
         ]);
 
@@ -129,6 +137,10 @@ class RevenueController extends Controller
             isset($validated['quantity_sold']) && 
             $validated['quantity_sold'] > 0) {
             $validated['price_per_unit'] = $validated['amount'] / $validated['quantity_sold'];
+        }
+
+        if ($request->hasFile('receipt')) {
+            $validated['receipt_path'] = $request->file('receipt')->store('receipts/revenues', 'public');
         }
 
         $revenue->update($validated);

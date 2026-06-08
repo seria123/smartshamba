@@ -9,7 +9,7 @@
                     <h4 class="card-title mb-0">Create Expense</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('expenses.store') }}" method="POST">
+                    <form action="{{ route('expenses.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="row mb-4">
@@ -31,6 +31,19 @@
                                         <option value="">Select Crop</option>
                                         @foreach(\App\Models\Crop::all() as $crop)
                                         <option value="{{ $crop->id }}">{{ $crop->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Animal (Optional)</label>
+                                    <select name="livestock_id" class="form-select">
+                                        <option value="">Select Animal</option>
+                                        @foreach(\App\Models\Livestock::all() as $animal)
+                                        <option value="{{ $animal->id }}" {{ old('livestock_id') == $animal->id ? 'selected' : '' }}>
+                                            {{ $animal->tag_number }} {{ $animal->name ? '- '.$animal->name : '' }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -76,9 +89,12 @@
                                                         'fertilizer' => 'Fertilizer',
                                                         'seeds' => 'Seeds',
                                                         'pesticides' => 'Pesticides',
+                                                        'animal_feed' => 'Animal Feed',
+                                                        'veterinary' => 'Veterinary',
                                                         'fuel' => 'Fuel',
                                                         'maintenance' => 'Maintenance',
                                                         'transport' => 'Transport',
+                                                        'utilities' => 'Utilities',
                                                         'other' => 'Other'
                                             ];
                                         @endphp
@@ -148,6 +164,39 @@
                                 <div class="mb-3">
                                     <label class="form-label">Receipt Number</label>
                                     <input type="text" name="receipt_number" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Receipt / Photo</label>
+                                    <input type="file" name="receipt" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mt-4">
+                                    <input type="hidden" name="is_recurring" value="0">
+                                    <input class="form-check-input" type="checkbox" name="is_recurring" value="1" id="is_recurring" {{ old('is_recurring') ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_recurring">Recurring expense</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Recurrence</label>
+                                    <select name="recurrence_interval" class="form-select">
+                                        <option value="">Select interval</option>
+                                        @foreach(['weekly','monthly','seasonal','yearly'] as $interval)
+                                        <option value="{{ $interval }}" {{ old('recurrence_interval') === $interval ? 'selected' : '' }}>{{ Str::headline($interval) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Next Due Date</label>
+                                    <input type="date" name="next_due_date" class="form-control" value="{{ old('next_due_date') }}">
                                 </div>
                             </div>
                         </div>

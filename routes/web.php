@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AlertController;
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CropAnalysisController;
 use App\Http\Controllers\CropController;
 use App\Http\Controllers\CropCycleController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\CropAnalysisImageController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\FertilizerApplicationController;
 use App\Http\Controllers\FertilizerController;
 use App\Http\Controllers\FertilizerTypeController;
@@ -27,6 +29,7 @@ use App\Http\Controllers\IrrigationController;
 use App\Http\Controllers\IrrigationZoneController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\YieldEstimationController;
 use App\Http\Controllers\RevenueController;
 use App\Http\Controllers\SensorReadingController;
@@ -117,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('sensor_readings', SensorReadingController::class);
     Route::resource('harvests', HarvestController::class);
     Route::resource('revenues', RevenueController::class);
+    Route::post('revenues/{revenue}/mark-as-paid', [RevenueController::class, 'markAsPaid'])->name('revenues.markAsPaid');
     Route::resource('buyers', BuyerController::class);
     Route::resource('orders', OrderController::class);
     Route::resource('feed_types', FeedTypeController::class);
@@ -167,23 +171,38 @@ Route::get('staff/{staff}/analytics', [StaffAnalyticsController::class, 'show'])
     Route::resource('staff.locations', StaffLocationController::class)->shallow();
     Route::resource('staff.activity_logs', StaffActivityLogController::class)->shallow();
 Route::resource('staff', StaffController::class);
+Route::get('/expenses/summary', [ExpenseController::class, 'summary'])
+    ->name('expenses.summary');
 Route::resources([
     'expenses' => ExpenseController::class,
 ]);
+Route::get('finance', [FinanceController::class, 'dashboard'])->name('finance.dashboard');
+Route::resource('budgets', BudgetController::class)->except(['show']);
+Route::resource('loans', LoanController::class)->except(['show']);
 Route::resource('reports', ReportController::class);
 Route::resource('yield-estimations', YieldEstimationController::class);
-Route::get('/expenses/summary', [ExpenseController::class, 'summary'])
-    ->name('expenses.summary');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('settings', [SettingsController::class, 'store'])->name('settings.store');
 });
 Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
-Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/comments/{comment}/react', [CommentController::class, 'react'])->name('comments.react');
+    Route::post('/comments/{comment}/report', [CommentController::class, 'report'])->name('comments.report');
+    Route::post('/comments/{comment}/moderate', [CommentController::class, 'moderate'])->name('comments.moderate');
+    Route::post('/comments/{comment}/convert', [CommentController::class, 'convert'])->name('comments.convert');
+});
 
-Route::get('/support-tickets', [SupportTicketController::class, 'index'])
-    ->name('support-tickets.index');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/support-tickets/chat', [SupportTicketController::class, 'chat'])->name('support-tickets.chat');
+    Route::get('/support-tickets/knowledge-base', [SupportTicketController::class, 'knowledgeBase'])->name('support-tickets.knowledge-base');
+    Route::post('/support-tickets/{supportTicket}/rate', [SupportTicketController::class, 'rate'])->name('support-tickets.rate');
+    Route::resource('support-tickets', SupportTicketController::class)->only(['index', 'create', 'store', 'show']);
+});
 
 
 

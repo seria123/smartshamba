@@ -175,6 +175,67 @@ class OpenAIService
         }
     }
 
+    public function answerSupportQuestion(string $question, array $context = [], array $knowledgeArticles = []): string
+    {
+        if (empty($this->apiKey) || $this->apiKey === 'your_openai_api_key_here') {
+            Log::warning('OpenAI: No API key configured for support help bot');
+
+            return '';
+        }
+
+        try {
+            $knowledge = collect($knowledgeArticles)
+                ->take(5)
+                ->map(function (array $article) {
+                    return [
+                        'title' => $article['title'] ?? '',
+                        'category' => $article['category'] ?? '',
+                        'summary' => $article['summary'] ?? '',
+                        'steps' => $article['steps'] ?? [],
+                    ];
+                })
+                ->values()
+                ->all();
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '.$this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->timeout(20)->post('https://api.openai.com/v1/chat/completions', [
+                'model' => config('services.openai.model', $this->model),
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'You are SmartShamba Farm Help Bot, a practical support assistant for Kenyan farmers. Give concise, safe, actionable answers. Use the provided farm context and help articles when relevant. If the issue could be serious, advise opening a support ticket and contacting a qualified agronomist or vet.',
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => json_encode([
+                            'question' => $question,
+                            'farm_context' => $context,
+                            'knowledge_base_matches' => $knowledge,
+                            'response_style' => 'Answer in short paragraphs. Include immediate steps and when to escalate.',
+                        ]),
+                    ],
+                ],
+                'max_tokens' => 700,
+                'temperature' => 0.4,
+            ]);
+
+            if ($response->successful()) {
+                return trim($response->json('choices.0.message.content', ''));
+            }
+
+            Log::error('OpenAI support bot error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('OpenAI support bot exception', ['message' => $e->getMessage()]);
+        }
+
+        return '';
+    }
+
     protected function parseOpenAIResponse(string $content): array
     {
         return [

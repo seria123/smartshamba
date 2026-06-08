@@ -180,11 +180,8 @@
                         <i class="fas fa-pills text-sm"></i>
                         <span>Deworming Schedules</span>
                     </a>
-                    <a href="{{ route('livestock_fumigation_schedules.index') }}"
-                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('livestock_fumigation_schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
-                        <i class="fas fa-wind text-sm"></i>
-                        <span>Fumigation Schedules</span>
-                    </a>
+                   
+                  
                 </div>
             </div>
 
@@ -274,22 +271,47 @@
         <div>
             <h3 class="text-xs uppercase text-green-300 font-semibold mb-2 tracking-wider">Finance</h3>
 
-            <a href="{{ route('revenues.index') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('revenues.*') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-dollar-sign w-5"></i>
-                <span>Income / Sales</span>
+            <a href="{{ route('finance.dashboard') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('finance.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-wallet w-5"></i>
+                <span>Finance Dashboard</span>
             </a>
 
-            <a href="{{ route('expenses.index') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('expenses.*') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-receipt w-5"></i>
-                <span>Expenses</span>
+            <div class="relative group">
+                <button class="flex items-center space-x-2 w-full hover:bg-green-700 p-2 rounded transition-all duration-200">
+                    <i class="fas fa-coins w-5"></i>
+                    <span>Money Tracking</span>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform group-hover:rotate-180"></i>
+                </button>
+                <div class="hidden group-hover:block pl-4 space-y-1 mt-1">
+                    <a href="{{ route('revenues.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('revenues.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-arrow-trend-up text-sm"></i>
+                        <span>Income / Sales</span>
+                    </a>
+                    <a href="{{ route('expenses.index') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('expenses.index') || request()->routeIs('expenses.create') || request()->routeIs('expenses.edit') || request()->routeIs('expenses.show') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-receipt text-sm"></i>
+                        <span>Expenses</span>
+                    </a>
+                    <a href="{{ route('expenses.summary') }}"
+                       class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('expenses.summary') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
+                        <i class="fas fa-chart-pie text-sm"></i>
+                        <span>Profit &amp; Loss</span>
+                    </a>
+                </div>
+            </div>
+
+            <a href="{{ route('budgets.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('budgets.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-calendar-check w-5"></i>
+                <span>Budgets</span>
             </a>
 
-            <a href="{{ route('expenses.summary') }}"
-               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('expenses.summary') ? 'bg-green-700 text-yellow-300' : '' }}">
-                <i class="fas fa-chart-pie w-5"></i>
-                <span>Profit & Loss</span>
+            <a href="{{ route('loans.index') }}"
+               class="flex items-center space-x-2 block hover:bg-green-700 p-2 rounded {{ request()->routeIs('loans.*') ? 'bg-green-700 text-yellow-300' : '' }}">
+                <i class="fas fa-building-columns w-5"></i>
+                <span>Loans &amp; Credit</span>
             </a>
         </div>
 

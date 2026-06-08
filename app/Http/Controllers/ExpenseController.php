@@ -11,7 +11,7 @@ class ExpenseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Expense::with(['farm', 'crop', 'staff']);
+        $query = Expense::with(['farm', 'crop', 'livestock', 'staff']);
 
         if ($request->filled('search')) {
             $query->where('description', 'like', "%{$request->search}%");
@@ -57,14 +57,19 @@ class ExpenseController extends Controller
         $validated = $request->validate([
             'farm_id' => 'required|exists:farms,id',
             'crop_id' => 'nullable|exists:crops,id',
+            'livestock_id' => 'nullable|exists:livestock,id',
             'expense_type' => 'required|array',
-            'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,fuel,maintenance,transport,other',
+            'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,animal_feed,veterinary,fuel,maintenance,transport,utilities,other',
             'description' => 'required|string',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
             'category' => 'required|string',
             'payment_method' => 'nullable|string',
             'receipt_number' => 'nullable|string',
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:4096',
+            'is_recurring' => 'nullable|boolean',
+            'recurrence_interval' => 'nullable|in:weekly,monthly,seasonal,yearly',
+            'next_due_date' => 'nullable|date',
             'staff_id' => 'nullable|exists:staff,id',
             'notes' => 'nullable|string',
         ]);
@@ -73,6 +78,12 @@ class ExpenseController extends Controller
         if (is_array($validated['expense_type'])) {
             $validated['expense_type'] = implode(',', $validated['expense_type']);
         }
+
+        if ($request->hasFile('receipt')) {
+            $validated['receipt_path'] = $request->file('receipt')->store('receipts/expenses', 'public');
+        }
+
+        $validated['is_recurring'] = $request->boolean('is_recurring');
 
         Expense::create($validated);
 
@@ -90,14 +101,19 @@ class ExpenseController extends Controller
         $validated = $request->validate([
             'farm_id' => 'required|exists:farms,id',
             'crop_id' => 'nullable|exists:crops,id',
+            'livestock_id' => 'nullable|exists:livestock,id',
             'expense_type' => 'required|array',
-            'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,fuel,maintenance,transport,other',
+            'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,animal_feed,veterinary,fuel,maintenance,transport,utilities,other',
             'description' => 'required|string',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
             'category' => 'required|string',
             'payment_method' => 'nullable|string',
             'receipt_number' => 'nullable|string',
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:4096',
+            'is_recurring' => 'nullable|boolean',
+            'recurrence_interval' => 'nullable|in:weekly,monthly,seasonal,yearly',
+            'next_due_date' => 'nullable|date',
             'staff_id' => 'nullable|exists:staff,id',
             'notes' => 'nullable|string',
         ]);
@@ -106,6 +122,12 @@ class ExpenseController extends Controller
         if (is_array($validated['expense_type'])) {
             $validated['expense_type'] = implode(',', $validated['expense_type']);
         }
+
+        if ($request->hasFile('receipt')) {
+            $validated['receipt_path'] = $request->file('receipt')->store('receipts/expenses', 'public');
+        }
+
+        $validated['is_recurring'] = $request->boolean('is_recurring');
 
         $expense->update($validated);
 

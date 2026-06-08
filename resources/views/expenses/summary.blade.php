@@ -131,9 +131,12 @@
                                                             'fertilizer' => 'Fertilizer',
                                                             'seeds' => 'Seeds',
                                                             'pesticides' => 'Pesticides',
+                                                            'animal_feed' => 'Animal Feed',
+                                                            'veterinary' => 'Veterinary',
                                                             'fuel' => 'Fuel',
                                                             'maintenance' => 'Maintenance',
                                                             'transport' => 'Transport',
+                                                            'utilities' => 'Utilities',
                                                             'other' => 'Other',
                                                             default => $type->expense_type
                                                         } }}

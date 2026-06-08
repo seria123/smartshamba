@@ -16,6 +16,7 @@ class Revenue extends Model
         'livestock_id',
         'crop_cycle_id',
         'buyer_id',
+        'income_type',
         'amount',
         'sale_date',
         'quantity_sold',
@@ -25,6 +26,7 @@ class Revenue extends Model
         'payment_date',
         'payment_method',
         'invoice_number',
+        'receipt_path',
         'notes',
     ];
 

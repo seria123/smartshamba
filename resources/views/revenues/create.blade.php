@@ -20,7 +20,7 @@
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <form action="{{ route('revenues.store') }}" method="POST">
+            <form action="{{ route('revenues.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="p-6 space-y-8">
@@ -63,6 +63,14 @@
                             Product Type
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="income_type" class="block text-sm font-medium text-gray-700 mb-2">Income Type *</label>
+                                <select name="income_type" id="income_type" class="form-input-modern" required>
+                                    @foreach(['crop_sale' => 'Crop Sale', 'livestock_sale' => 'Livestock Sale', 'milk' => 'Milk', 'eggs' => 'Eggs', 'animal_sale' => 'Animal Sale', 'by_product' => 'By-product', 'grant' => 'Grant', 'subsidy' => 'Subsidy', 'contract' => 'Contract', 'other' => 'Other'] as $value => $label)
+                                        <option value="{{ $value }}" {{ old('income_type', 'crop_sale') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div>
                                 <label for="livestock_id" class="block text-sm font-medium text-gray-700 mb-2">Livestock (for animal sales)</label>
                                 <select name="livestock_id" id="livestock_id" class="form-input-modern">
@@ -159,6 +167,10 @@
                                 <label for="invoice_number" class="block text-sm font-medium text-gray-700 mb-2">Invoice Number</label>
                                 <input type="text" name="invoice_number" id="invoice_number" 
                                     class="form-input-modern" placeholder="INV-2026-001">
+                            </div>
+                            <div>
+                                <label for="receipt" class="block text-sm font-medium text-gray-700 mb-2">Receipt / Proof</label>
+                                <input type="file" name="receipt" id="receipt" class="form-input-modern" accept=".jpg,.jpeg,.png,.pdf">
                             </div>
                             <div>
                                 <label for="payment_status" class="block text-sm font-medium text-gray-700 mb-2">Payment Status</label>
