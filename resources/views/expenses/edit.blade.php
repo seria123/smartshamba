@@ -125,8 +125,8 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Description *</label>
-                                    <input type="text" name="description" class="form-control" value="{{ old('description', $expense->description) }}" required>
+                                    <label class="form-label">Expense Title *</label>
+                                    <input type="text" name="title" class="form-control" value="{{ old('title', $expense->title ?? $expense->description) }}" placeholder="Maize fertilizer purchase" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -141,6 +141,11 @@
                                     <input type="date" name="expense_date" class="form-control" value="{{ $expense->expense_date->format('Y-m-d') }}" required>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Add supplier, quantity, purpose, or other useful context">{{ old('description', $expense->description) }}</textarea>
                         </div>
 
                         <div class="row mb-4">

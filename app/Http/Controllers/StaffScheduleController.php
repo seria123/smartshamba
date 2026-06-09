@@ -12,6 +12,17 @@ use Illuminate\View\View;
 
 class StaffScheduleController extends Controller
 {
+    public function all(): View
+    {
+        $staff = null;
+        $schedules = StaffSchedule::with(['staff', 'field', 'farm'])
+            ->orderBy('schedule_date', 'desc')
+            ->paginate(20);
+        $fields = Field::orderBy('name')->get();
+
+        return view('staff.schedules.index', compact('staff', 'schedules', 'fields'));
+    }
+
     public function index(Staff $staff): View
     {
         $schedules = $staff->schedules()

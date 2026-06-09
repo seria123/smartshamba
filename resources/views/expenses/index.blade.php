@@ -29,7 +29,7 @@
                                 <tr>
                                     <th>Date</th>
                                     <th>Type</th>
-                                    <th>Description</th>
+                                    <th>Title</th>
                                     <th>Farm</th>
                                     <th>Amount</th>
                                     <th>Actions</th>
@@ -40,7 +40,12 @@
                                 <tr>
                                     <td>{{ $expense->expense_date->format('M d, Y') }}</td>
                                     <td>{{ $expense->type_label }}</td>
-                                    <td>{{ $expense->description }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ $expense->title ?? $expense->description }}</div>
+                                        @if($expense->description && $expense->description !== $expense->title)
+                                            <small class="text-muted">{{ Str::limit($expense->description, 80) }}</small>
+                                        @endif
+                                    </td>
                                     <td>{{ $expense->farm?->name }}</td>
                                     <td class="text-danger fw-bold">{{ number_format($expense->amount, 2) }}</td>
                                     <td>

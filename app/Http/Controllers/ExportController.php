@@ -72,10 +72,10 @@ public function exportSensorReadings(Request $request): \Symfony\Component\HttpF
         return $this->exportService->exportIrrigationLogs($farm, $fromDate, $toDate, $request->get('format', 'csv'));
     }
 
-    public function exportWeatherData(string $format)
-{
-    return $this->exportService->exportWeatherData($format);
-}
+    public function exportWeatherData(Request $request)
+    {
+        return $this->exportService->exportWeatherData($request->get('format', 'csv'));
+    }
 
     public function exportCrops(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {

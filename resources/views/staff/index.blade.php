@@ -32,7 +32,7 @@
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="{{ route('staff.schedules.index', ['staff' => 'all']) }}" class="card bg-info text-white text-decoration-none">
+                <a href="{{ route('staff.schedules.all') }}" class="card bg-info text-white text-decoration-none">
                     <div class="card-body text-center">
                         <i class="fas fa-calendar-alt fa-2x mb-2"></i>
                         <h5 class="card-title mb-0">Schedules</h5>

@@ -88,8 +88,13 @@ if (app()->environment('local')) {
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/profile/edit', [ProfileController::class, 'edit'])
-    ->name('profile.edit');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::patch('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
@@ -118,6 +123,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('irrigation_zones', IrrigationZoneController::class);
     Route::resource('weather_data', WeatherDataController::class);
     Route::resource('sensor_readings', SensorReadingController::class);
+    Route::get('harvests/dashboard', [HarvestController::class, 'dashboard'])->name('harvests.dashboard');
+    Route::get('harvests/statistics', [HarvestController::class, 'statistics'])->name('harvests.statistics');
     Route::resource('harvests', HarvestController::class);
     Route::resource('revenues', RevenueController::class);
     Route::post('revenues/{revenue}/mark-as-paid', [RevenueController::class, 'markAsPaid'])->name('revenues.markAsPaid');
@@ -164,7 +171,12 @@ Route::get('staff/analytics', [StaffAnalyticsController::class, 'index'])->name(
 Route::get('staff/{staff}/analytics', [StaffAnalyticsController::class, 'show'])->name('staff.analytics.show');
     Route::resource('staff.field_assignments', StaffFieldAssignmentController::class)->shallow();
     Route::resource('staff.skills', StaffSkillController::class)->shallow();
-    Route::resource('staff.schedules', StaffScheduleController::class)->shallow();
+    Route::get('staff/schedules', [StaffScheduleController::class, 'all'])->name('staff.schedules.all');
+    Route::get('staff/all/schedules', fn () => redirect()->route('staff.schedules.all'))->name('staff.schedules.legacy-all');
+    Route::get('staff/{staff}/schedules', [StaffScheduleController::class, 'index'])->name('staff.schedules.index');
+    Route::post('staff/{staff}/schedules', [StaffScheduleController::class, 'store'])->name('staff.schedules.store');
+    Route::put('staff/{staff}/schedules/{schedule}', [StaffScheduleController::class, 'update'])->name('staff.schedules.update');
+    Route::delete('staff/{staff}/schedules/{schedule}', [StaffScheduleController::class, 'destroy'])->name('staff.schedules.destroy');
     Route::resource('staff.performance', StaffPerformanceReviewController::class)->shallow();
     Route::resource('staff.notifications', StaffNotificationController::class)->shallow();
     Route::resource('staff.proofs', StaffProofOfWorkController::class)->shallow();
@@ -186,7 +198,28 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('settings', [SettingsController::class, 'store'])->name('settings.store');
 });
-Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
+    Route::get('/exports/sensor-readings', [ExportController::class, 'exportSensorReadings'])->name('exports.sensorReadings');
+    Route::get('/exports/tasks', [ExportController::class, 'exportTasks'])->name('exports.tasks');
+    Route::get('/exports/irrigation-logs', [ExportController::class, 'exportIrrigationLogs'])->name('exports.irrigationLogs');
+    Route::get('/exports/weather-data', [ExportController::class, 'exportWeatherData'])->name('exports.weatherData');
+    Route::get('/exports/crops', [ExportController::class, 'exportCrops'])->name('exports.crops');
+    Route::get('/exports/crop-analyses', [ExportController::class, 'exportCropAnalyses'])->name('exports.cropAnalyses');
+    Route::get('/exports/livestock', [ExportController::class, 'exportLivestock'])->name('exports.livestock');
+    Route::get('/exports/equipment', [ExportController::class, 'exportEquipment'])->name('exports.equipment');
+    Route::get('/exports/fields', [ExportController::class, 'exportFields'])->name('exports.fields');
+    Route::get('/exports/crop-cycles', [ExportController::class, 'exportCropCycles'])->name('exports.cropCycles');
+    Route::get('/exports/pdf/livestock', [ExportController::class, 'pdfLivestock'])->name('exports.pdf.livestock');
+    Route::get('/exports/pdf/harvests', [ExportController::class, 'pdfHarvests'])->name('exports.pdf.harvests');
+    Route::get('/exports/pdf/farms/{farm}', [ExportController::class, 'pdfFarmSummary'])->name('exports.pdf.farm');
+    Route::get('/exports/sample/livestock', [ExportController::class, 'sampleLivestock'])->name('exports.sample.livestock');
+    Route::get('/exports/sample/crops', [ExportController::class, 'sampleCrops'])->name('exports.sample.crops');
+    Route::get('/exports/sample/equipment', [ExportController::class, 'sampleEquipment'])->name('exports.sample.equipment');
+    Route::post('/exports/import/livestock', [ExportController::class, 'importLivestock'])->name('exports.import.livestock');
+    Route::post('/exports/import/crops', [ExportController::class, 'importCrops'])->name('exports.import.crops');
+    Route::post('/exports/import/equipment', [ExportController::class, 'importEquipment'])->name('exports.import.equipment');
+});
 Route::middleware(['auth'])->group(function () {
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');

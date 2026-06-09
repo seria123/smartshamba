@@ -14,7 +14,10 @@ class ExpenseController extends Controller
         $query = Expense::with(['farm', 'crop', 'livestock', 'staff']);
 
         if ($request->filled('search')) {
-            $query->where('description', 'like', "%{$request->search}%");
+            $query->where(function ($expenseQuery) use ($request) {
+                $expenseQuery->where('title', 'like', "%{$request->search}%")
+                    ->orWhere('description', 'like', "%{$request->search}%");
+            });
         }
 
         if ($request->filled('expense_type')) {
@@ -58,9 +61,10 @@ class ExpenseController extends Controller
             'farm_id' => 'required|exists:farms,id',
             'crop_id' => 'nullable|exists:crops,id',
             'livestock_id' => 'nullable|exists:livestock,id',
+            'title' => 'required|string|max:255',
             'expense_type' => 'required|array',
             'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,animal_feed,veterinary,fuel,maintenance,transport,utilities,other',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
             'category' => 'required|string',
@@ -102,9 +106,10 @@ class ExpenseController extends Controller
             'farm_id' => 'required|exists:farms,id',
             'crop_id' => 'nullable|exists:crops,id',
             'livestock_id' => 'nullable|exists:livestock,id',
+            'title' => 'required|string|max:255',
             'expense_type' => 'required|array',
             'expense_type.*' => 'in:inputs,labor,equipment,fertilizer,seeds,pesticides,animal_feed,veterinary,fuel,maintenance,transport,utilities,other',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
             'category' => 'required|string',

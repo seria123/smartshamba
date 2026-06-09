@@ -237,7 +237,7 @@
                         <i class="fas fa-user-plus text-sm"></i>
                         <span>Add Staff</span>
                     </a>
-                    <a href="{{ route('staff.schedules.index', ['staff' => 'all']) }}"
+                    <a href="{{ route('staff.schedules.all') }}"
                        class="flex items-center space-x-2 block px-3 py-2 rounded hover:bg-green-700 {{ request()->routeIs('staff.schedules.*') ? 'bg-green-700 text-yellow-300' : 'text-green-100' }}">
                         <i class="fas fa-calendar-alt text-sm"></i>
                         <span>Schedules</span>

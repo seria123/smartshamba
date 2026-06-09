@@ -17,6 +17,10 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="mb-4">
+                        <h3 class="mb-1">{{ $expense->title ?? $expense->description }}</h3>
+                        <div class="text-muted">Expense entry</div>
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             <table class="table table-borderless">
@@ -82,7 +86,7 @@
                                     <h6 class="mb-0">Description</h6>
                                 </div>
                                 <div class="card-body">
-                                    <p class="mb-0">{{ $expense->description }}</p>
+                                    <p class="mb-0">{{ $expense->description ?: 'No extra description provided.' }}</p>
                                 </div>
                             </div>
                         </div>

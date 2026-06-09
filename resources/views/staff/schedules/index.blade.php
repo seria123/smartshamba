@@ -4,9 +4,10 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col gap-4">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h1 class="text-2xl font-bold mb-0">Schedules - {{ $staff->fullName() }}</h1>
+            <h1 class="text-2xl font-bold mb-0">{{ $staff ? 'Schedules - '.$staff->fullName() : 'All Staff Schedules' }}</h1>
         </div>
 
+        @if($staff)
         <div class="card-modern p-4 mb-4">
             <form action="{{ route('staff.schedules.store', $staff) }}" method="POST" class="row g-3">
                 @csrf
@@ -48,6 +49,11 @@
                 </div>
             </form>
         </div>
+        @else
+        <div class="alert alert-info">
+            Select an individual staff member to add a new schedule. This page shows schedules across all staff.
+        </div>
+        @endif
 
         <div class="card-modern overflow-hidden">
             <div class="overflow-x-auto">
@@ -55,6 +61,9 @@
                     <thead>
                         <tr>
                             <th>Date</th>
+                            @unless($staff)
+                            <th>Staff</th>
+                            @endunless
                             <th>Field</th>
                             <th>Time</th>
                             <th>Shift</th>
@@ -66,6 +75,9 @@
                         @forelse($schedules as $schedule)
                         <tr>
                             <td>{{ $schedule->schedule_date->format('M d, Y') }}</td>
+                            @unless($staff)
+                            <td>{{ $schedule->staff?->fullName() ?? '-' }}</td>
+                            @endunless
                             <td>{{ $schedule->field->name ?? '-' }}</td>
                             <td>{{ $schedule->start_time ?? '-' }} - {{ $schedule->end_time ?? '-' }}</td>
                             <td>{{ ucfirst(str_replace('_', ' ', $schedule->shift_type ?? 'N/A')) }}</td>
@@ -75,7 +87,9 @@
                                 </span>
                             </td>
                             <td>
-                                <form action="{{ route('staff.schedules.update', [$staff, $schedule]) }}" method="POST" class="d-inline">
+                                @php($routeStaff = $staff ?? $schedule->staff)
+                                @if($routeStaff)
+                                <form action="{{ route('staff.schedules.update', [$routeStaff, $schedule]) }}" method="POST" class="d-inline">
                                     @csrf @method('PUT')
                                     <select name="status" class="form-select form-select-sm d-inline w-auto">
                                         <option value="scheduled" {{ $schedule->status === 'scheduled' ? 'selected' : '' }}>Scheduled</option>
@@ -85,17 +99,20 @@
                                     </select>
                                     <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-save"></i></button>
                                 </form>
-                                <form action="{{ route('staff.schedules.destroy', [$staff, $schedule]) }}" method="POST" class="d-inline">
+                                <form action="{{ route('staff.schedules.destroy', [$routeStaff, $schedule]) }}" method="POST" class="d-inline">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this schedule?')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
+                                @else
+                                    <span class="text-muted">No staff linked</span>
+                                @endif
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">No schedules found</td>
+                            <td colspan="{{ $staff ? 6 : 7 }}" class="text-center text-muted py-4">No schedules found</td>
                         </tr>
                         @endforelse
                     </tbody>

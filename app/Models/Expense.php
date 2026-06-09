@@ -14,6 +14,7 @@ class Expense extends Model
         'farm_id',
         'crop_id',
         'livestock_id',
+        'title',
         'expense_type',
         'description',
         'amount',
